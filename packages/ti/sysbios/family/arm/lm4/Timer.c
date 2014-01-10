@@ -967,16 +967,14 @@ Void Timer_write(Bool altclk, volatile UInt32 *pReg, UInt32 val)
  */
 Bool Timer_masterDisable(Void)
 {
-    /* read PRIMASK bit to R0 and call CPSID to disable interrupts */
-    asm("    mrs     r0, PRIMASK\n"
+    /* read PRIMASK bit and call CPSID to disable interrupts */
+    int r;
+    asm("    mrs     %[r], PRIMASK\n"
         "    cpsid   i\n"
-        "    bx      lr\n");
-    /*
-     * The following return statement keeps the compiler from complaining
-     * about a missing return value.  The "bx lr" above does the actual return
-     * and the below statement is not executed.
-     */
-    return (0);
+    : [r] "=&r" (r)
+    :
+    );
+    return r;
 }
 
 /*
