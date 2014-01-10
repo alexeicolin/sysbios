@@ -1,3 +1,5 @@
+.*.swp
+
 .xdcenv.mak
 .dlls
 .interfaces
