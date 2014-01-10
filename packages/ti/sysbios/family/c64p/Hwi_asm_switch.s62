@@ -1,0 +1,93 @@
+;
+; ======== Hwi_asm.s62 ========
+;
+;
+
+        .cdecls C,NOLIST,"package/internal/Hwi.xdc.h" 
+
+;
+; This logic is needed to allow this code to work with 6.1.x codegen
+; which didn't define the .TI_C6X_TESLA symbol.  We need to work
+; with both old and new codegen, so we define our own symbol.
+;
+    .if ($isdefed(".TI_C6X_TESLA"))
+        .if (.TI_C6X_TESLA)
+_TESLA_         .set 1
+        .endif
+    .endif
+
+    .if $isdefed("__TI_ELFABI__")
+    .if __TI_ELFABI__
+        .asg ti_sysbios_family_xxx_Hwi_switchToIsrStack, _ti_sysbios_family_xxx_Hwi_switchToIsrStack
+        .asg ti_sysbios_family_xxx_Hwi_switchToTaskStack, _ti_sysbios_family_xxx_Hwi_switchToTaskStack
+        .asg ti_sysbios_family_c64p_Hwi_Module__state__V, _ti_sysbios_family_c64p_Hwi_Module__state__V
+    .endif
+    .endif
+
+        .global _ti_sysbios_family_xxx_Hwi_switchToIsrStack
+        .global _ti_sysbios_family_xxx_Hwi_switchToTaskStack
+
+_ti_sysbios_family_c64p_Hwi_Module__state__V .tag ti_sysbios_family_c64p_Hwi_Module_State
+
+        .text
+
+SP      .set    b15
+
+;
+;  ======== ti_sysbios_family_c64p_Hwi_switchToIsrStack ========
+;  Char *ti_sysbios_family_c64p_Hwi_switchToIsrStack();
+;
+;  If not already on the isr stack, switch to it.
+;
+;  Checks the Hwi module object's taskSP. 
+;  If 0, then set taskSP to current SP then switch to ISR stack.
+;
+;  Returns:
+;        old taskSP value for use with switchToTaskStack()
+;
+    .sect ".text:_ti_sysbios_family_xxx_Hwi_switchToIsrStack"
+        .clink
+_ti_sysbios_family_xxx_Hwi_switchToIsrStack:
+        .asmfunc
+        mvkl    _ti_sysbios_family_c64p_Hwi_Module__state__V, a0
+        mvkh    _ti_sysbios_family_c64p_Hwi_Module__state__V, a0
+        ldw     *a0(ti_sysbios_family_c64p_Hwi_Module_State.taskSP), b0   ; get current taskSP value 
+        ldw     *a0(ti_sysbios_family_c64p_Hwi_Module_State.isrStack), b1
+||      b       b3
+        nop     3                       ; wait total of 5 cycles for branch
+        mv      b0, a4                  ; 1st ldw to b0 complete
+  [!b0] stw     SP, *a0(ti_sysbios_family_c64p_Hwi_Module_State.taskSP)   ; save old SP
+||[!b0] mv      b1, SP                  ; return SP on isrStack
+        .endasmfunc
+
+;
+;  ======== ti_sysbios_family_c64p_Hwi_switchToTaskStack ========
+;  ti_sysbios_family_c64p_Hwi_switchToTaskStack(Char *oldTaskSP);
+;
+;  If at bottom of ISR stack, switch to Task stack.
+;
+;  If oldTaskSP is zero, then this is the thread that switched
+;  to the ISR stack first and therefore it is safe to switch
+;  back to the task stack address saved in the Hwi module 
+;  object's taskSP variable.
+;
+;
+    .sect ".text:_ti_sysbios_family_xxx_Hwi_switchToTaskStack"
+        .clink
+_ti_sysbios_family_xxx_Hwi_switchToTaskStack:
+        .asmfunc
+        mv      a4, b0
+||      mvkl    _ti_sysbios_family_c64p_Hwi_Module__state__V.taskSP, a0
+
+        .if ($isdefed("_TESLA_") = 0)
+        mvkh    _ti_sysbios_family_c64p_Hwi_Module__state__V.taskSP, a0
+||      b       b3
+        .else
+        mvkh    _ti_sysbios_family_c64p_Hwi_Module__state__V.taskSP, a0
+        b       b3
+        .endif
+
+  [!b0] ldw     *a0, SP
+  [!b0] stw     b0, *a0
+        nop     3
+        .endasmfunc

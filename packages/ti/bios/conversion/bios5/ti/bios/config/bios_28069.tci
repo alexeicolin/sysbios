@@ -1,0 +1,80 @@
+/*
+ *  ======== bios_28069.tci ========
+ *  This file contains BIOS settings for 28069.
+ *
+ */
+
+/*
+ *  ======== bios.setupMemory28069 ========
+ *  This function is the top-level function that will remove all MEM segments
+ *  from the cdb file.  It will take your physical memory map from calling
+ *  getMemoryMap() and create MEM instances in cdb.
+ *  It will then set sections to the default segment specified and fix up
+ *  the length and/or base of MEM segments if needed.
+ */
+bios.internal.setupMemory28069 = function (prog)
+{
+     /*
+      *  BIOS MEM segments will be created from object model memory definitions.
+      *  Place default code and data sections into specified memory segments.
+      */
+    bios.initializeMemory(prog, "FLASH", "L4SARAM");
+
+    /* place .trcdata section into LSARAM so KOV will work (SDOCM00059875) */
+    var lsaram = prog.module("MEM").instance("L4SARAM");
+    prog.module("MEM").TRCDATASEG = lsaram;
+
+    /* place .stack section into MSARAM so LSARAM does not overflow */
+    var msaram = prog.module("MEM").instance("MSARAM");
+    prog.module("MEM").STACKSEG = msaram;
+}
+
+/*
+ *  ======== bios.init28069 ========
+ *  BIOS initialization for the 28069
+ */
+bios.init28069 = function (prog, baseseed)
+{
+    /*
+     *  Find configuration seed files to load
+     */
+    if (baseseed == null) {
+        baseseed = "ti/bios/config/cdb/c28xx.cdb";
+    }
+
+    var seed = utils.findSeed(baseseed);
+    if (seed != null) {
+        try {
+            prog.load(seed);
+        }
+        catch (e) {
+            throw new Error ("Can't load configuration seed '" + seed + "' : "
+                + e);
+        }
+    }
+    else {
+        throw new Error ("Can't find configuration seed: " + baseseed);
+    }
+
+    /* Set CHIPTYPE to "other". No CSL support from BIOS config file */
+    prog.module("GBL").CHIPTYPE = "other";
+    prog.module("GBL").PLLTYPE = "2806x";
+
+    /* CLKOUT will be set to cpu.clockRate */
+    bios.internal.setClkout(prog);
+
+    /* If the old memory names are used, we call the function that sets up
+     * the old external memory names, while the internal names (and some old 
+     * ones are retained from the CDB file.
+     */
+    if (bios.supportOldMemoryNames) {
+        bios.internal.oldMemoryNames(prog);
+    }
+    else {
+        /* set the default memory segments for 28069 using new memory names */
+        bios.internal.setupMemory28069(prog);
+    }
+    
+    /* initialize some memory map registers */
+    bios.internal.initializeRegisterMap(prog);
+}

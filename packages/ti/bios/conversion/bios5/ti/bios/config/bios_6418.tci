@@ -1,0 +1,93 @@
+/*
+ *  ======== bios_6418.tci ========
+ *  This file contains BIOS settings for 6418.
+ *
+ */
+
+/*
+ *  ======== bios.internal.setupMemory6418 ========
+ *  This function is the top-level function that will remove all MEM segments
+ *  from the cdb file.  It will take your physical memory map from calling
+ *  getMemoryMap() and create MEM instances in cdb.
+ *  It will then set sections to the default segment specified and fix up
+ *  the length and/or base of MEM segments if needed.
+ */
+bios.internal.setupMemory6418 = function (prog)
+{
+    /*
+     *  BIOS MEM segments will be created from object model memory definitions.
+     *  Place default code and data sections into specified memory segments.
+     */
+    bios.initializeMemory(prog, "IRAM", "IRAM");
+
+    var cpu = prog.cpu;
+    var MEM = prog.module("MEM");
+    var iram = MEM.instance("IRAM");
+    var cache = MEM.instance("CACHE_L2");
+    cache.len  = 0x0;
+    cache.base = 0x80000;
+
+    if (cpu.registers.l2Mode != null) {
+        if (cpu.registers.l2Mode == "4-way cache (0k)") {
+            iram.len   = 0x80000;
+        }
+        else if (cpu.registers.l2Mode == "4-way cache (32k)") {
+            iram.len   = 0x78000;
+        }
+        else if (cpu.registers.l2Mode == "4-way cache (64k)") {
+            iram.len   = 0x70000;
+        }
+        else if (cpu.registers.l2Mode == "4-way cache (128k)") {
+            iram.len   = 0x60000;
+        }
+        else if (cpu.registers.l2Mode == "4-way cache (256k)") {
+            iram.len   = 0x40000;
+        }
+    }
+    else {
+        iram.len = 0x80000;
+    }
+}
+
+/*
+ *  ======== bios.init6418 ========
+ *  BIOS initialization for the 6418
+ */
+bios.init6418 = function (prog, baseseed)
+{
+    /*
+     *  Find configuration seed files to load
+     */
+    if (baseseed == null) {
+        baseseed = "ti/bios/config/cdb/c64xx.cdb";
+    }
+
+    var seed = utils.findSeed(baseseed);
+    if (seed != null) {
+        try {
+            prog.load(seed);
+        }
+        catch (e) {
+            throw new Error ("Can't load configuration seed '" + seed + "' : "
+                + e);
+        }
+    }
+    else {
+        throw new Error ("Can't find configuration seed: " + baseseed);
+
+    }
+
+    /* set CLKOUT to be the value of cpu.clockRate. */
+    bios.internal.setClkout(prog);
+
+    /* Set endian mode based on build options */
+    prog.module("GBL").ENDIANMODE = prog.build.target.model.endian;
+
+    /* set the L2 Cache configuration to false here */
+    //prog.module("GBL").C641XCONFIGUREL2 = false;
+
+    bios.internal.setupMemory6418(prog);
+
+    /* initialize some memory map registers */
+    bios.internal.initializeRegisterMap(prog);
+}

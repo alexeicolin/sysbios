@@ -1,0 +1,150 @@
+%%{
+/*
+ * Copyright (c) 2012, Texas Instruments Incorporated
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * *  Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * *  Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * *  Neither the name of Texas Instruments Incorporated nor the names of
+ *    its contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+*/
+%%}
+%%{
+/*
+ *  ======== TSK.xdt ========
+ *
+ *! Revision history
+ *! =================
+ *! 12-Mar-2010 connell fix for SDOCM00066697: made externs extern __FAR__
+ *! 30-Mar-2009 agd	Fix SDSCM00045981 legacy tasks all show "glue" fxn
+ */
+%%}
+%if (this.ENABLETSK == true) {
+#include <ti/bios/include/tsk.h>
+%    var TSK = xdc.module("ti.bios.TSK");
+
+__FAR__ TSK_Attrs TSK_ATTRS = {
+    `TSK.PRIORITY`,     /* priority */
+    NULL,       /* stack */
+    `TSK.STACKSIZE`,    /* stacksize */
+%    if (TSK.STACKSEG != null) {
+%        if (TSK.STACKSEG.createHeap) {
+    `TSK.STACKSEG.heapId`,      /* stackseg */
+%        }
+%        else {
+    0,          /* default heap not specified, using segment 0 */
+%        }
+%    }
+%    else {
+    0,          /* default heap not specified, using segment 0 */
+%    }
+    NULL,       /* environ */
+    "",         /* name */
+    TRUE,       /* exitflag */
+    TRUE        /* initstackflag */
+};
+
+/*
+ *  TSK_staticGlueTab[] structure has one entry per configured task
+ */
+% 
+%    for (var i = 0; i < TSK.$instances.length; i++) {
+%       // no need for declaration for IDL fxns.  Plus, if IDL fnx == null we
+%       // will have a bogus fxn declaration of "extern Void null()" here
+%       if (TSK.$instances[i].name != "TSK_idle") {
+% 
+extern Void `TSK.$instances[i].fxn`(); 
+% 
+%       }
+%       for (var j = 0; j < 8; j++) {   
+%           if (typeof(TSK.$instances[i]["arg" + j]) != "number") {
+%              var argStr = String( TSK.$instances[i]["arg" + j]).substring(7); 
+% 
+extern __FAR__ UArg `argStr`;
+% 
+%          }
+%       }
+
+%    }
+%    if (TSK.$instances.length > 1) {
+% 
+__FAR__ TSK_Glue TSK_staticGlueTab[] = {
+% 
+%        for (var i = 0; i < TSK.$instances.length; i++) {
+%       if (TSK.$instances[i].name != "TSK_idle") { 
+     {
+        (Fxn)`TSK.$instances[i].fxn`,   /* fxn */
+        { (Arg)`TSK.$instances[i].arg0`,     /* arg0 */
+          (Arg)`TSK.$instances[i].arg1`,     /* arg1 */
+          (Arg)`TSK.$instances[i].arg2`,     /* arg2 */
+          (Arg)`TSK.$instances[i].arg3`,     /* arg3 */
+          (Arg)`TSK.$instances[i].arg4`,     /* arg4 */
+          (Arg)`TSK.$instances[i].arg5`,     /* arg5 */
+          (Arg)`TSK.$instances[i].arg6`,     /* arg6 */
+          (Arg)`TSK.$instances[i].arg7`      /* arg7 */
+        }, 0    /* errno */
+     },
+%       }
+%        }
+};
+
+/*
+ *  ======== _TSK_staticGlue ========
+ *  used to create statically defined tasks
+ */
+/* ARGSUSED */
+Void _TSK_staticGlue(UArg arg0, UArg arg1)
+{
+    Int         index = (Int)arg0;
+    TSK_Glue    *glue = &TSK_staticGlueTab[index];
+    Fxn         fxn = glue->fxn;
+    Arg         *args = glue->args;
+    ti_sysbios_knl_Task_Handle	tsk;
+
+    /*
+     * Replace TSK_staticGlue with real task function.
+     */
+    tsk = ti_sysbios_knl_Task_self();
+    tsk->fxn = (ti_sysbios_knl_Task_FuncPtr)fxn;
+
+    /*
+     * Replace index with pointer to glue structure for use by
+     * TSK_get/seterror() and legacy elements not supported by Task.
+     */
+    ti_sysbios_knl_Task_setArg0(tsk, (UArg)glue);
+
+    /*
+     * Encode arg1 with the fxn for ROV to use prior to task running
+     */
+    ti_sysbios_knl_Task_setArg1(tsk, (UArg)fxn);
+
+    fxn(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+}
+%    }
+%}
+%else {
+/* TSK.ENABLETSK is false, so nothing to contribute */
+%}

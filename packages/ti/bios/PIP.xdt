@@ -1,0 +1,169 @@
+%%{
+/*
+ * Copyright (c) 2012, Texas Instruments Incorporated
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * *  Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * *  Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * *  Neither the name of Texas Instruments Incorporated nor the names of
+ *    its contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+*/
+%%}
+/* Static DEV Table entries */
+#include <ti/bios/include/pip.h>
+#include <ti/bios/include/fxn.h>
+%var PIP = xdc.module("ti.bios.PIP");
+
+% for (var i = 0; i < PIP.$instances.length; i++) {
+%   if (typeof(PIP.$instances[i].notifyWriterArg0) != "number") {
+%      var argStr = PIP.$instances[i].notifyWriterArg0; 
+%
+extern __FAR__ Void* `argStr`;
+%
+%   }
+%   if (typeof(PIP.$instances[i].notifyWriterArg1) != "number") {
+%      var argStr = PIP.$instances[i].notifyWriterArg1; 
+%
+extern __FAR__ Void* `argStr`;
+%
+%   }
+%   if (typeof(PIP.$instances[i].notifyReaderArg0) != "number") {
+%      var argStr = PIP.$instances[i].notifyReaderArg0; 
+%
+extern __FAR__ Void* `argStr`;
+%
+%   }
+%   if (typeof(PIP.$instances[i].notifyReaderArg1) != "number") {
+%      var argStr = PIP.$instances[i].notifyReaderArg1; 
+%
+extern __FAR__ Void* `argStr`;
+%
+%   }
+% }
+
+
+% for (var i = 0; i < PIP.$instances.length; i++) {
+%     /* framesize must be adjusted for alignment */
+%     var frameSize = PIP.$instances[i].frameSize;
+%     var align = PIP.$instances[i].bufAlign;
+%     var newFrameSize =  (frameSize + (align - 1)) & ( ~(align - 1));
+%     var bufSize = newFrameSize * PIP.$instances[i].numFrames;
+%
+% if ( PIP.$instances[i].bufSeg != null) {
+#pragma DATA_SECTION(`PIP.$instances[i].name`_buf, "_`PIP.$instances[i].name`$bufs");
+% }
+__FAR__ Int `PIP.$instances[i].name`_buf[`bufSize`];
+%
+%
+__FAR__ PIP_Curdesc `PIP.$instances[i].name`_desc[`PIP.$instances[i].numFrames`] = {
+%
+%     var offset = 0;
+%     for (var j = 0; j < PIP.$instances[i].numFrames - 1; j++) {
+%
+    {(`PIP.$instances[i].name`_buf + `offset`), `frameSize`, &(`PIP.$instances[i].name`_desc[`j + 1`])},
+%
+%         offset += frameSize;
+%     }
+%
+    {(`PIP.$instances[i].name`_buf + `offset`), `frameSize`, &(`PIP.$instances[i].name`_desc[0])},
+};
+%
+% }
+
+%if (PIP.$instances.length != 0) {
+__FAR__ PIP_Obj PIP_table[`PIP.$instances.length`] = {
+%     for (var i = 0; i < PIP.$instances.length; i++) {
+%
+    { 
+       `PIP.$instances[i].frameSize`,	/* threshold */
+	NULL, 				/* preaderTakeProbe */
+	NULL,				/* readerAddr */
+	`PIP.$instances[i].frameSize`,	/* readerSize */
+	`PIP.$instances[i].name`_desc,	/* readerCurdesc */
+	&PIP_table[`i`].notifyReader,	/* pnotifyReader */
+	0,				/* readerNumFrames */
+	NULL,				/* preaderGiveProbe */
+	&PIP_table[`i`].writerNumFrames, /* pwriterNumFrames */
+	{
+%         if (PIP.$instances[i].notifyWriterFxn != null) {
+	    (Fxn)`PIP.$instances[i].notifyWriterFxn`,
+%         }
+%         else {
+	    (Fxn)FXN_F_nop,
+%         }
+%         if (typeof(PIP.$instances[i].notifyWriterArg1) != "number") {
+	    (UArg)(Void *)&`PIP.$instances[i].notifyWriterArg1`,
+%         }
+%         else {
+	    `PIP.$instances[i].notifyWriterArg1`,
+%         }
+%         if (typeof(PIP.$instances[i].notifyWriterArg0) != "number") {
+	    (UArg)(Void *)&`PIP.$instances[i].notifyWriterArg0`,
+%         }
+%         else {
+	    `PIP.$instances[i].notifyWriterArg0`,
+%         }
+	},				/* notifyWriter */
+	NULL,				/* preaderSts */
+	NULL,				/* pwriterTakeProbe */
+	NULL,				/* writerAddr */
+	`PIP.$instances[i].frameSize`,	/* writerSize */
+	`PIP.$instances[i].name`_desc,  /* writerCurdesc */
+	&PIP_table[`i`].notifyWriter,	/* pnotifyWriter */
+	`PIP.$instances[i].numFrames`,	/* writerNumFrames */
+	NULL,				/* pwriterGiveProbe */
+	&PIP_table[`i`].readerNumFrames,	/* preaderNumFrames */
+	{
+%         if (PIP.$instances[i].notifyReaderFxn != null) {
+	    (Fxn) `PIP.$instances[i].notifyReaderFxn`,
+%         }
+%         else {
+	    (Fxn)FXN_F_nop,
+%         }
+%         if (typeof(PIP.$instances[i].notifyReaderArg1) != "number") {
+	    (UArg)(Void *)&`PIP.$instances[i].notifyReaderArg1`,
+%         }
+%         else {
+	    `PIP.$instances[i].notifyReaderArg1`,
+%         }
+%         if (typeof(PIP.$instances[i].notifyReaderArg0) != "number") {
+	    (UArg)(Void *)&`PIP.$instances[i].notifyReaderArg0`,
+%         }
+%         else {
+	    `PIP.$instances[i].notifyReaderArg0`,
+%         }
+	},				/* notifyReader */
+	NULL				/* pwriterSts */
+    },
+%     }
+};
+__FAR__ Int PIP_tablen = `PIP.$instances.length`;
+__FAR__ PIP_Obj *PIP_tabbeg = &PIP_table[0];
+% }
+% else {
+__FAR__ Int PIP_tablen = 0;
+__FAR__ Int PIP_tabbeg = NULL;
+% }

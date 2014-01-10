@@ -1,0 +1,183 @@
+;
+;  ======== pip.s62 ========
+;
+;
+        .include "ti/bios/include/pip.h62"
+        .include "ti/bios/include/fxn.h62"
+
+;
+;# ======== _PIP_take ========
+;
+;# Preconditions:
+;#      a4 = address of the NumFrames field in the pipe object 
+;#
+;# Postconditions:
+;#      none
+;#
+;
+_PIP_take:
+        .asmfunc
+        ; decrement and save the readerNumFrames(writerNumFrames) field of 
+        ; the PIP_Obj
+        b tkat1                 ; start ATOMIC
+        ldw *a4,a2              ; get numFrames value
+        stw b3,*b15--[2]        ; save b3 return pointer to stack
+        nop 2
+        b tkat2
+
+tkat1:  sub a2,1,a2             ; decrement numFrames 
+        stw a2,*a4--            ; save new NumFrames, point a4 at 
+                                ; pnotifyReader(pnotifyWriter) FXN_Obj
+        nop 3
+tkat2:                          ; end ATOMIC
+
+        ; if NumFrames !=0 then do FXN_execute on notify function
+ [!a2]  b dsctab
+ [a2]   stw a4,*b15--[2]        ; temp save a4 on stack
+ [a2]   ldw *a4,a4              ; get pointer to notify function
+        nop 4
+
+        FXN_execute             ; run notify FXN_Obj (a4 already points at it) 
+
+        ldw *++b15[2],a4        ; restore a4 to pnotifyReader(pnotifyWriter)
+        nop 4
+
+dsctab:
+        ldw *a4--,a2            ; dummy read on a4 to decrement it to
+                                ; point to readerCurdesc(writerCurdesc)
+                                ; (don't use value that gets to a2)
+
+        ldw *a4,a2              ; get (reader/writer)Curdesc pointer
+
+        ldw *a4--,a0            ; dummy read on a4 to decrement it to
+                                ; point to readerSize(writerSize)
+                                ; (don't use value that gets to a0)
+
+        nop 3                   ; fill delay slots, waiting for  
+
+        ; read addr[i] and size[i] from the frame descriptor table
+        ldw *+a2(4),a1          ; load size[i]
+        ldw *+a2(0),a0          ; load addr[i]
+        nop 3                   ; pad delay slots for size arrival
+
+        ; save size to readerSize/writerSize of PIP_Obj
+        stw a1,*a4--            ; save size[i], decrement a4 
+
+        ; save addr to readerAddr/writerAddr of PIP_Obj
+        stw a0,*a4--            ; save addr[i], decrement a4 to point to
+                                ; preaderTakeProbe(pwriterTakeProbe)
+
+        ; check if pTakeProbe is non-zero (i.e., a probe is attached); if is,
+        ; then branch directly to PIP_probe 
+
+        ldw *a4,a2              ; load value of preaderTakeProbe
+                                ;  (pwriterTakeProbe)
+        nop 4
+
+ [a2]   b _PIP_probe            ; go to probe handler
+
+ [!a2]  ldw *++b15[2],b3        ; probe not attached, restore return pointer 
+        nop 4                   ; from stack
+
+        b b3                    ; return to caller
+        nop 5
+        .endasmfunc
+
+;
+;# ======== _PIP_probe ========
+;  Copy data from src buffer into probe.  
+;
+;  Currently not implemented for C6x.
+;
+;# Preconditions:
+;#      none
+;# Postconditions:
+;#      none
+;#
+;
+_PIP_probe:
+
+
+;
+;# ======== _PIP_give ========
+;
+;# Preconditions:
+;#       a4 = address of the Curdesc field in the pipe object 
+;#       b4 = Size 
+;#       
+;# Postconditions:
+;#      none
+;#       
+;
+_PIP_give:
+        .asmfunc
+        ; load frame descriptor table pointer into register
+        mv a4,b0                ; save pointer to Curdesc field
+        ldw *a4--,a2            ; a4 now points to readerSize(writerSize)
+        ldw *a4--,a1            ; dummy read, to set a4 to point to 
+                                ; readerAddr(writerAddr)
+                                ; (don't use value loaded into a1)
+
+        ; get readerAddr(writerAddr) from PIP_Obj
+        ldw *a4,a1              ; load readerAddr(writerAddr) pointer 
+
+                                ; a4 now points to readerAddr
+                                ; (writerAddr) field of PIP_Obj
+
+        nop 4                   ; wait for a1 pointer to arrive
+
+        ; write readerAddr(writerAddr) to addr[i] in frame descriptor table
+        stw a1,*+a2(0)  
+
+        ; write Size to size[i] in frame descriptor table
+        stw b4,*+a2(4)  
+
+        ; read next[i] from frame descriptor table
+        ldw *+a2(8),a2
+        nop 4
+
+        ; set readerCurdesc(writerCurdesc) in PIP_Obj to next[i], to update
+        ; pointer to next frame
+        stw a2,*b0
+
+        ; if pGiveProbe is non-zero, then setup and call _PIP_probe
+        ; (!!! check and call to _PIP_probe to be supported in future release)
+
+        ; form address of pwriterNumFrames(preaderNumFrames) in PIP_Obj
+        mvk (PIP_O_PNUMFRAMES - PIP_O_CURDESC),a1
+        addu a1,b0,b1:b0      
+
+                                ; b0 now points to pwriterNumFrames
+                                ; (preaderNumFrames)
+
+        ; increment location pointed to by preaderNumFrames(pwriterNumFrames)
+
+        ldw *b0++,a1            ; load pointer to writerNumFrames
+        nop 3                   ; (readerNumFrames)
+                                ; b0 now points to notifyWriter
+
+        b gat1                  ; start ATOMIC 
+
+        ldw *a1,a2              ; load writerNumFrames(readerNumFrames) value
+        mvk 1,a3                ; set register for upcoming increment
+        nop 2
+        b gat2
+gat1:
+        addu a2,a3,a3:a2
+        stw a2,*a1              ; save new value of NumFrames
+        nop 3
+gat2:                           ; end ATOMIC
+        
+        ; Execute the notify FXN_Obj, let its return be the return from
+        ; _PIP_give
+
+        ; b0 points to the notify FXN_Obj
+
+        ldw *+b0(0),a1  ; get fxn addr
+        ldw *+b0(4),b4  ; get arg1 
+        ldw *+b0(8),a4  ; get arg0 
+        nop 2                   ; wait for fxn addr to arrive
+
+        b a1                    ; branch to function
+        nop 5
+        .endasmfunc

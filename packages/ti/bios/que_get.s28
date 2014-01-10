@@ -1,0 +1,62 @@
+;
+; ======== que_get.s28 ========
+;
+
+        .global _QUE_get
+        .global _QUE_put
+; 
+; ======== QUE_get ========
+; xar4                    xar4
+; Ptr QUE_get(QUE_Handle queue)
+; {
+;   QUE_Elem retValue;
+;   retValue = queue->next;
+;   queue->next = queue->next->next;
+;   queue->next->prev = queue;
+;   return (retValue);
+; }
+;
+_QUE_get:
+    .asmfunc
+        push    st1
+        setc    intm, dbgm              ; ##interrupt Begin Atomic
+        movl    xar0, xar4              ; mov que address in xar0
+        movl    xar4, *xar0             ; mov que->next in xar4 which is our
+                                        ; return value
+        movl    xar5, *xar4             ; xar5 = que->next->next
+        movl    *xar0, xar5             ; que->next = que->next->next
+        movl    *+xar5[2], xar0         ; que->next->previous = que
+
+        pop     st1                     ; ##interrupt Restore interrupts
+         
+        lretr   
+    .endasmfunc
+
+;
+; ======== QUE_put ========
+;                         xar4       xar5
+;Void QUE_put(QUE_Handle queue, Ptr elem)
+;{
+; (QUE_Handle *)elem->next = queue; 
+; (QUE_Handle *)elem->prev = queue->prev; 
+; (QUE_Handle *)elem->prev->next = (QUE_Handle *)elem;
+; queue->prev = (QUE_Handle *)elem;
+; return;
+;}
+;
+;
+_QUE_put:
+    .asmfunc
+        push    st1
+        setc    intm, dbgm              ; ##interrupt Begin Atomic
+        movl    *xar5, xar4             ; elem->next = que
+        movl    xar0, *+xar4[2]         ; xar0 = que->prev
+        movl    *+xar5[2], xar0         ; elem->prev = que->prev
+        movl    *xar0, xar5             ; elem->prev->next = elem 
+        movl    *+xar4[2], xar5         ; que->prev = elem
+
+        pop     st1                     ; ##interrupt Restore interrupts
+
+        lretr
+    .endasmfunc
+

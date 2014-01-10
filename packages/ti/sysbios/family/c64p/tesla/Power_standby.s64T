@@ -1,0 +1,91 @@
+;
+;  Copyright (c) 2012, Texas Instruments Incorporated
+;  All rights reserved.
+; 
+;  Redistribution and use in source and binary forms, with or without
+;  modification, are permitted provided that the following conditions
+;  are met:
+; 
+;  *  Redistributions of source code must retain the above copyright
+;     notice, this list of conditions and the following disclaimer.
+; 
+;  *  Redistributions in binary form must reproduce the above copyright
+;     notice, this list of conditions and the following disclaimer in the
+;     documentation and/or other materials provided with the distribution.
+; 
+;  *  Neither the name of Texas Instruments Incorporated nor the names of
+;     its contributors may be used to endorse or promote products derived
+;     from this software without specific prior written permission.
+; 
+;  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+;  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+;  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+;  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+;  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+;  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+;  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+;  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+;  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+;  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+;  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+;
+;
+; ======== Power_standby.s64T ========
+;
+;
+    .if $isdefed("__TI_ELFABI__")
+    .if __TI_ELFABI__
+        .asg ti_sysbios_family_c64p_tesla_Power_standby__I, _ti_sysbios_family_c64p_tesla_Power_standby__I
+    .endif
+    .endif
+
+        .global _ti_sysbios_family_c64p_tesla_Power_standby__I
+
+        .align  4
+
+
+;
+;  ======== Power_standby ========
+;
+;  Power_standby(address)
+;
+
+        .sect ".text:ti_sysbios_family_c64p_tesla_Power_code"
+        .clink
+
+_ti_sysbios_family_c64p_tesla_Power_standby__I:
+        .asmfunc
+        .nocmp
+
+        ; save child-preserved CPU regs to CPU context structure
+        stdw a15:a14, *a4++     ; save A15-A10
+        stdw a13:a12, *a4++
+        stdw a11:a10, *a4++
+        stdw b15:b14, *a4++     ; save B15-B10
+        stdw b13:b12, *a4++
+        stdw b11:b10, *a4++
+        stw  b3, *a4            ; save B3
+
+        ; idle the CPU with a simultaneous interrupt enable (GIE=1)
+        mvc csr, b4
+        or 1, b4, b4            ; set GIE
+        mvc b4, csr
+    ||  idle
+        nop                     ; pad rest of fetch packet
+        nop
+        nop
+        nop
+        nop
+        nop
+
+        ; if get here: CPU woke but did not reset after retention or hibernate
+
+        ; set return code to 0, indicating no reset
+        mvk 0, a4               
+
+        ; return back to Power_suspend API
+        b b3
+        nop 5
+
+        .endasmfunc
+

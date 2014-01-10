@@ -1,0 +1,203 @@
+;
+;  Copyright (c) 2013, Texas Instruments Incorporated
+;  All rights reserved.
+;
+;  Redistribution and use in source and binary forms, with or without
+;  modification, are permitted provided that the following conditions
+;  are met:
+;
+;  *  Redistributions of source code must retain the above copyright
+;     notice, this list of conditions and the following disclaimer.
+;
+;  *  Redistributions in binary form must reproduce the above copyright
+;     notice, this list of conditions and the following disclaimer in the
+;     documentation and/or other materials provided with the distribution.
+;
+;  *  Neither the name of Texas Instruments Incorporated nor the names of
+;     its contributors may be used to endorse or promote products derived
+;     from this software without specific prior written permission.
+;
+;  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+;  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+;  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+;  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+;  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+;  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+;  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+;  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+;  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+;  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+;  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+;
+; ======== Hwi_asm.s28 ========
+;
+;
+
+        .cdecls C,NOLIST,"package/internal/Hwi.xdc.h" 
+
+        .global _ti_sysbios_family_c28_Hwi_getIFR__I
+
+_ti_sysbios_family_c28_Hwi_Module__state__V .tag ti_sysbios_family_c28_Hwi_Module_State
+
+;
+;  ======== getIFR ========
+;  Returns the value of the IFR register.
+;  IFR only supports PUSH, POP, AND, OR
+;  
+    .sect ".text:_ti_sysbios_family_c28_Hwi_getIFR__I"
+    .clink
+_ti_sysbios_family_c28_Hwi_getIFR__I:
+    .asmfunc
+    push    ifr        ; Push the IFR on the stack (Only way to read IFR).
+    pop     al         ; Read the IFR into the accumulator..
+    lretr              ; Return the value of the IFR
+    .endasmfunc
+    
+;
+;  ======== interruptReturn ========
+;  Simply return from a PIE interrupt. Used to temporarily plug a PIE vector
+;  during the process of clearing a PIEIFR bit.  Refer to Hwi_clearInterrupt
+;  for more information.
+;  For internal use only.
+;  
+    .sect ".text:_ti_sysbios_family_c28_Hwi_interruptReturn__I"
+    .clink
+_ti_sysbios_family_c28_Hwi_interruptReturn__I:
+    .asmfunc
+    iret                ; Return from interrupt
+    .endasmfunc
+
+
+;
+;  ======== ti_sysbios_family_c28_Hwi_switchAndDispatch ========
+;
+    .sect ".text:_ti_sysbios_family_c28_Hwi_switchAndDispatch__I"
+    .clink
+_ti_sysbios_family_c28_Hwi_switchAndDispatch__I
+    .asmfunc
+
+    movl xar5, acc
+
+    movl xar0, #_ti_sysbios_family_c28_Hwi_Module__state__V.taskSP
+    movl acc, *xar0
+    movl xar4, acc      ; oldTaskSP = Hwi_module->taskSP
+    sb dispatch$, neq   ; if (Hwi_module->taskSP != 0), goto dispatch$
+
+    mov acc, sp
+    mov *xar0, acc      ; taskSP = SP
+    movl xar0, #_ti_sysbios_family_c28_Hwi_Module__state__V.isrStack
+    mov al, *xar0
+    mov sp, al          ; SP = Hwi_module->isrStack
+
+dispatch$:
+
+    ; save xar4
+    movl *sp++, xar4
+
+    ; Hwi_dispatchCore(intNum)
+    movl acc, xar5
+    lcr #_ti_sysbios_family_c28_Hwi_dispatchCore__I
+
+    ; restore xar4
+    movl xar4, *--sp
+
+    movl acc, xar4
+    sb nonZero$, neq    ; if (oldTaskSP != 0), return
+    movl xar0, #_ti_sysbios_family_c28_Hwi_Module__state__V.taskSP
+    mov al, *xar0
+    mov sp, al          ; SP = taskSP
+    mov acc, #0
+    movl *xar0, acc     ; taskSP = 0
+
+nonZero$:
+    lretr
+
+    .endasmfunc
+
+;
+;  ======== ti_sysbios_family_c28_Hwi_switchToIsrStack ========
+;  Char *ti_sysbios_family_c28_Hwi_switchToIsrStack();
+;
+;  If not already on the isr stack, switch to it.
+;
+;  Checks the Hwi module object's taskSP. 
+;  If 0, then set taskSP to current SP then switch to ISR stack.
+;
+;  Preconditions:
+;     intm = 1 dbgm = 1
+;
+;  Postconditions:
+;
+;  Returns:
+;        old taskSP value for use with switchToTaskStack()
+;
+;  Ptr swithToIsrStack() {
+;      Ptr oldTaskSP = Hwi_module->taskSP;
+;      if (Hwi_module->taskSP == 0) {
+;        Hwi_module->taskSP = SP;
+;        SP = Hwi_module->isrStack
+;      }
+;      return oldTaskSP;
+;  }
+
+
+        .global _ti_sysbios_family_xxx_Hwi_switchToIsrStack
+    .sect ".text:_ti_sysbios_family_xxx_Hwi_switchToIsrStack"
+    .clink
+_ti_sysbios_family_xxx_Hwi_switchToIsrStack:
+    .asmfunc
+    movl xar0, #_ti_sysbios_family_c28_Hwi_Module__state__V.taskSP
+    movl acc,*xar0
+    movl xar4, acc      ; oldTaskSP = Hwi_module->taskSP
+    sb zero$, eq        ; if (Hwi_module->taskSP == 0), goto zero$
+    lretr               ; return oldTaskSP
+        
+zero$:
+    mov acc, sp
+    mov *xar0, acc      ; taskSP = SP
+    movl xar0, #_ti_sysbios_family_c28_Hwi_Module__state__V.isrStack
+    mov al, *xar0       
+    mov sp, al          ; SP = Hwi_module->isrStack
+    lretr               ; return oldTaskSP
+    .endasmfunc
+
+;
+;  ======== ti_sysbios_family_c28_Hwi_switchToTaskStack ========
+;  ti_sysbios_family_c28_Hwi_switchToTaskStack(Char *oldTaskSP);
+;
+;  If at bottom of ISR stack, switch to Task stack.
+;
+;  If oldTaskSP is zero, then this is the thread that switched
+;  to the ISR stack first and therefore it is safe to switch
+;  back to the task stack address saved in the Hwi module 
+;  object's taskSP variable
+;
+;  Preconditions:
+;     intm = 1 dbgm = 1
+;
+;  Postconditions:
+;
+;  Void switchToTaskStack(Ptr oldTaskSP) {
+;       if (oldTaskSP == 0) {
+;           SP = Hwi_module->taskSP;
+;           Hwi_module->taskSP = 0;
+;       }
+;   }
+;  
+        .global _ti_sysbios_family_xxx_Hwi_switchToTaskStack
+    .sect ".text:_ti_sysbios_family_xxx_Hwi_switchToTaskStack"
+    .clink
+_ti_sysbios_family_xxx_Hwi_switchToTaskStack:
+    .asmfunc
+    movl acc,xar4
+    sb notZero$, neq        ; if (oldTaskSP != 0), return
+    movl xar0, #_ti_sysbios_family_c28_Hwi_Module__state__V.taskSP
+    mov al, *xar0
+    mov sp, al           ; SP = taskSP
+    mov acc, #0         
+    movl *xar0, acc      ; taskSP = 0
+        
+notZero$:
+    lretr;
+    .endasmfunc
+

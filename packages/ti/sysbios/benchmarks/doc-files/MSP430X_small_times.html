@@ -1,0 +1,122 @@
+<html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>MSP430 small code, small data Timing Benchmarks</title>
+    <style type="text/css" media="screen">table { border-collapse: collapse; font-family: "Ariel", sans-serif } 
+ 		  td    { background: white; border: ridge black } 
+  		  tr.hdr { font-weight: bolder }</style>
+  </head>
+  <body>
+    <h2>MSP430 small code, small data Timing Benchmarks</h2>
+    <h3>ti.platforms.exp430F5438 (compiler version: 4.1.5)</h3>
+  </body>
+  <body xmlns="">
+    <table>
+      <tr class="hdr">
+        <td>Benchmark</td>
+        <td>Cycles</td>
+        <td style="border-top-style:none;border-right-style:none;border-bottom-style:none">
+          <cite>(1)</cite>
+        </td>
+      </tr>
+      <tr>
+        <td>Interrupt Latency</td>
+        <td>64</td>
+      </tr>
+      <tr>
+        <td>Hwi_restore()</td>
+        <td>14</td>
+      </tr>
+      <tr>
+        <td>Hwi_disable()</td>
+        <td>6</td>
+      </tr>
+      <tr>
+        <td>Hwi dispatcher prolog</td>
+        <td>78</td>
+      </tr>
+      <tr>
+        <td>Hwi dispatcher epilog</td>
+        <td>86</td>
+      </tr>
+      <tr>
+        <td>Hwi dispatcher()</td>
+        <td>182</td>
+      </tr>
+      <tr>
+        <td>Hardware Interrupt to Blocked Task</td>
+        <td>434</td>
+      </tr>
+      <tr>
+        <td>Hardware Interrupt to Software Interrupt</td>
+        <td>287</td>
+      </tr>
+      <tr>
+        <td>Swi_enable()</td>
+        <td>80</td>
+      </tr>
+      <tr>
+        <td>Swi_disable()</td>
+        <td>31</td>
+      </tr>
+      <tr>
+        <td>Post Software Interrupt Again</td>
+        <td>56</td>
+      </tr>
+      <tr>
+        <td>Post Software Interrupt without Context Switch</td>
+        <td>148</td>
+      </tr>
+      <tr>
+        <td>Post Software Interrupt with Context Switch</td>
+        <td>265</td>
+      </tr>
+      <tr>
+        <td>Create a New Task without Context Switch</td>
+        <td>2445</td>
+      </tr>
+      <tr>
+        <td>Set a Task Priority without a Context Switch</td>
+        <td>211</td>
+      </tr>
+      <tr>
+        <td>Task_yield</td>
+        <td>267</td>
+      </tr>
+      <tr>
+        <td>Post Semaphore, No Waiting Task</td>
+        <td>79</td>
+      </tr>
+      <tr>
+        <td>Post Semaphore No Task Switch</td>
+        <td>227</td>
+      </tr>
+      <tr>
+        <td>Post Semaphore with Task Switch</td>
+        <td>312</td>
+      </tr>
+      <tr>
+        <td>Pend on Semaphore, No Context Switch</td>
+        <td>101</td>
+      </tr>
+      <tr>
+        <td>Pend on Semaphore with Task Switch</td>
+        <td>340</td>
+      </tr>
+      <tr>
+        <td>Clock_getTicks</td>
+        <td>52</td>
+      </tr>
+    </table>
+    <div>
+      <p style="margin: 0px;width: 400px">
+        <cite>(1) The benchmark application was built using BIOS.LibType_Custom with the following BIOS.customCCOpts settings: "-vmspx --code_model=small --data_model=small -q --advice:power=1 --program_level_compile -o3".</cite>
+      </p>
+      <p style="margin: 0px;width: 400px">
+        <cite>Timings were obtained using the expMSP4305438 board.</cite>
+      </p>
+      <p style="margin: 0px;width: 400px">
+        <cite/>
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,67 @@
+%%{
+/*
+ * Copyright (c) 2012, Texas Instruments Incorporated
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * *  Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * *  Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * *  Neither the name of Texas Instruments Incorporated nor the names of
+ *    its contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+%%}
+%
+%    /*
+%     *  The ELF compiler removes the legacy instance vector table, causing
+%     *  instances to be NULL when referenced in the application C file.  This
+%     *  code forces the linker to keep these table symbols by generating
+%     *  "-u <symbol name> for each instance table.
+%     */
+%    var foundTable = {}; /* hash to keep track of symbols already generated */
+%    for (var entry in Program.symbol) {
+%        var currInst = Program.symbol[entry];
+%
+%        if (typeof(currInst) == "object") {
+%            if ("instance" in currInst) {
+%                /* craft the table name symbol */
+%                var name = currInst.$module.$name.replace(/\./g, "_");
+%                name += "_Object__table__V";
+%
+%                if (!(name in foundTable)) {
+%                /* force the symbol for the instance table into the program */
+%                name = Program.build.target.asmName(name);
+-u `name`
+%
+%                    foundTable[name] = true;
+%                }
+%            }
+%        }
+%    }
+%
+%    if (xdc.om['ti.bios.PIP'].$used > 0) {
+%        var Temp = xdc.loadTemplate("PIP_link.xdt");
+%        Temp.genStream($out, this, $args);
+%    }
+%

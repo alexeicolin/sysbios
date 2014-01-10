@@ -1,0 +1,178 @@
+;
+; ======== atm.s28 ========
+;
+
+
+        .global _ATM_andi,      _ATM_andu
+        .global _ATM_cleari,    _ATM_clearu
+        .global _ATM_deci,      _ATM_decu
+        .global _ATM_inci,      _ATM_incu
+        .global _ATM_ori,       _ATM_oru
+        .global _ATM_seti,      _ATM_setu
+
+        .text
+
+;
+; ======== ATM_and ========
+;
+;
+; al                 xar4      al
+; Int ATM_andi( Int *ptr, Int mask )
+; Uns ATM_andu( Uns *ptr, Uns mask )
+;{
+;   disable interrupt
+;       *ptr &= mask;
+;       return (old *ptr);
+;   enable interrupt
+;}
+;
+_ATM_andi:
+_ATM_andu:
+    .asmfunc
+        push    st1
+        setc    intm, dbgm              ; ##interrupt Disable Interrupts
+
+        mov     ah, *xar4
+        and     *xar4, al
+        mov     al, ah
+        pop     st1                     ; ##interrupt Restore Interrupts
+
+        lretr
+    .endasmfunc
+
+
+;
+; ======== ATM_clear ========
+;
+; al                    xar4 
+; Int   ATM_cleari( Int  *ptr )
+; Uns   ATM_clearu( Uns  *ptr )
+;{
+;    disable interrupt;
+;    Int/Uns    old = *ptr;
+;
+;    (*ptr) = 0;
+;    enable interrupt;
+;    return(old);
+;}
+;
+_ATM_cleari:
+_ATM_clearu:
+    .asmfunc
+        push    st1                     ;Begin Atomic
+        setc    intm, dbgm              ; ##interrupt disable interrupts
+        mov     al, *xar4
+        mov     *xar4, #0
+        pop     st1                     ; ##interrupt Restore Interrupts
+
+        lretr
+    .endasmfunc
+
+;
+; ======== atm_dec ========
+;
+; al                 xar4 
+; Int ATM_deci( Int * dst )
+; Uns ATM_decu( Uns * dst )
+;{
+;    disable interrupt;
+;    (*dst) -= 1;
+;    return(*dst);
+;    enable interrupt;
+;}
+;
+_ATM_deci:
+_ATM_decu:
+    .asmfunc
+        push    st1                     ;Begin Atomic
+        setc    intm, dbgm              ; ##interrupt disable interrupts
+        dec     *xar4
+        mov     al, *xar4
+        pop     st1                     ; ##interrupt Restore Interrupts
+
+        lretr
+    .endasmfunc
+
+
+
+
+;
+; ======== ATM_inc ========
+;
+; al                 xar4 
+; Int ATM_inci( Int * dst )
+; Uns ATM_incu( Uns * dst )
+;{
+;    disable interrupt;
+;    (*dst) += 1;
+;    return (*dst);
+;    enable interrupt;
+;}
+;
+_ATM_inci:
+_ATM_incu:
+    .asmfunc
+        push    st1                     ;Begin Atomic
+        setc    intm, dbgm              ; ##interrupt disable interrupts
+        inc     *xar4
+        mov     al, *xar4
+        pop     st1                     ; ##interrupt Restore Interrupts
+
+        lretr
+    .endasmfunc
+
+
+;
+;  ======== ATM_or ========
+;
+;   al             xar4      al
+;  Int ATM_ori( Int *dst, Int mask )
+;  Uns ATM_oru( Uns *dst, Uns mask )
+;  {
+;    disable interrupt;
+;    (*dst = *dst | mask);
+;    return old *dst;
+;    enable interrupt;
+;  }
+;
+_ATM_ori:
+_ATM_oru:
+    .asmfunc
+        push    st1
+        setc    intm, dbgm              ; ##interrupt Disable Interrupts
+        mov     ah, *xar4               ; store return value in ah
+        or      *xar4, al
+        mov     al, ah                  ; store return value in al
+        pop     st1                     ; ##interrupt Restore Interrupts
+
+        lretr
+    .endasmfunc
+
+;
+; ======== ATM_set ========
+;
+;  al             xar4      al
+; Int ATM_seti( Int * dst, Int x )
+; Uns ATM_setu( Uns * dst, Uns x )
+;{
+;    disable interrupt;
+;    Int/Uns    old = *ptr;
+;    
+;    (*ptr) = x;
+;    enable interrupt;
+;    return(old);
+;}
+;
+_ATM_seti:
+_ATM_setu:
+    .asmfunc
+        push    st1
+        setc    intm, dbgm              ; ##interrupt Disable Interrupts
+
+        mov     ah, *xar4               ; store old value
+        mov     *xar4, al
+        mov     al, ah                  ; store return value in al
+        pop     st1                     ; ##interrupt Restore Interrupts
+
+        lretr
+    .endasmfunc

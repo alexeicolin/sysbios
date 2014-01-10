@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  This file conforms to the DTD xdc/bld/build.dtd -->
+<package name="ti.sysbios.fatfs.utils" version="1, 0, 0" producerId="undefined">
+    <units>
+    </units>
+    <sources>
+        <srcFile name="package/cfg/bin/mkimage_p86U.c"/>
+        <srcFile name="package/cfg/bin/cptoimage_p86U.c"/>
+        <srcFile name="package/cfg/bin/lsimage_p86U.c"/>
+        <srcFile name="package/cfg/bin/catimagefile_p86U.c"/>
+        <srcFile name="package/cfg/bin/imagetosrc_p86U.c"/>
+        <srcFile name="package/cfg/bin/mkimage_p86GW.c"/>
+        <srcFile name="package/cfg/bin/cptoimage_p86GW.c"/>
+        <srcFile name="package/cfg/bin/lsimage_p86GW.c"/>
+        <srcFile name="package/cfg/bin/catimagefile_p86GW.c"/>
+        <srcFile name="package/cfg/bin/imagetosrc_p86GW.c"/>
+        <srcFile name="ff.c"/>
+        <srcFile name="fatfs_ram.c"/>
+        <srcFile name="fsutils.c"/>
+        <srcFile name="memgnu.c"/>
+        <srcFile name="mkimage.c"/>
+        <srcFile name="cptoimage.c"/>
+        <srcFile name="lsimage.c"/>
+        <srcFile name="catimagefile.c"/>
+        <srcFile name="imagetosrc.c"/>
+    </sources>
+    <configscripts>
+    </configscripts>
+    <makefiles>
+        <srcFile name="package.mak" src="package.bld"/>
+        <srcFile name="package/package.xdc.dep" src="package.xdc"/>
+        <srcFile name="package/cfg/bin/mkimage_p86U.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/mkimage_p86U.o86U.dep" src="package/cfg/bin/mkimage_p86U.c"/>
+        <srcFile name="package/cfg/bin/mkimage_p86U.dep" src="package/cfg/bin/mkimage_p86U.cfg"/>
+        <srcFile name="package/cfg/bin/cptoimage_p86U.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/cptoimage_p86U.o86U.dep" src="package/cfg/bin/cptoimage_p86U.c"/>
+        <srcFile name="package/cfg/bin/cptoimage_p86U.dep" src="package/cfg/bin/cptoimage_p86U.cfg"/>
+        <srcFile name="package/cfg/bin/lsimage_p86U.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/lsimage_p86U.o86U.dep" src="package/cfg/bin/lsimage_p86U.c"/>
+        <srcFile name="package/cfg/bin/lsimage_p86U.dep" src="package/cfg/bin/lsimage_p86U.cfg"/>
+        <srcFile name="package/cfg/bin/catimagefile_p86U.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/catimagefile_p86U.o86U.dep" src="package/cfg/bin/catimagefile_p86U.c"/>
+        <srcFile name="package/cfg/bin/catimagefile_p86U.dep" src="package/cfg/bin/catimagefile_p86U.cfg"/>
+        <srcFile name="package/cfg/bin/imagetosrc_p86U.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/imagetosrc_p86U.o86U.dep" src="package/cfg/bin/imagetosrc_p86U.c"/>
+        <srcFile name="package/cfg/bin/imagetosrc_p86U.dep" src="package/cfg/bin/imagetosrc_p86U.cfg"/>
+        <srcFile name="package/cfg/bin/mkimage_p86GW.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/mkimage_p86GW.o86GW.dep" src="package/cfg/bin/mkimage_p86GW.c"/>
+        <srcFile name="package/cfg/bin/mkimage_p86GW.dep" src="package/cfg/bin/mkimage_p86GW.cfg"/>
+        <srcFile name="package/cfg/bin/cptoimage_p86GW.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/cptoimage_p86GW.o86GW.dep" src="package/cfg/bin/cptoimage_p86GW.c"/>
+        <srcFile name="package/cfg/bin/cptoimage_p86GW.dep" src="package/cfg/bin/cptoimage_p86GW.cfg"/>
+        <srcFile name="package/cfg/bin/lsimage_p86GW.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/lsimage_p86GW.o86GW.dep" src="package/cfg/bin/lsimage_p86GW.c"/>
+        <srcFile name="package/cfg/bin/lsimage_p86GW.dep" src="package/cfg/bin/lsimage_p86GW.cfg"/>
+        <srcFile name="package/cfg/bin/catimagefile_p86GW.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/catimagefile_p86GW.o86GW.dep" src="package/cfg/bin/catimagefile_p86GW.c"/>
+        <srcFile name="package/cfg/bin/catimagefile_p86GW.dep" src="package/cfg/bin/catimagefile_p86GW.cfg"/>
+        <srcFile name="package/cfg/bin/imagetosrc_p86GW.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/imagetosrc_p86GW.o86GW.dep" src="package/cfg/bin/imagetosrc_p86GW.c"/>
+        <srcFile name="package/cfg/bin/imagetosrc_p86GW.dep" src="package/cfg/bin/imagetosrc_p86GW.cfg"/>
+        <srcFile name="package/cfg/bin/mkimage.x86U.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/mkimage/ff.o86U.dep" src="ff.c"/>
+        <srcFile name="package/cfg/bin/mkimage/fatfs_ram.o86U.dep" src="fatfs_ram.c"/>
+        <srcFile name="package/cfg/bin/mkimage/fsutils.o86U.dep" src="fsutils.c"/>
+        <srcFile name="package/cfg/bin/mkimage/memgnu.o86U.dep" src="memgnu.c"/>
+        <srcFile name="package/cfg/bin/mkimage/mkimage.o86U.dep" src="mkimage.c"/>
+        <srcFile name="package/cfg/bin/cptoimage.x86U.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/cptoimage/ff.o86U.dep" src="ff.c"/>
+        <srcFile name="package/cfg/bin/cptoimage/fatfs_ram.o86U.dep" src="fatfs_ram.c"/>
+        <srcFile name="package/cfg/bin/cptoimage/fsutils.o86U.dep" src="fsutils.c"/>
+        <srcFile name="package/cfg/bin/cptoimage/memgnu.o86U.dep" src="memgnu.c"/>
+        <srcFile name="package/cfg/bin/cptoimage/cptoimage.o86U.dep" src="cptoimage.c"/>
+        <srcFile name="package/cfg/bin/lsimage.x86U.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/lsimage/ff.o86U.dep" src="ff.c"/>
+        <srcFile name="package/cfg/bin/lsimage/fatfs_ram.o86U.dep" src="fatfs_ram.c"/>
+        <srcFile name="package/cfg/bin/lsimage/fsutils.o86U.dep" src="fsutils.c"/>
+        <srcFile name="package/cfg/bin/lsimage/memgnu.o86U.dep" src="memgnu.c"/>
+        <srcFile name="package/cfg/bin/lsimage/lsimage.o86U.dep" src="lsimage.c"/>
+        <srcFile name="package/cfg/bin/catimagefile.x86U.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/catimagefile/ff.o86U.dep" src="ff.c"/>
+        <srcFile name="package/cfg/bin/catimagefile/fatfs_ram.o86U.dep" src="fatfs_ram.c"/>
+        <srcFile name="package/cfg/bin/catimagefile/fsutils.o86U.dep" src="fsutils.c"/>
+        <srcFile name="package/cfg/bin/catimagefile/memgnu.o86U.dep" src="memgnu.c"/>
+        <srcFile name="package/cfg/bin/catimagefile/catimagefile.o86U.dep" src="catimagefile.c"/>
+        <srcFile name="package/cfg/bin/imagetosrc.x86U.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/imagetosrc/ff.o86U.dep" src="ff.c"/>
+        <srcFile name="package/cfg/bin/imagetosrc/fatfs_ram.o86U.dep" src="fatfs_ram.c"/>
+        <srcFile name="package/cfg/bin/imagetosrc/fsutils.o86U.dep" src="fsutils.c"/>
+        <srcFile name="package/cfg/bin/imagetosrc/memgnu.o86U.dep" src="memgnu.c"/>
+        <srcFile name="package/cfg/bin/imagetosrc/imagetosrc.o86U.dep" src="imagetosrc.c"/>
+        <srcFile name="package/cfg/bin/mkimage.exe.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/mkimage/ff.o86GW.dep" src="ff.c"/>
+        <srcFile name="package/cfg/bin/mkimage/fatfs_ram.o86GW.dep" src="fatfs_ram.c"/>
+        <srcFile name="package/cfg/bin/mkimage/fsutils.o86GW.dep" src="fsutils.c"/>
+        <srcFile name="package/cfg/bin/mkimage/memgnu.o86GW.dep" src="memgnu.c"/>
+        <srcFile name="package/cfg/bin/mkimage/mkimage.o86GW.dep" src="mkimage.c"/>
+        <srcFile name="package/cfg/bin/cptoimage.exe.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/cptoimage/ff.o86GW.dep" src="ff.c"/>
+        <srcFile name="package/cfg/bin/cptoimage/fatfs_ram.o86GW.dep" src="fatfs_ram.c"/>
+        <srcFile name="package/cfg/bin/cptoimage/fsutils.o86GW.dep" src="fsutils.c"/>
+        <srcFile name="package/cfg/bin/cptoimage/memgnu.o86GW.dep" src="memgnu.c"/>
+        <srcFile name="package/cfg/bin/cptoimage/cptoimage.o86GW.dep" src="cptoimage.c"/>
+        <srcFile name="package/cfg/bin/lsimage.exe.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/lsimage/ff.o86GW.dep" src="ff.c"/>
+        <srcFile name="package/cfg/bin/lsimage/fatfs_ram.o86GW.dep" src="fatfs_ram.c"/>
+        <srcFile name="package/cfg/bin/lsimage/fsutils.o86GW.dep" src="fsutils.c"/>
+        <srcFile name="package/cfg/bin/lsimage/memgnu.o86GW.dep" src="memgnu.c"/>
+        <srcFile name="package/cfg/bin/lsimage/lsimage.o86GW.dep" src="lsimage.c"/>
+        <srcFile name="package/cfg/bin/catimagefile.exe.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/catimagefile/ff.o86GW.dep" src="ff.c"/>
+        <srcFile name="package/cfg/bin/catimagefile/fatfs_ram.o86GW.dep" src="fatfs_ram.c"/>
+        <srcFile name="package/cfg/bin/catimagefile/fsutils.o86GW.dep" src="fsutils.c"/>
+        <srcFile name="package/cfg/bin/catimagefile/memgnu.o86GW.dep" src="memgnu.c"/>
+        <srcFile name="package/cfg/bin/catimagefile/catimagefile.o86GW.dep" src="catimagefile.c"/>
+        <srcFile name="package/cfg/bin/imagetosrc.exe.mak" src="package.bld"/>
+        <srcFile name="package/cfg/bin/imagetosrc/ff.o86GW.dep" src="ff.c"/>
+        <srcFile name="package/cfg/bin/imagetosrc/fatfs_ram.o86GW.dep" src="fatfs_ram.c"/>
+        <srcFile name="package/cfg/bin/imagetosrc/fsutils.o86GW.dep" src="fsutils.c"/>
+        <srcFile name="package/cfg/bin/imagetosrc/memgnu.o86GW.dep" src="memgnu.c"/>
+        <srcFile name="package/cfg/bin/imagetosrc/imagetosrc.o86GW.dep" src="imagetosrc.c"/>
+        <srcFile name="package/rel/ti_sysbios_fatfs_utils.tar.gz.dep" src="package/rel/ti_sysbios_fatfs_utils.xdc.inc"/>
+    </makefiles>
+    <targets>
+        <target name="gnu.targets.Linux86"
+            version="gnu.targets.Linux86{1,0,4.3,4"
+            platform="host.platforms.PC"
+            isa="i686"
+            suffix="86U"
+            rootDir="/db/toolsrc/library/tools/vendors/opensource/gcc/4.3.4-2.9glibc-2.6.9headers/Linux"
+            os="Linux"
+            rts="gnu.targets.rts86U">
+            <model endian="little"
+                codeModel="undefined"
+                dataModel="undefined"/>
+        </target>
+        <target name="gnu.targets.Mingw"
+            version="gnu.targets.Mingw{1,0,4.4,0"
+            platform="host.platforms.PC"
+            isa="x86"
+            suffix="86GW"
+            rootDir="/db/toolsrc/library/tools/vendors/opensource/mingw/4.4.0/Windows"
+            os="Windows"
+            rts="gnu.targets.rts86GW">
+            <model endian="little"
+                codeModel="undefined"
+                dataModel="undefined"/>
+        </target>
+    </targets>
+    <libraries>
+    </libraries>
+    <configurations>
+    <configuration name="bin/mkimage"
+        pname="bin/mkimage.p86U"
+        target="gnu.targets.Linux86"
+        platform="host.platforms.PC"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/bin/mkimage_p86U.cfg"
+        xCfgPrefix="package/cfg/bin/mkimage_p86U"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    <configuration name="bin/cptoimage"
+        pname="bin/cptoimage.p86U"
+        target="gnu.targets.Linux86"
+        platform="host.platforms.PC"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/bin/cptoimage_p86U.cfg"
+        xCfgPrefix="package/cfg/bin/cptoimage_p86U"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    <configuration name="bin/lsimage"
+        pname="bin/lsimage.p86U"
+        target="gnu.targets.Linux86"
+        platform="host.platforms.PC"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/bin/lsimage_p86U.cfg"
+        xCfgPrefix="package/cfg/bin/lsimage_p86U"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    <configuration name="bin/catimagefile"
+        pname="bin/catimagefile.p86U"
+        target="gnu.targets.Linux86"
+        platform="host.platforms.PC"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/bin/catimagefile_p86U.cfg"
+        xCfgPrefix="package/cfg/bin/catimagefile_p86U"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    <configuration name="bin/imagetosrc"
+        pname="bin/imagetosrc.p86U"
+        target="gnu.targets.Linux86"
+        platform="host.platforms.PC"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/bin/imagetosrc_p86U.cfg"
+        xCfgPrefix="package/cfg/bin/imagetosrc_p86U"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    <configuration name="bin/mkimage"
+        pname="bin/mkimage.p86GW"
+        target="gnu.targets.Mingw"
+        platform="host.platforms.PC"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/bin/mkimage_p86GW.cfg"
+        xCfgPrefix="package/cfg/bin/mkimage_p86GW"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    <configuration name="bin/cptoimage"
+        pname="bin/cptoimage.p86GW"
+        target="gnu.targets.Mingw"
+        platform="host.platforms.PC"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/bin/cptoimage_p86GW.cfg"
+        xCfgPrefix="package/cfg/bin/cptoimage_p86GW"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    <configuration name="bin/lsimage"
+        pname="bin/lsimage.p86GW"
+        target="gnu.targets.Mingw"
+        platform="host.platforms.PC"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/bin/lsimage_p86GW.cfg"
+        xCfgPrefix="package/cfg/bin/lsimage_p86GW"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    <configuration name="bin/catimagefile"
+        pname="bin/catimagefile.p86GW"
+        target="gnu.targets.Mingw"
+        platform="host.platforms.PC"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/bin/catimagefile_p86GW.cfg"
+        xCfgPrefix="package/cfg/bin/catimagefile_p86GW"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    <configuration name="bin/imagetosrc"
+        pname="bin/imagetosrc.p86GW"
+        target="gnu.targets.Mingw"
+        platform="host.platforms.PC"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/bin/imagetosrc_p86GW.cfg"
+        xCfgPrefix="package/cfg/bin/imagetosrc_p86GW"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    </configurations>
+    <executables>
+    <executable name="bin/mkimage"
+        pname="bin/mkimage.x86U"
+        target="gnu.targets.Linux86"
+        platform="host.platforms.PC"
+        profile="release"
+        xCfgScript="package/cfg/bin/mkimage_p86U.cfg"
+        xCfgPrefix="package/cfg/bin/mkimage_p86U"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    <executable name="bin/cptoimage"
+        pname="bin/cptoimage.x86U"
+        target="gnu.targets.Linux86"
+        platform="host.platforms.PC"
+        profile="release"
+        xCfgScript="package/cfg/bin/cptoimage_p86U.cfg"
+        xCfgPrefix="package/cfg/bin/cptoimage_p86U"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    <executable name="bin/lsimage"
+        pname="bin/lsimage.x86U"
+        target="gnu.targets.Linux86"
+        platform="host.platforms.PC"
+        profile="release"
+        xCfgScript="package/cfg/bin/lsimage_p86U.cfg"
+        xCfgPrefix="package/cfg/bin/lsimage_p86U"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    <executable name="bin/catimagefile"
+        pname="bin/catimagefile.x86U"
+        target="gnu.targets.Linux86"
+        platform="host.platforms.PC"
+        profile="release"
+        xCfgScript="package/cfg/bin/catimagefile_p86U.cfg"
+        xCfgPrefix="package/cfg/bin/catimagefile_p86U"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    <executable name="bin/imagetosrc"
+        pname="bin/imagetosrc.x86U"
+        target="gnu.targets.Linux86"
+        platform="host.platforms.PC"
+        profile="release"
+        xCfgScript="package/cfg/bin/imagetosrc_p86U.cfg"
+        xCfgPrefix="package/cfg/bin/imagetosrc_p86U"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    <executable name="bin/mkimage"
+        pname="bin/mkimage.exe"
+        target="gnu.targets.Mingw"
+        platform="host.platforms.PC"
+        profile="release"
+        xCfgScript="package/cfg/bin/mkimage_p86GW.cfg"
+        xCfgPrefix="package/cfg/bin/mkimage_p86GW"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    <executable name="bin/cptoimage"
+        pname="bin/cptoimage.exe"
+        target="gnu.targets.Mingw"
+        platform="host.platforms.PC"
+        profile="release"
+        xCfgScript="package/cfg/bin/cptoimage_p86GW.cfg"
+        xCfgPrefix="package/cfg/bin/cptoimage_p86GW"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    <executable name="bin/lsimage"
+        pname="bin/lsimage.exe"
+        target="gnu.targets.Mingw"
+        platform="host.platforms.PC"
+        profile="release"
+        xCfgScript="package/cfg/bin/lsimage_p86GW.cfg"
+        xCfgPrefix="package/cfg/bin/lsimage_p86GW"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    <executable name="bin/catimagefile"
+        pname="bin/catimagefile.exe"
+        target="gnu.targets.Mingw"
+        platform="host.platforms.PC"
+        profile="release"
+        xCfgScript="package/cfg/bin/catimagefile_p86GW.cfg"
+        xCfgPrefix="package/cfg/bin/catimagefile_p86GW"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    <executable name="bin/imagetosrc"
+        pname="bin/imagetosrc.exe"
+        target="gnu.targets.Mingw"
+        platform="host.platforms.PC"
+        profile="release"
+        xCfgScript="package/cfg/bin/imagetosrc_p86GW.cfg"
+        xCfgPrefix="package/cfg/bin/imagetosrc_p86GW"
+        cfgScript="null"
+        cfgArgs=""
+        />
+    </executables>
+    <tests>
+    <test exeName="bin/mkimage.x86U"
+        args=""
+        groupName="bin/mkimage.x86U"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="bin/cptoimage.x86U"
+        args=""
+        groupName="bin/cptoimage.x86U"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="bin/lsimage.x86U"
+        args=""
+        groupName="bin/lsimage.x86U"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="bin/catimagefile.x86U"
+        args=""
+        groupName="bin/catimagefile.x86U"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="bin/imagetosrc.x86U"
+        args=""
+        groupName="bin/imagetosrc.x86U"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="bin/mkimage.exe"
+        args=""
+        groupName="bin/mkimage.exe"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="bin/cptoimage.exe"
+        args=""
+        groupName="bin/cptoimage.exe"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="bin/lsimage.exe"
+        args=""
+        groupName="bin/lsimage.exe"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="bin/catimagefile.exe"
+        args=""
+        groupName="bin/catimagefile.exe"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="bin/imagetosrc.exe"
+        args=""
+        groupName="bin/imagetosrc.exe"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    </tests>
+    <releases relDir="package/rel/">
+    <release name="ti_sysbios_fatfs_utils"
+        pname="../../../../../exports/ti_sysbios_fatfs_utils.tar.gz"
+        label="default"
+    >
+        <file name="package/package.bld.xml"/>
+        <file name="package/build.cfg"/>
+        <file name="package/package.xdc.inc"/>
+        <file name="bin"/>
+        <file name="diskio.h"/>
+        <file name="ff.h"/>
+        <file name="ffconf.h"/>
+        <file name="fsutils.h"/>
+        <file name="package/cfg/bin/mkimage_p86U.c"/>
+        <file name="package/cfg/bin/cptoimage_p86U.c"/>
+        <file name="package/cfg/bin/lsimage_p86U.c"/>
+        <file name="package/cfg/bin/catimagefile_p86U.c"/>
+        <file name="package/cfg/bin/imagetosrc_p86U.c"/>
+        <file name="package/cfg/bin/mkimage_p86GW.c"/>
+        <file name="package/cfg/bin/cptoimage_p86GW.c"/>
+        <file name="package/cfg/bin/lsimage_p86GW.c"/>
+        <file name="package/cfg/bin/catimagefile_p86GW.c"/>
+        <file name="package/cfg/bin/imagetosrc_p86GW.c"/>
+        <file name="ff.c"/>
+        <file name="fatfs_ram.c"/>
+        <file name="fsutils.c"/>
+        <file name="memgnu.c"/>
+        <file name="mkimage.c"/>
+        <file name="cptoimage.c"/>
+        <file name="lsimage.c"/>
+        <file name="catimagefile.c"/>
+        <file name="imagetosrc.c"/>
+    </release>
+    </releases>
+    <repositories>
+    </repositories>
+</package>

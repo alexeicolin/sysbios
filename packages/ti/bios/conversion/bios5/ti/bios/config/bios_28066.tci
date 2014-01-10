@@ -1,0 +1,12 @@
+/*
+ *  ======== bios_28066.tci ========
+ *
+ */
+
+utils.importFile("ti/bios/config/bios_28069.tci");
+
+/*
+ *  ======== bios.init28066 ========
+ *  BIOS initialization for the 28066 is same as for 28069
+ */
+bios.init28066 = bios.init28069;

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<gep name="SupportLogger" title="SupportLogger Module" version="1">
+
+<page name="Module" title="Module Settings">
+<html><body><table>
+  <tr>
+      <td><form>
+        <p>The SupportLogger is used to log the Timestamp frequency so that
+           the RTA tool can convert the log event timestamps into seconds. This log
+           occurs during module startup"</p>
+        <p> </p>
+      </form></td>
+  </tr>
+  <tr>
+    <td><control type="checkbox" label="Add the SupportLogger module to my configuration" value="value:this.$used" bold="true"/></td>
+  </tr>
+  <tr></tr>
+  <tr><td>
+      <h1>SupportLogger Settings</h1>
+      <table>
+        <tr>
+          <td><control type="label" label="Create log size" align="left"/></td>
+          <td><control type="editbox" 
+               value="value:this.createLogSize"
+               tooltip="value:this.createLogSize.$summary"/></td>
+        </tr>
+      </table>               
+  </td></tr>
+</table></body></html>
+</page>
+<properties name="Advanced" title="All Options" enabled="true" visible="true" link="this"/>
+</gep>
+

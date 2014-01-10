@@ -1,0 +1,831 @@
+/* ------------------------------------------------------------------------ *
+ *  OSK5912.gel                                                             *
+ *  Version 0.97                                                            *
+ * ------------------------------------------------------------------------ */ 
+menuitem "OSK5912";
+
+/* ------------------------------------------------------------------------ *
+ *  The StartUp( ) function is called each time CCS is started.             *
+ * ------------------------------------------------------------------------ */ 
+StartUp( )
+{
+    GEL_Reset( );
+    startupARM();
+}
+
+/* ------------------------------------------------------------------------ *
+ *  The OnReset( ) function is called each time a reset occurs              *
+ * ------------------------------------------------------------------------ */ 
+OnReset( )
+{
+    /* Perform a GEL Reset to set the CPSR into supervisor mode.
+     * This step is needed for setting up the stacks and interrupts. */ 
+    resetARM();
+//	stopTimers();
+}
+
+/* ------------------------------------------------------------------------ *
+ *  The OnPreFileLoaded() function is called each time a program is loaded  *
+ * ------------------------------------------------------------------------ */ 
+OnPreFileLoaded( )
+{
+    /* Perform a GEL Reset to set the CPSR into supervisor mode.
+     * This step is needed for setting up the stacks and interrupts. */ 
+    resetARM( );
+//	stopTimers();
+}
+
+/* ------------------------------------------------------------------------ *
+ *  startupARM( ) initializes the DPLL, clocks, emif settings               *
+ * ------------------------------------------------------------------------ */ 
+hotmenu
+startupARM( )
+{
+    GEL_TextOut( "\nOSK5912 GEL StartUp ( please wait )\n", "GEL" );
+
+    /* Reset ARM to a known inital state */ 
+    //resetARM( );
+
+    /* Configure Memory Mapping */ 
+    setupMemoryMap( );
+
+    /* Disable Watchdog Timer */ 
+    disableWatchdog( );
+    GEL_TextOut( "    Watchdog timer   Disabled\n", "GEL" );
+
+    /* Configure ARM DPLL and clocks */ 
+//    setupDpll( 96 );
+    setupDpll( 192 );
+
+    /* Configure Pin Mux */ 
+    setupPinMux( );
+
+    /* Configure ARM Peripherals */ 
+    setupPeripherals( );
+
+    /* Configure ARM EMIFS & EMIFF */ 
+    setupEmif( );
+
+    /* Release DSP */ 
+    //releaseDsp( );
+
+    /* Configure MMU */ 
+    //setupMmu( );
+
+    GEL_TextOut( "OSK5912 GEL StartUp ( complete )\n\n", "GEL" );
+}
+
+/* ------------------------------------------------------------------------ *
+ *  resetARM( ) resets the OSK5912 w/o using the GEL_reset( )               *
+ * ------------------------------------------------------------------------ */ 
+hotmenu
+resetARM( )
+{
+    /* Set PC to 0x00000000 */ 
+    PC = 0x00000000;
+
+    /* Set CPSR to supervisor mode & disable IRQ/FIQ */ 
+    CPSR = 0x400000D3;
+
+    /* Flush DCache & ICache */ 
+    REG_CP15_FLSH_DI;
+
+    /* Disable ICache */ 
+    REG_CP15_I_CACHE = 0;
+
+    /* Disable DCache */ 
+    REG_CP15_D_CACHE = 0;
+
+    /* Disable MMU */ 
+    REG_CP15_MMU = 0;
+
+    /* Reset DSP */ 
+    resetDsp( );
+
+    /* Reset Emifs settings */ 
+//    resetEmifs( );
+}
+
+/* ------------------------------------------------------------------------ *
+ *  Reset DSP                                                               *
+ * ------------------------------------------------------------------------ */ 
+hotmenu
+resetDsp( )
+{
+    #define ARM_CKCTL               *( unsigned int* )0xFFFECE00
+    #define ARM_RSTCT1              *( unsigned int* )0xFFFECE10
+    #define DSP_IDLECT2             *( unsigned short* )0xE1008008
+    #define DSP_RSTCT2              *( unsigned short* )0xE1008014
+
+    /* Reset DSP and disable programming of priority registers */ 
+    ARM_RSTCT1 &= ~0x00000006;
+
+    /* Turn off DSP clock after it is placed in reset */ 
+    ARM_CKCTL &= ~0x00002000;
+
+//    GEL_TextOut( "    DSP              Reset\n", "GEL" );
+}
+
+/* ------------------------------------------------------------------------ *
+ *  Reset EMIFS                                                             *
+ * ------------------------------------------------------------------------ */ 
+hotmenu
+resetEmifs( )
+{
+    /* EMIFS registers */ 
+    #define EMIFS_CONFIG            *( unsigned int* )0xFFFECC0C
+    #define EMIFS_CCS0              *( unsigned int* )0xFFFECC10
+    #define EMIFS_CCS1              *( unsigned int* )0xFFFECC14
+    #define EMIFS_CCS2              *( unsigned int* )0xFFFECC18
+    #define EMIFS_CCS3              *( unsigned int* )0xFFFECC1C
+
+    /* Reset the EMIFS chip selects */ 
+    EMIFS_CCS0 = 0x0000FFFB;
+    EMIFS_CCS1 = 0x0000FFFB;
+    EMIFS_CCS2 = 0x0000FFFB;
+    EMIFS_CCS3 = 0x0000FFFB;
+
+    /* Reset flash to Read Array Mode */ 
+    if ( EMIFS_CONFIG & 2 )
+        *( unsigned char* )0x00000000 = 0xff;
+    else
+        *( unsigned char* )0x0C000000 = 0xff;
+
+    GEL_TextOut( "    EMIFS            Reset\n", "GEL" );
+}
+
+/* ------------------------------------------------------------------------ *
+ *  Disable Watchdog                                                        *
+ * ------------------------------------------------------------------------ */ 
+hotmenu
+disableWatchdog( )
+{
+    /* Disable OMAP Watchdog Timer */ 
+    #define WD_CNTL_TIMER           *( unsigned short* )0xFFFEC800
+    #define WD_LOAD_TIM             *( unsigned short* )0xFFFEC804
+    #define WD_TIMER_MODE           *( unsigned short* )0xFFFEC808
+
+    /* Sequence to convert Watchdog Timer into General-Purpose timer */ 
+    WD_TIMER_MODE = 0x00F5;
+    WD_TIMER_MODE = 0x00A0;
+
+
+    /* Disable 32KHz Watchdog */ 
+    #define WDT_WWPS                *( unsigned int* )0xFFFEB034
+    #define WDT_WSPR                *( unsigned int* )0xFFFEB048
+
+    /* Sequence to disable 32KHz Watchdog timer */ 
+    WDT_WSPR = 0xAAAA;
+    while ( WDT_WWPS & 0x00000010 );
+    WDT_WSPR = 0x5555;
+    while ( WDT_WWPS & 0x00000010 );
+}
+
+/* ------------------------------------------------------------------------ *
+ *  Setup Dpll                                                              *
+ * ------------------------------------------------------------------------ */ 
+hotmenu
+setupDpll( freq )
+{
+    #define DPLL1_CTL_REG           *( unsigned short* )0xFFFECF00
+    #define ARM_CKCTL               *( unsigned short* )0xFFFECE00
+    #define ARM_IDLECT1             *( unsigned short* )0xFFFECE04
+    #define ARM_IDLECT2             *( unsigned short* )0xFFFECE08
+    #define ARM_RSTCT1              *( unsigned short* )0xFFFECE10
+    #define ARM_RSTCT2              *( unsigned short* )0xFFFECE14
+    #define ARM_SYSST               *( unsigned short* )0xFFFECE18
+
+    /* Enable ARM peripheral clock & TIMCK */ 
+    ARM_IDLECT2 |= 0x0084;
+
+    /* Enable ARM peripherals */ 
+    ARM_RSTCT2 = 0x00000001;
+
+    /* Start DPLL lock before ramping up the freq */ 
+    DPLL1_CTL_REG = 0x2090;
+          /*| ( 1 << 13 )           // Initial on Break
+            | ( 1 << 7 )            // Set PLL_MULT
+            | ( 0 << 5 )            // Set PLL_DIV
+            | ( 1 << 4 )            // Enable DPLL
+            | ( 0 << 2 )            // Set BYPASS_DIV
+            ;*/ 
+
+    /* Poll DPLL until frequency is locked */ 
+    while ( ! ( DPLL1_CTL_REG & 0x0001 ) );
+
+    /* Settings for 192 MHz freq */ 
+    if ( freq == 192 )
+    {
+        /* Set the DPLL for new freq */ 
+        DPLL1_CTL_REG = 0x2813;
+              /*| ( 1 << 13 )       // Set IOB ( Initial on Break )
+                | ( 16 << 7 )       // Set PLL_MULT
+                | ( 0 << 5 )        // Set PLL_DIV
+                | ( 1 << 4 )        // Enable DPLL
+                | ( 0 << 2 )        // Set BYPASS_DIV
+                | ( 3 << 0 )        // Lock fields
+                ;*/ 
+
+        /* Set clocking mode */ 
+        ARM_SYSST = 0x00001000;     // Synchronous Scalable
+
+        /* Set the clock divisor
+         * Values must NOT violate the clocking mode selected eariler.
+         * values range from [n = 0..3] and correspond to divisors [.5 ^ n] */ 
+        ARM_CKCTL = 0x110F;
+              /*| ( 0 << 14 )       // Set ARM_INTH_CK to half of ARM_CK
+                | ( 0 << 13 )       // Set EN_DSPCK to be off at reset
+                | ( 1 << 12 )       // Set ARM_TIMXO clk to be CK_GEN1
+                | ( 0 << 10 )       // DSPMMU clk: 192 MHz
+                | ( 1 << 8 )        //     TC clk: 96 MHz
+                | ( 0 << 6 )        //    DSP clk: 192 MHz
+                | ( 0 << 4 )        //    ARM clk: 192 MHz
+                | ( 3 << 2 )        //    LCD clk: 24 MHz
+                | ( 3 << 0 )        //    PER clk: 24 MHz
+                ;*/ 
+    }
+    /* Settings for 96 MHz freq ( default speed ) */ 
+    else if ( freq == 96 )
+    {
+        /* Set the DPLL for new freq */ 
+//        DPLL1_CTL_REG = 0x2413;
+        DPLL1_CTL_REG = 0x2113;
+              /*| ( 1 << 13 )       // Set IOB ( Initial on Break )
+                | ( 8 << 7 )        // Set PLL_MULT
+                | ( 0 << 5 )        // Set PLL_DIV
+                | ( 1 << 4 )        // Enable DPLL
+                | ( 0 << 2 )        // Set BYPASS_DIV
+                | ( 3 << 0 )        // Lock fields
+                ;*/ 
+
+        /* Set clocking mode */ 
+        ARM_SYSST = 0;              // Fully Synchronous
+
+        /* Set the clock divisor
+         * Values must NOT violate the clocking mode selected eariler.
+         * values range from [n = 0..3] and correspond to divisors [.5 ^ n] */ 
+        ARM_CKCTL = 0x100A;
+              /*| ( 0 << 14 )       // Set ARM_INTH_CK to half of ARM_CK
+                | ( 0 << 13 )       // Set EN_DSPCK to be off at reset
+                | ( 1 << 12 )       // Set ARM_TIMXO clk to be CK_GEN1
+                | ( 0 << 10 )       // DSPMMU clk: 96 MHz
+                | ( 0 << 8 )        //     TC clk: 96 MHz
+                | ( 0 << 6 )        //    DSP clk: 96 MHz
+                | ( 0 << 4 )        //    ARM clk: 96 MHz
+                | ( 2 << 2 )        //    LCD clk: 24 MHz
+                | ( 2 << 0 )        //    PER clk: 24 MHz
+                ;*/ 
+    }
+
+    /* Set which components will receive a clock signal when idle */ 
+    ARM_IDLECT1 = 0;
+
+    GEL_TextOut( "    DPLL & clocks    Configured\n", "GEL" );
+}
+
+
+/* ------------------------------------------------------------------------ *
+ *  Setup pin mux for OSK5912                                               *
+ *      Follows the OSK 5912 schematic which the exception of:              *
+ *      LCD pins replaced with GPIO/MPUIO/Z_STATE                           *
+ *      KB  pins replaced with GPIO/MPUIO                                   *
+ *      CAM pins replaced with GPIO/MPUIO                                   *
+ * ------------------------------------------------------------------------ */ 
+hotmenu
+setupPinMux( )
+{
+    #define COMP_MODE_CTRL_0        *( unsigned int* )0xFFFE100C
+
+    #define FUNC_MUX_CTRL_0         *( unsigned int* )0xFFFE1000
+    #define FUNC_MUX_CTRL_1         *( unsigned int* )0xFFFE1004
+    #define FUNC_MUX_CTRL_2         *( unsigned int* )0xFFFE1008
+    #define FUNC_MUX_CTRL_3         *( unsigned int* )0xFFFE1010
+    #define FUNC_MUX_CTRL_4         *( unsigned int* )0xFFFE1014
+    #define FUNC_MUX_CTRL_5         *( unsigned int* )0xFFFE1018
+    #define FUNC_MUX_CTRL_6         *( unsigned int* )0xFFFE101C
+    #define FUNC_MUX_CTRL_7         *( unsigned int* )0xFFFE1020
+    #define FUNC_MUX_CTRL_8         *( unsigned int* )0xFFFE1024
+    #define FUNC_MUX_CTRL_9         *( unsigned int* )0xFFFE1028
+    #define FUNC_MUX_CTRL_A         *( unsigned int* )0xFFFE102C
+    #define FUNC_MUX_CTRL_B         *( unsigned int* )0xFFFE1030
+    #define FUNC_MUX_CTRL_C         *( unsigned int* )0xFFFE1034
+    #define FUNC_MUX_CTRL_D         *( unsigned int* )0xFFFE1038
+    #define USB_TRANSCEIVER_CTRL    *( unsigned int* )0xFFFE1064
+    #define FUNC_MUX_CTRL_E         *( unsigned int* )0xFFFE1090
+    #define FUNC_MUX_CTRL_F         *( unsigned int* )0xFFFE1094
+    #define FUNC_MUX_CTRL_10        *( unsigned int* )0xFFFE1098
+    #define FUNC_MUX_CTRL_11        *( unsigned int* )0xFFFE109C
+    #define FUNC_MUX_CTRL_12        *( unsigned int* )0xFFFE10A0
+    #define PULL_DWN_CTRL_0         *( unsigned int* )0xFFFE1040
+    #define PULL_DWN_CTRL_1         *( unsigned int* )0xFFFE1044
+    #define PULL_DWN_CTRL_2         *( unsigned int* )0xFFFE1048
+    #define PULL_DWN_CTRL_3         *( unsigned int* )0xFFFE104C
+    #define PULL_DWN_CTRL_4         *( unsigned int* )0xFFFE10AC
+    #define PU_PD_SEL_0             *( unsigned int* )0xFFFE10B4
+    #define PU_PD_SEL_1             *( unsigned int* )0xFFFE10B8
+    #define PU_PD_SEL_2             *( unsigned int* )0xFFFE10BC
+    #define PU_PD_SEL_3             *( unsigned int* )0xFFFE10C0
+    #define PU_PD_SEL_4             *( unsigned int* )0xFFFE10C4
+    #define MOD_CONF_CTRL_0         *( unsigned int* )0xFFFE1080
+
+    COMP_MODE_CTRL_0        = 0;
+
+    /* Set pin multiplexing */ 
+    FUNC_MUX_CTRL_0         = 0;
+    FUNC_MUX_CTRL_1         = 0;
+    FUNC_MUX_CTRL_2         = 0;
+    FUNC_MUX_CTRL_3         = 0x49249FFF;
+    FUNC_MUX_CTRL_4         = 0x3FE01001;
+    FUNC_MUX_CTRL_5         = 0x3F4BFFFF;
+    FUNC_MUX_CTRL_6         = 0x00000001;
+    FUNC_MUX_CTRL_7         = 0x00001000;
+    FUNC_MUX_CTRL_8         = 0x00001200;
+    FUNC_MUX_CTRL_9         = 0x00201008;
+    FUNC_MUX_CTRL_A         = 0;
+    FUNC_MUX_CTRL_B         = 0;
+    FUNC_MUX_CTRL_C         = 0x09000000;
+    FUNC_MUX_CTRL_D         = 0x09249418;
+    FUNC_MUX_CTRL_E         = 0x09249249;
+    FUNC_MUX_CTRL_F         = 0x00000049;
+    FUNC_MUX_CTRL_10        = 0;
+    FUNC_MUX_CTRL_11        = 0;
+    FUNC_MUX_CTRL_12        = 0;
+    USB_TRANSCEIVER_CTRL    = 0;
+    PULL_DWN_CTRL_0         = 0;
+    PULL_DWN_CTRL_1         = 0;
+    PULL_DWN_CTRL_2         = 0;
+    PULL_DWN_CTRL_3         = 0;
+    PULL_DWN_CTRL_4         = 0;
+    PU_PD_SEL_0             = 0;
+    PU_PD_SEL_1             = 0;
+    PU_PD_SEL_2             = 0;
+    PU_PD_SEL_3             = 0;
+    PU_PD_SEL_4             = 0;
+    MOD_CONF_CTRL_0         = 0;
+
+    COMP_MODE_CTRL_0        = 0x0000EAEF;
+    GEL_TextOut( "    Pin multiplexing Configured\n", "GEL" );
+}
+
+hotmenu
+stopTimers()
+{
+	#define TIMER1_CNTL	*( unsigned int* )0xFFFEC500
+	#define TIMER2_CNTL	*( unsigned int* )0xFFFEC600
+	#define TIMER3_CNTL	*( unsigned int* )0xFFFEC700
+
+	TIMER1_CNTL = 0xffffffa2;
+	TIMER2_CNTL = 0xffffffa2;
+	TIMER2_CNTL = 0xffffffa2;
+}
+/* ------------------------------------------------------------------------ *
+ *  Setup Peripherals                                                       *
+ * ------------------------------------------------------------------------ */ 
+hotmenu
+setupPeripherals( )
+{
+    #define MPUI_CTRL_REG           *( unsigned int* )0xFFFEC900
+    #define PRIB_TIPB_CNTL          *( unsigned short* )0xFFFECA00
+    #define PUBB_TIPB_CNTL          *( unsigned short* )0xFFFED300
+
+    /* Set Access Width */ 
+    MPUI_CTRL_REG = 0x0003FF2C;
+          /*| ( 3 << 16 )           // Byte swap for MPUI port RAM accesses
+            | ( 0xFF << 8 )         // Timeout set to max [255]
+            | ( 2 << 4 )            // Access factor 2-cycles
+            | ( 1 << 3 )            // Send MPUI port abort
+            | ( 1 << 1 )            // Timeout enabled
+            ;*/ 
+
+    /* ARM Private Bus */ 
+    PRIB_TIPB_CNTL = 0x0000FF22;
+          /*| ( 0xFF << 8 )         // Timeout set to max [255]
+            | ( 2 << 4 )            // Strobe period = TIPB clock * 2
+            | ( 2 << 0 )            // Strobe period = TIPB clock * 2
+            ;*/ 
+
+    /* ARM Public Bus */ 
+    PUBB_TIPB_CNTL = 0x0000FF22;
+          /*| ( 0xFF << 8 )         // Timeout set to max [255]
+            | ( 2 << 4 )            // Strobe period = TIPB clock * 2
+            | ( 2 << 0 )            // Strobe period = TIPB clock * 2
+            ;*/ 
+
+    GEL_TextOut( "    Peripheral bus   Configured\n", "GEL" );
+}
+
+/* ------------------------------------------------------------------------ *
+ *  Setup EMIF                                                              *
+ * ------------------------------------------------------------------------ */ 
+hotmenu
+setupEmif( )
+{
+
+    /* EMIFS registers */ 
+    #define EMIFS_CONFIG            *( unsigned int* )0xFFFECC0C
+    #define EMIFS_CCS0              *( unsigned int* )0xFFFECC10
+    #define EMIFS_CCS1              *( unsigned int* )0xFFFECC14
+    #define EMIFS_CCS2              *( unsigned int* )0xFFFECC18
+    #define EMIFS_CCS3              *( unsigned int* )0xFFFECC1C
+
+if (1) {
+/* ------------------------------------------------------------------------ *
+ *  Configure EMIFS ( slow external memory: Flash )                         *
+ * ------------------------------------------------------------------------ */ 
+//    EMIFS_CCS0 = 0x0000FFF3;
+          /*| ( 0 << 20 )           // Bus Width: 16-bit
+            | ( 0 << 16 )           // Read mode: Asynchronous Read
+            | ( 15 << 12 )          // Page/WE wait states
+            | ( 15 << 8 )           // Write wait states
+            | ( 15 << 4 )           // Read wait states
+            | ( 3 << 0 )            // Ref. Clk = Clk/6
+            ;*/ 
+    EMIFS_CCS1 = 0x0000FFF3;
+          /*| ( 0 << 20 )           // Bus Width: 16-bit
+            | ( 0 << 16 )           // Read mode: Asynchronous Read
+            | ( 15 << 12 )          // Page/WE wait states
+            | ( 15 << 8 )           // Write wait states
+            | ( 15 << 4 )           // Read wait states
+            | ( 3 << 0 )            // Ref. Clk = Clk/6
+            ;*/ 
+    EMIFS_CCS2 = 0x0000FFF3;
+          /*| ( 0 << 20 )           // Bus Width: 16-bit
+            | ( 0 << 16 )           // Read mode: Asynchronous Read
+            | ( 15 << 12 )          // Page/WE wait states
+            | ( 15 << 8 )           // Write wait states
+            | ( 15 << 4 )           // Read wait states
+            | ( 3 << 0 )            // Ref. Clk = Clk/6
+            ;*/ 
+    EMIFS_CCS3 = 0x30003361;
+          /*| ( 6 << 27 )           // Page wait state
+            | ( 0 << 20 )           // Bus Width: 16-bit
+            | ( 0 << 16 )           // Read mode: Asynchronous Read
+            | ( 3 << 12 )           // Page/WE wait states
+            | ( 3 << 8 )            // Write wait states
+            | ( 6 << 4 )            // Read wait states
+            | ( 1 << 0 )            // Ref. Clk = Clk/2
+            ;*/ 
+
+//    *( unsigned short* )0x0C000000 = 0xff;   // Reset flash to Read Array Mode
+
+    GEL_TextOut( "    EMIFS            Configured\n", "GEL" );
+}
+
+/* ------------------------------------------------------------------------ *
+ *  Configure EMIFF ( fast external memory: SDRAM-Mobile DDR )              *
+ * ------------------------------------------------------------------------ */ 
+    /* EMIFF registers */ 
+    #define EMIFF_CONFIG            *( unsigned int* )0xFFFECC20
+    #define EMIFF_DLL_WRD_CTRL      *( unsigned int* )0xFFFECC64
+    #define EMIFF_MRS_NEW           *( unsigned int* )0xFFFECC70
+    #define EMIFF_EMRS1             *( unsigned int* )0xFFFECC78
+    #define EMIFF_OP                *( unsigned int* )0xFFFECC80
+    #define EMIFF_CMD               *( unsigned int* )0xFFFECC84
+    #define EMIFF_DLL_URD_CTRL      *( unsigned int* )0xFFFECCC0
+    #define EMIFF_DLL_LRD_CTRL      *( unsigned int* )0xFFFECCCC
+
+    /* SDRAM type: mobile DDR SDRAM in High power high bandwidth [HPHB] mode */ 
+    EMIFF_OP = 0x00000007;
+          /*| ( 0 << 25 )           // Timeout for Bank 3 ( in TC cycles )
+            | ( 0 << 18 )           // Timeout for Bank 2 ( in TC cycles )
+            | ( 0 << 11 )           // Timeout for Bank 1 ( in TC cycles )
+            | ( 0 << 4 )            // Timeout for Bank 0 ( in TC cycles )
+            | ( 1 << 2 )            // High Power High Bandwidth
+            | ( 3 << 0 )            // Mobile DDR SDRAM
+            ;*/ 
+
+    /* SDRAM Config */ 
+    EMIFF_CONFIG = 0x001200F6;
+          /*| ( 0 << 28 )           // Don't use SDRAM larger than 256MB
+            | ( 0 << 27 )           // Enable Clock
+            | ( 0 << 26 )           // Disable power down
+            | ( 0 << 24 )           // SDRAM freq select
+            | ( 0x1200 << 8 )       // Autorefresh counter =
+                                    // ( refresh interval / clock period
+                                    //      / number of rows ) - 50
+            | ( 0xF << 4 )          // SDRAM: 32MB ( 256Mbit x 16 x 4 banks )
+            | ( 1 << 2 )            // Auto refresh enabled - every 14.7 usec
+            | ( 1 << 1 )            // Reserved [ = 1 ]
+            | ( 0 << 0 )            // Self refresh disabled
+            ;*/ 
+
+/* ------------------------------------------------------------------------ *
+ *  Initialization procedures for Mobile DDR                                *
+ * ------------------------------------------------------------------------ */ 
+    EMIFF_CMD = 0x00000000;         // NOP
+    EMIFF_CMD = 0x00000001;         // PRECHARGE
+    EMIFF_CMD = 0x00000002;         // AUTOREFRESH
+    EMIFF_CMD = 0x00000002;         // AUTOREFRESH
+
+    /* CAS idle 3, Page burst 8 */ 
+    EMIFF_MRS_NEW = 0x00000033;
+          /*| ( 3 << 4 )            // CAS idle time of 3
+            | ( 0 << 3 )            // Serial
+            | ( 3 << 0 )            // Page Burst Length = 8
+            ;*/ 
+
+    /* EMRS1 self refresh all banks */ 
+    EMIFF_EMRS1 = 0;
+          /*| ( 0 << 3 )            // 70 degree C max temp
+            | ( 0 << 0 )            // Partial-array self-refresh all banks
+            ;*/ 
+
+    /* Enable DLL at 90 degress phase ( 25% clock period )*/ 
+    EMIFF_DLL_URD_CTRL = 0x06;
+    EMIFF_DLL_LRD_CTRL = 0x06;
+    EMIFF_DLL_WRD_CTRL = 0x06;
+
+    GEL_TextOut( "    EMIFF            Configured\n", "GEL" );
+}
+
+/* ------------------------------------------------------------------------ *
+ *  Release DSP                                                             *
+ * ------------------------------------------------------------------------ */ 
+hotmenu
+releaseDsp( )
+{
+    /* Register for DSP & ARM clocks + MPUI controls */ 
+    #define ARM_CKCTL               *( unsigned int* )0xFFFECE00
+    #define ARM_IDLECT2             *( unsigned int* )0xFFFECE08
+    #define ARM_RSTCT1              *( unsigned int* )0xFFFECE10
+    #define MPUI_CTRL_REG           *( unsigned int* )0xFFFEC900
+    #define MPUI_DSP_BOOT_CONFIG    *( unsigned int* )0xFFFEC918
+    #define MPUI_DSP_MPUI_CONFIG    *( unsigned int* )0xFFFEC91C
+    #define DSP_CKCTL               *( unsigned short* )0xE1008000
+    #define DSP_IDLECT1             *( unsigned short* )0xE1008004
+    #define DSP_IDLECT2             *( unsigned short* )0xE1008008
+    #define DSP_RSTCT2              *( unsigned short* )0xE1008014
+
+    /* Set priority registers to allow for reprogramming */ 
+    ARM_RSTCT1 |= 0x00000006;
+
+    /* Set SARAM to be shared by DSP and ARM */ 
+    MPUI_DSP_MPUI_CONFIG = 0;
+
+    /* Enable clock for MPUI */ 
+    ARM_IDLECT2 |= 0x0040;
+
+    /* Turn off byte swap in MPUI config register & set timeout to MAX */ 
+    MPUI_CTRL_REG = 0x0000FF2C;
+
+    /* Insert an idle loop at DSP [0x10000], mapped to ARM [0xE0010000]
+     * The loop will continuously branch to itself  */ 
+    *( unsigned short* )0xE0010000 = 0x2020;
+    *( unsigned short* )0xE0010002 = 0x4A7E;
+    *( unsigned short* )0xE0010004 = 0x2020;
+    *( unsigned short* )0xE0010006 = 0x2020;
+
+    /*  Set the DSP boot address to [0x010000], mapped to ARM [0xE0010000] */ 
+    MPUI_DSP_BOOT_CONFIG = 0x00000005;
+
+    /* Set Idle Register */ 
+    DSP_IDLECT2 = 0x0027;
+          /*| ( 1 << 5 )             // EN_TIMCK
+            | ( 1 << 2 )             // EN_PERCK
+            | ( 1 << 1 )             // EN_XORPCK
+            | ( 1 << 0 )             // EN_WDTCK
+            ;*/ 
+
+    /* Enable Peripherals on DSP */ 
+    DSP_RSTCT2 = 0x0003;
+
+    /* Enable DSP clock */ 
+    ARM_CKCTL |= 0x00002000;
+
+    /* Set Idle Register */ 
+    DSP_IDLECT1 = 0x0177;
+          /*| ( 1 << 8 )            // IDLTIM_DSP
+            | ( 1 << 6 )            // WKUP_MODE
+            | ( 1 << 5 )            // IDLDPLL_DSP
+            | ( 1 << 4 )            // IDLIF_DSP
+            | ( 1 << 2 )            // IDLPER_DSP
+            | ( 1 << 1 )            // IDLXORP_DSP
+            | ( 1 << 0 )            // IDLWDT_DSP
+            ;*/ 
+
+    /* Set DSP clock inputs */ 
+    DSP_CKCTL = 0x0090;
+          /*| ( 0 << 8 )            // TIMXO is equal to input clock reference
+            | ( 1 << 7 )            // Reserved to 1
+            | ( 1 << 4 )            // Reserved to 1
+            | ( 0 << 0 )            // DSP peripheral clock
+            ;*/ 
+
+    /* Enable DSP */ 
+    ARM_RSTCT1 = 0x00000006;
+
+    GEL_TextOut( "    DSP              Released\n", "GEL" );
+}
+
+/* ------------------------------------------------------------------------ *
+ *  Setup MMU                                                               *
+ * ------------------------------------------------------------------------ */ 
+MMU_Section( inAddr, inVal, inCount )
+{
+    int i;
+    for ( i = 0; i < inCount; i++ )
+        ( ( int * )inAddr )[i] = inVal + ( 0x100000 * i );
+}
+
+hotmenu setupMmu( )
+{
+    int translation_table = 0x11FFC000;
+
+    GEL_TextOut( "    Initializing MMU Please wait\n", "GEL" );
+
+    // VA = 0x000x:xxxx => PA = 0x100x:xxxx
+    MMU_Section( translation_table + 0x0000, 0x10000C0E, 32 );
+
+    // VA = 0x040x:xxxx => PA = 0x040x:xxxx
+    MMU_Section( translation_table + 0x0100, 0x04000C02, 32 );
+
+    // VA = 0x080x:xxxx => PA = 0x080x:xxxx
+    MMU_Section( translation_table + 0x0200, 0x08000C02, 32 );
+
+    // VA = 0x0C0x:xxxx => PA = 0x0C0x:xxxx
+    MMU_Section( translation_table + 0x0300, 0x0C000C02, 16 );
+
+    // VA = 0x100x:xxxx => PA = 0x100x:xxxx
+    MMU_Section( translation_table + 0x0400, 0x10000C0E, 32 );
+
+    // VA = 0x200x:xxxx => PA = 0x200x:xxxx
+    MMU_Section( translation_table + 0x0800, 0x20000C02, 16 );
+
+    // VA = 0x300x:xxxx => PA = 0x300x:xxxx
+    MMU_Section( translation_table + 0x0C00, 0x30000C02,  1 );
+
+    // VA = 0x700x:xxxx => PA = 0x000x:xxxx
+    MMU_Section( translation_table + 0x1C00, 0x00000C02, 64 );
+
+    // VA = 0xE00x:xxxx => PA = 0xE00x:xxxx
+    MMU_Section( translation_table + 0x3800, 0xE0000C02, 32 );
+
+    // VA = 0xfffx:xxxx => PA = 0xfffx:xxxx
+    MMU_Section( translation_table + 0x3FFC, 0xFFF00C02,  1 );
+
+    REG_CP15_TT_BASE = translation_table;
+    REG_CP15_DACR = 0xFFFFFFFF;
+    REG_CP15_MMU = 0x1301;
+          /*| ( 0 << 13 )           // Alt. Intr vector
+            | ( 1 << 12 )           // Enable ICache
+            | ( 1 << 9 )            // Disable ROM Protect
+            | ( 1 << 8 )            // Disable System Protect
+            | ( 0 << 2 )            // Disable DCache
+            | ( 0 << 1 )            // Disable Alignment check
+            | ( 1 << 0 )            // Enable MMU
+            ;*/ 
+
+    if ( REG_CP15_MMU )
+        GEL_TextOut( "    Initializing MMU Complete: ON\n", "GEL" );
+    else
+        GEL_TextOut( "    Initializing MMU Complete: OFF\n", "GEL" );
+
+    /* CS4 - SDRAM remapped at 0x0 - 32MB */ 
+    GEL_MapAddStr( 0, 0, 0x02000000, "R|W|AS4", 0 );
+
+    /* CS0 - Flash remapped at 0x70000000 - 64MB */ 
+    GEL_MapAddStr( 0x70000000, 0, 0x04000000, "R|W|AS4", 0 );
+}
+
+/* ------------------------------------------------------------------------ *
+ *  Setup memory map for OSK5912                                            *
+ * ------------------------------------------------------------------------ */ 
+hotmenu
+setupMemoryMap( )
+{
+    GEL_MapReset( );
+
+    /* Memory Blocks */ 
+    GEL_MapAddStr( 0         , 0, 0x04000000, "R|W|AS4", 0 ); // CS0: Flash 64MB
+    GEL_MapAddStr( 0x04000000, 0, 0x00004000, "R|W|AS2", 0 ); // CS1A: CompactFlash
+    GEL_MapAddStr( 0x04004000, 0, 0x03FFC000, "NONE"   , 0 ); // CS1: NONE
+    GEL_MapAddStr( 0x08000000, 0, 0x00004000, "R|W|AS2", 0 ); // CS2A: CompactFlash
+    GEL_MapAddStr( 0x08004000, 0, 0x03FFC000, "NONE"   , 0 ); // CS2: NONE
+    GEL_MapAddStr( 0x0C000000, 0, 0x04000000, "R|W|AS4", 0 ); // CS3: Flash 64MB
+    GEL_MapAddStr( 0x10000000, 0, 0x02000000, "R|W|AS4", 0 ); // SDRAM: 32MB
+    GEL_MapAddStr( 0x20000000, 0, 0x0003E800, "R|W|AS4", 0 ); // SRAM: 250KB
+
+    /* Memory mapping */ 
+    GEL_MapAddStr( 0xE0000000, 0, 0x01000000, "R|W|AS4", 0 ); // MPUI Memory
+
+    /* DSP Strobe 0 */ 
+    GEL_MapAddStr( 0xE1000000, 0, 0x00000800, "R|W|AS2", 0 ); // DSP RHEA
+    GEL_MapAddStr( 0xE1008000, 0, 0x00000800, "R|W|AS2", 0 ); // DSP CLKM
+
+    /* DSP Strobe 1 */ 
+    GEL_MapAddStr( 0xE1010000, 0, 0x00000800, "R|W|AS1", 0 ); // UART1
+    GEL_MapAddStr( 0xE1010800, 0, 0x00000800, "R|W|AS1", 0 ); // UART2
+    GEL_MapAddStr( 0xE1010C00, 0, 0x00000800, "R|W|AS2", 0 ); // SPI
+    GEL_MapAddStr( 0xE1011000, 0, 0x00000800, "R|W|AS2", 0 ); // McBSP2
+    GEL_MapAddStr( 0xE1011400, 0, 0x00000800, "R|W|AS2", 0 ); // GPTIMER1
+    GEL_MapAddStr( 0xE1011800, 0, 0x00000800, "R|W|AS2", 0 ); // McBSP1
+    GEL_MapAddStr( 0xE1011C00, 0, 0x00000800, "R|W|AS2", 0 ); // GPTIMER2
+    GEL_MapAddStr( 0xE1012000, 0, 0x00000800, "R|W|AS2", 0 ); // MCSI2
+    GEL_MapAddStr( 0xE1012400, 0, 0x00000800, "R|W|AS2", 0 ); // GPTIMER3
+    GEL_MapAddStr( 0xE1012800, 0, 0x00000800, "R|W|AS2", 0 ); // MCSI1
+    GEL_MapAddStr( 0xE1012C00, 0, 0x00000800, "R|W|AS2", 0 ); // GPTIMER4
+    GEL_MapAddStr( 0xE1013400, 0, 0x00000800, "R|W|AS2", 0 ); // GPTIMER5
+    GEL_MapAddStr( 0xE1013800, 0, 0x00000800, "R|W|AS2", 0 ); // I2C
+    GEL_MapAddStr( 0xE1013800, 0, 0x00000C00, "R|W|AS2", 0 ); // GPTIMER6
+    GEL_MapAddStr( 0xE1017000, 0, 0x00000800, "R|W|AS2", 0 ); // McBSP3
+    GEL_MapAddStr( 0xE1017400, 0, 0x00000800, "R|W|AS2", 0 ); // GPTIMER7
+    GEL_MapAddStr( 0xE1017C00, 0, 0x00000800, "R|W|AS2", 0 ); // MMCSDIO2
+    GEL_MapAddStr( 0xE1019800, 0, 0x00000800, "R|W|AS1", 0 ); // UART3
+    GEL_MapAddStr( 0xE101A400, 0, 0x00000800, "R|W|AS2", 0 ); // STI
+    GEL_MapAddStr( 0xE101B400, 0, 0x00000800, "R|W|AS2", 0 ); // GPIO3
+    GEL_MapAddStr( 0xE101BC00, 0, 0x00000800, "R|W|AS2", 0 ); // GPIO4
+    GEL_MapAddStr( 0xE101C400, 0, 0x00000800, "R|W|AS2", 0 ); // 32k Sync Timer
+    GEL_MapAddStr( 0xE101C800, 0, 0x00000800, "R|W|AS2", 0 ); // Rhea Switch
+    GEL_MapAddStr( 0xE101CC00, 0, 0x00000800, "R|W|AS2", 0 ); // NAND Flash Ctrl
+    GEL_MapAddStr( 0xE101D400, 0, 0x00000800, "R|W|AS2", 0 ); // GPTIMER8
+    GEL_MapAddStr( 0xE101E400, 0, 0x00000800, "R|W|AS2", 0 ); // GPIO1
+    GEL_MapAddStr( 0xE101EC00, 0, 0x00000800, "R|W|AS2", 0 ); // GPIO2
+    GEL_MapAddStr( 0xE101F000, 0, 0x00000800, "R|W|AS2", 0 ); // Mailbox
+    GEL_MapAddStr( 0xE101F800, 0, 0x00000800, "R|W|AS2", 0 ); // RESERVED
+    GEL_MapAddStr( 0xE1020000, 0, 0x00000004, "R|W|AS2", 0 ); // MGS3 MPUI Ctrl
+
+    /* ARM Public TIPB Strobe 0 */ 
+    GEL_MapAddStr( 0xFFFB0000, 0, 0x00000400, "R|W|AS1", 0 ); // UART 1
+    GEL_MapAddStr( 0xFFFB0400, 0, 0x00000400, "R|W|AS4", 0 ); // USB OTG
+    GEL_MapAddStr( 0xFFFB0800, 0, 0x00000400, "R|W|AS1", 0 ); // UART 2
+    GEL_MapAddStr( 0xFFFB0C00, 0, 0x00000400, "R|W|AS4", 0 ); // SPI
+    GEL_MapAddStr( 0xFFFB1000, 0, 0x00000400, "R|W|AS2", 0 ); // McBSP2
+    GEL_MapAddStr( 0xFFFB1400, 0, 0x00000400, "R|W|AS4", 0 ); // GPTIMER1
+    GEL_MapAddStr( 0xFFFB1C00, 0, 0x00000400, "R|W|AS4", 0 ); // GPTIMER2
+    GEL_MapAddStr( 0xFFFB2400, 0, 0x00000400, "R|W|AS4", 0 ); // GPTIMER3
+    GEL_MapAddStr( 0xFFFB2C00, 0, 0x00000400, "R|W|AS4", 0 ); // GPTIMER4
+    GEL_MapAddStr( 0xFFFB3000, 0, 0x00000400, "R|W|AS2", 0 ); // uWire
+    GEL_MapAddStr( 0xFFFB3400, 0, 0x00000400, "R|W|AS4", 0 ); // GPTIMER5
+    GEL_MapAddStr( 0xFFFB3800, 0, 0x00000400, "R|W|AS2", 0 ); // I2C
+    GEL_MapAddStr( 0xFFFB3C00, 0, 0x00000400, "R|W|AS4", 0 ); // GPTIMER6
+    GEL_MapAddStr( 0xFFFB4000, 0, 0x00000400, "R|W|AS2", 0 ); // USB Client
+    GEL_MapAddStr( 0xFFFB4008, 0, 0x00000004, "NONE",    0 );
+    GEL_MapAddStr( 0xFFFB4048, 0, 0x00000004, "NONE",    0 );
+    GEL_MapAddStr( 0xFFFB4800, 0, 0x00000800, "R|W|AS2", 0 ); // RTC
+    GEL_MapAddStr( 0xFFFB5000, 0, 0x00000800, "R|W|AS2", 0 ); // MPUIO
+    GEL_MapAddStr( 0xFFFB5800, 0, 0x00000800, "R|W|AS2", 0 ); // PWL
+    GEL_MapAddStr( 0xFFFB6000, 0, 0x00000800, "R|W|AS2", 0 ); // PWT
+    GEL_MapAddStr( 0xFFFB6800, 0, 0x00000800, "R|W|AS4", 0 ); // CAMERA
+    GEL_MapAddStr( 0xFFFB7400, 0, 0x00000400, "R|W|AS4", 0 ); // GPTIMER7
+    GEL_MapAddStr( 0xFFFB7800, 0, 0x00000400, "R|W|AS2", 0 ); // MMC1/SDIO1
+    GEL_MapAddStr( 0xFFFB7C00, 0, 0x00000400, "R|W|AS2", 0 ); // MMC2/SDIO2
+    GEL_MapAddStr( 0xFFFB8000, 0, 0x00000400, "R|W|AS4", 0 ); // Memory Stick
+    GEL_MapAddStr( 0xFFFB8C00, 0, 0x00000400, "R|W|AS4", 0 ); // CCP
+    GEL_MapAddStr( 0xFFFB9000, 0, 0x00000400, "R|W|AS4", 0 ); // OS Timer
+    GEL_MapAddStr( 0xFFFB9800, 0, 0x00000400, "R|W|AS1", 0 ); // UART3
+    GEL_MapAddStr( 0xFFFBA000, 0, 0x00000400, "R|W|AS4", 0 ); // USB Host
+    GEL_MapAddStr( 0xFFFBA800, 0, 0x00000400, "R|W|AS2", 0 ); // FAC
+    GEL_MapAddStr( 0xFFFBAC00, 0, 0x00000400, "R|W|AS4", 0 ); // SoSSI
+    GEL_MapAddStr( 0xFFFBB400, 0, 0x00000400, "R|W|AS4", 0 ); // GPIO3
+    GEL_MapAddStr( 0xFFFBBC00, 0, 0x00000400, "R|W|AS4", 0 ); // GPIO4
+    GEL_MapAddStr( 0xFFFBC000, 0, 0x00000400, "R|W|AS4", 0 ); // 1wire
+    GEL_MapAddStr( 0xFFFBC400, 0, 0x00000400, "R|W|AS4", 0 ); // 32K sync timer
+    GEL_MapAddStr( 0xFFFBC800, 0, 0x00000400, "R|W|AS4", 0 ); // TIPB switch
+    GEL_MapAddStr( 0xFFFBCC00, 0, 0x00000400, "R|W|AS4", 0 ); // NAND Flash ctrl
+    GEL_MapAddStr( 0xFFFBD000, 0, 0x00000400, "R|W|AS4", 0 ); // LPG1
+    GEL_MapAddStr( 0xFFFBD400, 0, 0x00000400, "R|W|AS4", 0 ); // GPTIMER8
+    GEL_MapAddStr( 0xFFFBD800, 0, 0x00000400, "R|W|AS4", 0 ); // LPG2
+    GEL_MapAddStr( 0xFFFBE400, 0, 0x00000400, "R|W|AS4", 0 ); // GPIO1
+    GEL_MapAddStr( 0xFFFBEC00, 0, 0x00000400, "R|W|AS4", 0 ); // GPIO2
+
+    /* ARM Public Strobe 1 */ 
+    GEL_MapAddStr( 0xFFFCF000, 0, 0x00000800, "R|W|AS2", 0 ); // Mailbox
+
+    /* ARM Private Strobe 0 */ 
+    /* ARM Private Strobe 1 */ 
+    GEL_MapAddStr( 0xFFFE0000, 0, 0x00000800, "R|W|AS4", 0 ); // MPU Intr Hndl 2
+    GEL_MapAddStr( 0xFFFE0800, 0, 0x00000800, "R|W|AS4", 0 ); // ULPD
+    GEL_MapAddStr( 0xFFFE1000, 0, 0x00000800, "R|W|AS4", 0 ); // OMAP5912 Config
+    GEL_MapAddStr( 0xFFFE1800, 0, 0x00000800, "R|W|AS4", 0 ); // Die ID
+    GEL_MapAddStr( 0xFFFE2000, 0, 0x00000800, "R|W|AS4", 0 ); // Production ID
+    GEL_MapAddStr( 0xFFFE2800, 0, 0x00000800, "R|W|AS4", 0 ); // Compact Flash
+    GEL_MapAddStr( 0xFFFE3000, 0, 0x00000800, "R|W|AS4", 0 ); // LCD Converter
+    GEL_MapAddStr( 0xFFFE3800, 0, 0x00000800, "R|W|AS4", 0 ); // BCM
+    GEL_MapAddStr( 0xFFFE4000, 0, 0x00000800, "R|W|AS4", 0 ); // DES/3DES
+    GEL_MapAddStr( 0xFFFE4800, 0, 0x00000800, "R|W|AS4", 0 ); // SHA-1/MD5
+    GEL_MapAddStr( 0xFFFE5000, 0, 0x00000800, "R|W|AS4", 0 ); // RNG
+    GEL_MapAddStr( 0xFFFE5800, 0, 0x00000800, "R|W|AS4", 0 ); // OMAP5912 JTAG
+    GEL_MapAddStr( 0xFFFEA000, 0, 0x00000800, "R|W|AS4", 0 ); // STI
+    GEL_MapAddStr( 0xFFFEA800, 0, 0x00000800, "R|W|AS4", 0 ); // Secure Watchdog
+    GEL_MapAddStr( 0xFFFEB000, 0, 0x00000800, "R|W|AS4", 0 ); // 32K Watchdog
+    GEL_MapAddStr( 0xFFFEC000, 0, 0x00000100, "R|W|AS4", 0 ); // LCD
+    GEL_MapAddStr( 0xFFFEC300, 0, 0x00000100, "R|W|AS4", 0 ); // L3 OCPI
+    GEL_MapAddStr( 0xFFFEC500, 0, 0x00000100, "R|W|AS4", 0 ); // MPU Timer 1
+    GEL_MapAddStr( 0xFFFEC600, 0, 0x00000100, "R|W|AS4", 0 ); // MPU Timer 2
+    GEL_MapAddStr( 0xFFFEC700, 0, 0x00000100, "R|W|AS4", 0 ); // MPU Timer 3
+    GEL_MapAddStr( 0xFFFEC800, 0, 0x00000100, "R|W|AS4", 0 ); // WatchDog Timer
+    GEL_MapAddStr( 0xFFFEC900, 0, 0x00000100, "R|W|AS4", 0 ); // MPUI Interface
+    GEL_MapAddStr( 0xFFFECA00, 0, 0x00000100, "R|W|AS4", 0 ); // TIPB Bridge
+    GEL_MapAddStr( 0xFFFECB00, 0, 0x00000100, "R|W|AS4", 0 ); // MPU Intr Hndl 1
+    GEL_MapAddStr( 0xFFFECC00, 0, 0x00000100, "R|W|AS4", 0 ); // Traffic Ctrl
+    GEL_MapAddStr( 0xFFFECE00, 0, 0x00000100, "R|W|AS4", 0 ); // CLKM
+    GEL_MapAddStr( 0xFFFECF00, 0, 0x00000100, "R|W|AS2", 0 ); // DPLL1
+    GEL_MapAddStr( 0xFFFED200, 0, 0x00000100, "R|W|AS4", 0 ); // DSP MMU
+    GEL_MapAddStr( 0xFFFED300, 0, 0x00000100, "R|W|AS4", 0 ); // TIPB Bridge 2
+    GEL_MapAddStr( 0xFFFED400, 0, 0x00000100, "R|W|AS2", 0 ); // Test block PSA
+    GEL_MapAddStr( 0xFFFED800, 0, 0x00002800, "R|W|AS2", 0 ); // System DMA
+
+    GEL_MapOn( );
+    GEL_TextOut( "    MemoryMap        Configured\n", "GEL" );
+}
+

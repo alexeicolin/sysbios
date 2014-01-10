@@ -1,0 +1,180 @@
+%%{
+/*
+ * Copyright (c) 2012, Texas Instruments Incorporated
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * *  Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * *  Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * *  Neither the name of Texas Instruments Incorporated nor the names of
+ *    its contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+*/
+%%}
+%%{
+/*
+ * ======== buildUniqueList ========
+ *  Builds up an array of unique strings based on an input instance array
+ *  and a field name.  The non-unique fields are filled in with null.  This
+ *  allows the caller to still associate the index with the original instance
+ *  array.
+ */
+function buildUniqueList(arr, field)
+{
+    var uniqueArr = new Array();    
+    
+    for (var i = 0; i < arr.length; i++) {        
+        var match = false;
+        for (var j = 0; j < i; j++) {            
+            if (arr[i][field] == arr[j][field]) {
+                match = true;
+            }    
+        }
+        if (match == false) {
+            uniqueArr[i] = arr[i][field];            
+        }
+        else {
+            uniqueArr[i] = null;
+        }
+    }
+    return(uniqueArr);
+}
+%%}
+
+/* Static DEV Table entries */
+#include <ti/bios/include/dev.h>
+#include <ti/bios/include/iom.h>
+%var DEV = xdc.module("ti.bios.DEV");
+%for (var i = 0; i < DEV.$instances.length; i++) {
+    %if (DEV.$instances[i].includePath != null) {
+#include "`DEV.$instances[i].includePath`"
+    %}
+%}
+
+/* extern init functions */
+%uniqueTempArr = buildUniqueList(DEV.$instances, "initFxn");
+%for (var i = 0; i < uniqueTempArr.length; i++) {
+    %if ((uniqueTempArr[i] != null) && (typeof uniqueTempArr[i] != "number")) {
+extern Void `uniqueTempArr[i]`(Void);
+    %}
+%}
+
+__FAR__ Int _DEV_numStaticDevs = `DEV.$instances.length`;
+%if (DEV.$instances.length != 0) {
+__FAR__ DEV_Tinit _DEV_initFxn[`DEV.$instances.length`]  = {
+    %for (var i = 0; i < DEV.$instances.length; i++) {    
+        %if (DEV.$instances[i].initFxn == null) {
+    NULL,
+        %}
+        %else {
+    (DEV_Tinit)`DEV.$instances[i].initFxn`,
+        %}
+    %}
+};
+%}
+
+/* extern params */
+%for (var i = 0; i < DEV.$instances.length; i++) {
+    %if ((DEV.$instances[i].params != null) && (typeof DEV.$instances[i].params != "number")) {
+extern __FAR__ `DEV.$instances[i].paramsType` `DEV.$instances[i].params`;
+    %}
+%}
+
+/* extern deviceGlobalDataPtr */
+%uniqueTempArr = buildUniqueList(DEV.$instances, "deviceGlobalDataPtr");
+%for (var i = 0; i < uniqueTempArr.length; i++) {    
+    %if ((uniqueTempArr[i] != null) && (typeof uniqueTempArr[i] != "number")) {
+extern __FAR__ Ptr `uniqueTempArr[i]`;
+    %}
+%}
+
+/* extern function tables */
+%uniqueTempArr = buildUniqueList(DEV.$instances, "fxnTable");
+%for (var i = 0; i < uniqueTempArr.length; i++) {
+    %if (uniqueTempArr[i] != null) {
+        %if (DEV.$instances[i].fxnTableType == "IOM_Fxns") {
+extern __FAR__ IOM_Fxns `uniqueTempArr[i]`;
+        %}
+        %else {
+extern __FAR__ DEV_Fxns `uniqueTempArr[i]`;
+        %}
+    %}
+%}
+
+%if (DEV.$instances.length != 0) {
+__FAR__ DEV_TableElem _DEV_staticDevTable[`DEV.$instances.length`] = {
+    %for (var i = 0; i < DEV.$instances.length; i++) {
+        %%{ 
+               /* 
+                *  Create locals to make the DEV_staticDevTable create
+                *  easier to read.
+                */
+               var deviceId = "NULL";
+               if (DEV.$instances[i].deviceId != null) {
+                   deviceId = DEV.$instances[i].deviceId;
+               }      
+               
+               var params = "NULL";
+               if (DEV.$instances[i].params != null) {                                      
+                   if (typeof DEV.$instances[i].params == "number") {
+                       params = "(Ptr)" + DEV.$instances[i].params; 
+                   }
+                   else {
+                       params = "&" + DEV.$instances[i].params; 
+                   }
+               } 
+               
+               var fxnTableType = "DEV_SIOTYPE";
+               if (DEV.$instances[i].fxnTableType == "IOM_Fxns") {
+                   fxnTableType = "DEV_IOMTYPE";
+               }               
+               
+               var globalDataPtr = "NULL";
+               if (DEV.$instances[i].deviceGlobalDataPtr != null) {
+                   if (typeof DEV.$instances[i].deviceGlobalDataPtr == "number") {
+                       globalDataPtr = "(Ptr)" + DEV.$instances[i].deviceGlobalDataPtr;
+                   }
+                   else {
+                       globalDataPtr = "&" + 
+                           DEV.$instances[i].deviceGlobalDataPtr;
+                   }
+                   
+               } 
+        %%}    
+    { {NULL, NULL},       /* QUE_Elem */
+      {"/`DEV.$instances[i].name`",
+%if (DEV.$instances[i].fxnTable != null) {
+       &`DEV.$instances[i].fxnTable`,
+%}
+%else {
+       NULL,
+%}
+       `deviceId`,
+       `params`,
+       `fxnTableType`,
+       `globalDataPtr`}
+    },
+    %}
+};
+%}

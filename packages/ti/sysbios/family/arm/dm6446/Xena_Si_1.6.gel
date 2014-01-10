@@ -1,0 +1,839 @@
+/* 
+   (c) 2007 Texas Instruments Inc.
+   Xena Si 1.0 Gel Settings
+   Version 1.6
+   Modifications done: Added PLL_powerdown and DAC_powerdown functions on 04.09.2007
+					   Modified the "Video_PLL_init()" 0n 10th September,2007	
+   Author: Xena AV&V Team
+*/
+
+//#define hotmenu void
+//#define GEL_TextOut printf
+
+#define	DDR_BASE 0x20000000
+#define ERCSR           	 (unsigned int*)(DDR_BASE + 0x00)    	//EMIF Module ID and Revision Register                                    
+#define SDRSTAT          	 (unsigned int*)(DDR_BASE + 0x04)    	//SDRAM Status Register  
+#define SDBCR           	 (unsigned int*)(DDR_BASE + 0x08) 	  	//SDRAM Bank Config Register
+#define SDRCR           	 (unsigned int*)(DDR_BASE + 0x0C) 	  	//SDRAM Refresh Control Register
+#define SDTIMR           	 (unsigned int*)(DDR_BASE + 0x10) 	  	//SDRAM Timing Register
+#define SDTIMR2           	 (unsigned int*)(DDR_BASE + 0x14) 	  	//SDRAM Timing Register
+#define SDBCR2           	 (unsigned int*)(DDR_BASE + 0x1C) 	  	//SDRAM Config Register 2
+
+
+#define VBUSMP           	 (unsigned int*)(DDR_BASE + 0x20) 	  	//VBUSM Burst Priority Register
+#define VBUSMCFG1          	 (unsigned int*)(DDR_BASE + 0x28) 	  	//VBUSM config Value1 Register
+#define VBUSMCFG2          	 (unsigned int*)(DDR_BASE + 0x2c) 	  	//VBUSM config Value2 Register
+#define PERFCNT1			 (unsigned int*)(DDR_BASE + 0x40)	  	//Performance Counter Register 1
+#define PERFCNT2			 (unsigned int*)(DDR_BASE + 0x44)	  	//Performance Counter Register 2
+#define PERFCNTCFG			 (unsigned int*)(DDR_BASE + 0x48)    	//Performance Counter Config Register
+#define PERFCNTMSTREGSEL     (unsigned int*)(DDR_BASE + 0x4C)	  	//Performance Counter Master Region Select Register
+#define INTRAW				 (unsigned int*)(DDR_BASE + 0xC0)    	//Interrupt Raw Register
+#define INTMASK              (unsigned int*)(DDR_BASE + 0xC4)    	//Interrupt Masked Register
+#define INTMASKSET           (unsigned int*)(DDR_BASE + 0xC8)    	//Interrupt Mask Set Register
+#define INTMASKCLR        	 (unsigned int*)(DDR_BASE + 0xCC)    	//Interrupt Mask Clear Register
+#define DDRPHYREV            (unsigned int*)(DDR_BASE + 0xE0)    	//DDR PHY ID and Revision Register
+#define DDRPHYCTL1           (unsigned int*)(DDR_BASE + 0xE4)    	//DDR PHY Control 1 Register
+#define DDRPHYCTL2           (unsigned int*)(DDR_BASE + 0xE8)    	//DDR PHY Control 2 Register
+#define DDRPHYCTL3           (unsigned int*)(DDR_BASE + 0xEC)    	//DDR PHY Control Register
+#define VTPIOCTL             (unsigned int*)(DDR_BASE + 0xF0)    	//VTPIO Control register
+#define VTPIOSTAT            (unsigned int*)(DDR_BASE + 0xF4)    	//VTPIO Status register
+
+#define PLL_A_BASE	0x01c40800
+#define PLL_A_PLLCTL 		 (unsigned int *)(PLL_A_BASE+ 0x100)
+#define PLL_A_PLLM 			 (unsigned int *)(PLL_A_BASE+ 0x110)
+#define PLL_A_PLLDIV1 		 (unsigned int *)(PLL_A_BASE+ 0x118)
+#define PLL_A_PLLDIV2		 (unsigned int *)(PLL_A_BASE+ 0x11C)
+#define PLL_A_PLLDIV5		 (unsigned int *)(PLL_A_BASE+ 0x164)
+#define PLL_A_PLLCMD		 (unsigned int *)(PLL_A_BASE+ 0x138)
+#define PLL_A_ALNCTL		 (unsigned int *)(PLL_A_BASE+ 0x140)
+#define PLL_A_DCHANGE		 (unsigned int *)(PLL_A_BASE+ 0x144)
+#define PLL_A_PLLSTAT		 (unsigned int *)(PLL_A_BASE+ 0x13C)
+#define PLL_C_BASE	0x01c42400
+#define PLL_C_PLLCTL 		 (unsigned int *)(PLL_C_BASE+ 0x100)
+#define PLL_C_PLLM 			 (unsigned int *)(PLL_C_BASE+ 0x110)
+#define PLL_C_PLLDIV1 		 (unsigned int *)(PLL_C_BASE+ 0x118)
+#define PLL_C_PLLDIV2		 (unsigned int *)(PLL_C_BASE+ 0x11C)
+#define PLL_C_PLLCMD		 (unsigned int *)(PLL_C_BASE+ 0x138)
+#define PLL_C_ALNCTL		 (unsigned int *)(PLL_C_BASE+ 0x140)
+#define PLL_C_DCHANGE		 (unsigned int *)(PLL_C_BASE+ 0x144)
+#define PLL_C_PLLSTAT		 (unsigned int *)(PLL_C_BASE+ 0x13C)
+
+#define SYSREG_BASE 0x01c40000
+#define SYSREG_MISC			 (unsigned int *)(SYSREG_BASE+0x38)
+#define ARM_926_THR			 (unsigned int *)(SYSREG_BASE+0xF8)
+
+#define ADPLL_A_MN 			 (unsigned int *)0x01C400A4         	// Sets the M and N for PLL A - System PLL
+#define ADPLL_A_CTRL 		 (unsigned int *)0x01C400A8      // Controll signal for initializing PLL A - System PLL
+#define ADPLL_C_MN 			 (unsigned int *)0x01C400AC         	// Sets the M and N for PLL C - Video PLL
+#define ADPLL_C_CTRL 		 (unsigned int *)0x01C400B0      // Controll signal for initializing PLL C - Video PLL
+
+#define PLLM_SHIFT			21
+#define PLLN_SHIFT			16
+
+#define PLLM_MASK			0x7FF
+#define PLLN_MASK			0x1F
+
+// M,N values for 180 MHz are 75 and 7 respectively (clk in = 19.2 MHz)
+#define PLL_A_M				75
+#define PLL_A_N				7	//+1 = 8
+
+// M,N values for 378 MHz are 315 and 15 respectively (clk in = 19.2 MHz)
+#define PLL_C_M				315
+#define PLL_C_N				15	//+1 = 16
+
+#define LPSC_KALEIDO	20
+#define LPSC_EDMA_CC	0
+#define LPSC_EDMA_TC0	1
+#define LPSC_EDMA_TC1	2
+#define LPSC_TIMER_0	3
+#define LPSC_TIMER_1	4
+#define LPSC_TIMER_2	5
+#define LPSC_DDR_EMIF	11
+#define LPSC_VPSS		17
+
+#define PSC_ADDR 		0x01C41000
+
+#define EPCPR 			(unsigned int *)(PSC_ADDR+0x070)
+#define PTCMD			(unsigned int *)(PSC_ADDR+0x120)
+#define PTSTAT         	(unsigned int *)(PSC_ADDR+0x128)   
+#define PDSTAT         	(unsigned int *)(PSC_ADDR+0x200)
+#define PDSTAT1        	(unsigned int *)(PSC_ADDR+0x204)
+#define PDCTL			(unsigned int *)(PSC_ADDR+0x300)            
+#define PDCTL1			(unsigned int *)(PSC_ADDR+0x304)
+
+#define	EDMA_DMAQNUM          (unsigned int *)0x1C00240
+#define	EDMA_ICR              (unsigned int *)0x1C01070
+#define	EDMA_ICRH             (unsigned int *)0x1C01074
+#define EDMA_DRAE_0           (unsigned int *)0x1C00340
+#define EDMA_DRAEH_0          (unsigned int *)0x1C00344
+#define EDMA_PE1_OPT          (unsigned int *)0x1C04020
+#define EDMA_PE1_SRC          (unsigned int *)0x1C04024
+#define EDMA_PE1_A_B_CNT      (unsigned int *)0x1c04028
+#define EDMA_PE1_DST          (unsigned int *)0x1c0402c
+#define EDMA_PE1_SRC_DST_BIDX (unsigned int *)0x1c04030
+#define EDMA_PE1_LINK_BCNTRLD (unsigned int *)0x1c04034
+#define EDMA_PE1_SRC_DST_CIDX (unsigned int *)0x1c04038
+#define EDMA_PE1_CCNT         (unsigned int *)0x1c0403C  
+#define EDMA_ESR              (unsigned int *)0x1C02010
+#define EDMA_ESRH             (unsigned int *)0x1C02010
+
+menuitem "Basic Initialization";
+
+StartUp() 
+{
+
+}
+
+hotmenu Init_SysPLL_mDDR_Kaleido()
+{
+	System_PLL_Init_180();
+	Xena_mDDR_Init();
+	KALEIDO_setup();
+	Video_PLL_Init();
+	Enable_Timers();
+}
+menuitem "Custom Initializations: Power";
+hotmenu Set_Voltage_to_1_15V()
+{
+	GEL_Load("C:\\CCStudio_v3.3\\cc\\gel\\tps65342.out");
+	GEL_Run();
+}
+menuitem "Custom Initializations: PLLs, Clock";
+hotmenu System_PLL_Init_180()
+{
+	System_PLL_Init(75, 7);
+	GEL_TextOut("System PLL(A) set to 180 MHz \n");
+}
+
+hotmenu System_PLL_Init_90()
+{
+	System_PLL_Init(75, 15);
+	GEL_TextOut("System PLL(A) set to 90 MHz \n");
+}
+hotmenu Set_ARMDIV_90()
+{
+	ARM_PLL_DIV(1, 1);
+	GEL_TextOut("ARM clock adjusted down to 90 MHz \n");
+}
+
+hotmenu Set_ARMDIV_45()
+{
+	ARM_PLL_DIV(2, 3);
+	GEL_TextOut("ARM clock adjusted down to 45 MHz \n");
+}
+
+hotmenu Set_ARMDIV_22_5()
+{
+	ARM_PLL_DIV(3, 4);
+	GEL_TextOut("ARM clock adjusted down to 22.5 MHz \n");
+}
+
+ARM_PLL_DIV(div, thr)
+{
+	unsigned int val = 0;	
+	
+	// Set the threshold first since we are reducing clock from 180
+	*ARM_926_THR = (thr<<8) | thr;
+
+
+	val =  *PLL_A_PLLSTAT ;
+	while ((val & 0x01) != 0 )
+	{
+		val =  *PLL_A_PLLSTAT ;
+	}
+
+	//Program PLLDIV5 for ARM
+	*PLL_A_PLLDIV5 = 0x00008000 | (div);	//14;
+
+	// Set the align bits
+	*PLL_A_ALNCTL = 0x10;
+
+	// Set the GOSET bit
+    *PLL_A_PLLCMD = 1;
+
+	val =  *PLL_A_PLLSTAT ;
+	while ((val & 0x01) != 0 )
+	{
+		val =  *PLL_A_PLLSTAT ;
+	}
+
+	// Set the GOSET bit
+    *PLL_A_PLLCMD = 0;
+}
+
+System_PLL_Init(pllm, plln)
+{
+	unsigned int val = 0, pll_mn,i;	
+  
+	*(unsigned long *)0x1C400DC = 9; /* The magic number 9 disables write protection */
+	psc_enable(LPSC_EDMA_CC);
+	psc_enable(LPSC_EDMA_TC0);
+
+	*PLL_A_PLLCTL = *PLL_A_PLLCTL & 0xFFFFFFFD; 
+
+   // Deassert PLL Reset(bit3)
+    *PLL_A_PLLCTL = *PLL_A_PLLCTL & 0xFFFFFFF7;
+
+	// Set the GOSET bit
+    *PLL_A_PLLCMD = 1;
+	
+	pll_mn = *ADPLL_A_MN;
+	pll_mn &= ~(PLLM_MASK<<PLLM_SHIFT);
+	pll_mn |= pllm<<PLLM_SHIFT;
+
+	pll_mn &= ~(PLLN_MASK<<PLLN_SHIFT);
+	pll_mn |= plln<<PLLN_SHIFT;
+	
+	*ADPLL_A_MN = pll_mn;
+	
+	// De-assert TINITZ
+	*ADPLL_A_CTRL = *ADPLL_A_CTRL & 0xFFDFFFFF;
+	// Assert TENABLE
+	*ADPLL_A_CTRL = *ADPLL_A_CTRL | 0x00400000;
+	// Assert TENABLEDIV
+	*ADPLL_A_CTRL = *ADPLL_A_CTRL | 0x00800000;
+	// Assert TINITZ
+	*ADPLL_A_CTRL = *ADPLL_A_CTRL | 0x00200000;
+	// De-assert TENABLE
+	*ADPLL_A_CTRL = *ADPLL_A_CTRL & 0xFFBFFFFF;
+	// De-assert TENABLEDIV
+	*ADPLL_A_CTRL = *ADPLL_A_CTRL & 0xFF7FFFFF;
+
+	*((unsigned long *)(0x171C0)) = 0x41378122;
+	*((unsigned long *)(0x171C4)) = 0x41378122;
+	*((unsigned long *)(0x171C8)) = 0x41378122;
+	*((unsigned long *)(0x171CC)) = 0x41378122;
+	*((unsigned long *)(0x171D0)) = 0x41378122;
+	*((unsigned long *)(0x171D4)) = 0x41378122;
+	*((unsigned long *)(0x171D8)) = 0x41178122;
+	*((unsigned long *)(0x171DC)) = 0x41378122;
+
+	/* Program EDMA */
+	*EDMA_DMAQNUM = 1;
+	
+	// ***** Region Access *****
+	*EDMA_DRAE_0  = 0xFFFFFFFF; // ARM access
+	*EDMA_DRAEH_0 = 0xFFFFFFFF;
+
+	// ==== Set Channel  parameters ====//
+	*EDMA_PE1_OPT          = ((1) << 12) + 0x100004; // Assign Channel ch int completion,AB sync transfer
+	*EDMA_PE1_SRC          = 0x171C0 ;
+	*EDMA_PE1_A_B_CNT      = 0x00080004 ;
+	*EDMA_PE1_DST          = ADPLL_A_CTRL;
+	*EDMA_PE1_SRC_DST_BIDX = 0x00000004;
+	*EDMA_PE1_LINK_BCNTRLD = 0x0001FFFF;
+	*EDMA_PE1_SRC_DST_CIDX = 0x00000000;
+	*EDMA_PE1_CCNT         = 0x00000001;
+    
+    /*Trigger EDMA*/ 
+	*EDMA_ESR  = 2 ; //Trigger Channel ch
+	*EDMA_ESRH = 0x0;
+
+	//wait for lock
+	val =*ADPLL_A_CTRL ;
+	while ((val & 0x00000020) != 0x00000020 )
+	{
+		val =  *ADPLL_A_CTRL ;
+	}
+        /* Clear all the interrupts */ 
+	*EDMA_ICR = 0xFFFFFFFF;
+	*EDMA_ICRH = 0xFFFFFFFF;
+
+	// Deassert  PLLENSRC (bit5)
+	*PLL_A_PLLCTL = *PLL_A_PLLCTL & 0xFFFFFFDF; 
+
+	// Enable PLL mode
+	*PLL_A_PLLCTL = *PLL_A_PLLCTL | 0x1;   // PLLEN=1
+	
+	psc_disable(LPSC_EDMA_CC);
+	psc_disable(LPSC_EDMA_TC0);
+
+}
+hotmenu PLL_powerdown()
+{
+	// de Assert TINITZ
+	*ADPLL_A_CTRL = *ADPLL_A_CTRL & 0xFFDFFFFF;
+
+	*ADPLL_C_CTRL = *ADPLL_C_CTRL & 0xFFDFFFFF;
+		
+	GEL_TextOut("all plls disabled");
+}
+
+hotmenu Video_PLL_Init()
+{
+	unsigned int val = 0, pll_mn, i;	
+	psc_enable(LPSC_EDMA_CC);
+	psc_enable(LPSC_EDMA_TC0);
+
+	*(unsigned long *)0x1C400DC = 9; /* The magic number 9 disables write protection */
+
+	*PLL_C_PLLCTL |= 0x100; /*Reference Clock Selection is CLKIN square wave*/
+	
+	*PLL_C_PLLCTL = *PLL_C_PLLCTL & 0xFFFFFFFD; 
+	
+	// SET to VXI VCLK IN
+//	*PLL_C_PLLCTL = *PLL_C_PLLCTL & 0xFFFFFEFF; 
+
+   // Deassert PLL Reset(bit3)
+    *PLL_C_PLLCTL = *PLL_C_PLLCTL & 0xFFFFFFF7;
+
+	// Set the GOSET bit
+//    *PLL_C_PLLCMD = 1;
+//    *PLL_C_PLLCMD = 0;
+
+	
+	pll_mn = *ADPLL_C_MN;
+	pll_mn &= ~(PLLM_MASK<<PLLM_SHIFT);
+	pll_mn |= PLL_C_M<<PLLM_SHIFT;
+
+	pll_mn &= ~(PLLN_MASK<<PLLN_SHIFT);
+	pll_mn |= PLL_C_N<<PLLN_SHIFT;
+	
+	*ADPLL_C_MN = pll_mn;
+	
+	// De-assert TINITZ
+	*ADPLL_C_CTRL = *ADPLL_C_CTRL & 0xFFDFFFFF;
+	// Assert TENABLE
+	*ADPLL_C_CTRL = *ADPLL_C_CTRL | 0x00400000;
+	// Assert TENABLEDIV
+	*ADPLL_C_CTRL = *ADPLL_C_CTRL | 0x00800000;
+	// Assert TINITZ
+	*ADPLL_C_CTRL = *ADPLL_C_CTRL | 0x00200000;
+	// De-assert TENABLE
+	*ADPLL_C_CTRL = *ADPLL_C_CTRL & 0xFFBFFFFF;
+	// De-assert TENABLEDIV
+	*ADPLL_C_CTRL = *ADPLL_C_CTRL & 0xFF7FFFFF;
+
+	*((unsigned long *)(0x171C0)) = 0x41378122;
+	*((unsigned long *)(0x171C4)) = 0x41378122;
+	*((unsigned long *)(0x171C8)) = 0x41378122;
+	*((unsigned long *)(0x171CC)) = 0x41378122;
+	*((unsigned long *)(0x171D0)) = 0x41378122;
+	*((unsigned long *)(0x171D4)) = 0x41378122;
+	*((unsigned long *)(0x171D8)) = 0x41178122;
+	*((unsigned long *)(0x171DC)) = 0x41378122;
+
+	/* Program EDMA */
+	*EDMA_DMAQNUM = 1;
+	
+	// ***** Region Access *****
+	*EDMA_DRAE_0  = 0xFFFFFFFF; // ARM access
+	*EDMA_DRAEH_0 = 0xFFFFFFFF;
+
+	// ==== Set Channel  parameters ====//
+	*EDMA_PE1_OPT          = ((1) << 12) + 0x100004; // Assign Channel ch int completion,AB sync transfer
+	*EDMA_PE1_SRC          = 0x171C0 ;
+	*EDMA_PE1_A_B_CNT      = 0x00080004 ;
+	*EDMA_PE1_DST          = ADPLL_C_CTRL;
+	*EDMA_PE1_SRC_DST_BIDX = 0x00000004;
+	*EDMA_PE1_LINK_BCNTRLD = 0x0001FFFF;
+	*EDMA_PE1_SRC_DST_CIDX = 0x00000000;
+	*EDMA_PE1_CCNT         = 0x00000001;
+    
+    /*Trigger EDMA*/ 
+	*EDMA_ESR  = 2 ; //Trigger Channel ch
+	*EDMA_ESRH = 0x0;
+
+
+	//wait for lock
+	for(i=0;i<10000;i++);
+	
+	val =*ADPLL_C_CTRL;
+	
+	while ((val & 0x00000020) != 0x00000020 )
+	{
+		val =  *ADPLL_C_CTRL ;
+	}
+	
+	/* Clear all the interrupts */ 
+	*EDMA_ICR = 0xFFFFFFFF;
+	*EDMA_ICRH = 0xFFFFFFFF;
+
+
+	// Deassert  PLLENSRC (bit5)
+	*PLL_C_PLLCTL = *PLL_C_PLLCTL & 0xFFFFFFDF; 
+
+	// Enable PLL mode
+	*PLL_C_PLLCTL = *PLL_C_PLLCTL | 0x1;   // PLLEN=1
+
+	val =  *PLL_C_PLLSTAT ;
+	while ((val & 0x01) != 0 )
+	{
+		val =  *PLL_C_PLLSTAT ;
+	}
+
+	//Program PLLDIV1 to give 27 MHz output assuming PLL output is 378 MHz
+	*PLL_C_PLLDIV1 = 0x00008000 | (14-1);	//14;
+
+	//Program PLLDIV2 to give 94.5 MHz output assuming PLL output is 378 MHz
+	*PLL_C_PLLDIV2 = 0x00008000 | (4-1);	//4;
+
+	// Set the align bits
+	*PLL_C_ALNCTL = 0x03;
+
+//	val =  *PLL_C_DCHANGE ;
+//	while ((val & 0x03) != 0x03 )
+//	{
+//		val =  *PLL_C_DCHANGE ;
+//	}
+
+	// Set the GOSET bit
+    *PLL_C_PLLCMD = 1;
+
+	val =  *PLL_C_PLLSTAT ;
+	while ((val & 0x01) != 0 )
+	{
+		val =  *PLL_C_PLLSTAT ;
+	}
+
+	// Set the GOSET bit
+    *PLL_C_PLLCMD = 0;
+
+	psc_disable(LPSC_EDMA_CC);
+	psc_disable(LPSC_EDMA_TC0);
+
+	GEL_TextOut("Video PLL(C) set to 27MHz and 94.5MHz for DAC\n");  	
+
+}
+
+PSC_Unlock()
+{
+	*(unsigned long *)0x1C400DC = 9; /* The magic number 9 disables write protection */
+}
+Xena_mDDR_Init()
+{
+	/**(unsigned long *)0x1C400DC = 9;*/
+	PSC_Unlock();
+	psc_enable(LPSC_DDR_EMIF);
+
+//	*PLL0_PLLCTL =1;	
+	*SDRCR = 0x0000057C;
+   	*SDBCR   = 0x00800000;
+   	*SDBCR   = 0x02030000;	
+   	*SDBCR   = 0x00008620;
+   	*SDTIMR  = 0x12912248;
+	*SDTIMR2 = 0x340A1081;
+	*VBUSMP  = 0xFE;
+	*SDBCR2  = 0x00000000;
+	*SDBCR   = 0x00000620;
+	GEL_TextOut("Mobile DDR init is done\n");  	
+}
+psc_syncReset(int lpscnum)
+{
+    PSC_Unlock();
+    *(PSC_ADDR+0xA00+4*lpscnum) = (*(PSC_ADDR+0xA00+4*lpscnum)&0xFFFFFFF0)|0x1;
+    *PTCMD = 1;
+    while((*PTSTAT)&0x1);
+    while(!(((*(PSC_ADDR+0x800+4*lpscnum)&0x1F) == 0x1)));
+}
+psc_enable(int lpscnum)
+{
+	PSC_Unlock();
+	*(PSC_ADDR+0xA00+4*lpscnum) = ((*(PSC_ADDR+0xA00+4*lpscnum))&0xFFFFFFF0)|0x3;
+	*(PSC_ADDR+0x300) |=0x1;
+	*PTCMD = 1;
+	while((*PTSTAT) & 0x1);
+	while(!(((*(PSC_ADDR+0x800+4*lpscnum)&0x1F) == 0x3)));
+}
+psc_disable(int lpscnum)
+{
+	PSC_Unlock();
+	*(PSC_ADDR+0xA00+4*lpscnum) = (*(PSC_ADDR+0xA00+4*lpscnum)&0xFFFFFFF0)|0x2;
+	*PTCMD = 1;
+	while((*PTSTAT) & 0x1);
+	while(!(((*(PSC_ADDR+0x800+4*lpscnum)&0x1F) == 0x2)));
+}
+/*********************/
+/* Kaleido Functions */
+/*********************/
+
+Reset_ARM968()
+{
+
+	unsigned int i = 10;;;
+   //Release Kaleido (ARM968) reset
+	*(int*)0x1c400dc =0x9;
+	*(int*)0x1c41a50 =0x103;
+	*(int*)0x1c41120 =0x1;
+
+	// Assert Init RAM signal to ARM968
+	*(int*)0x1C40084 = 0x6 ;
+	    // Assert Init RAM signal to ARM968
+	   //    *(int*)0x1C40084 = 0x6 ;
+	*(int*)0x1c41a50 = 0;	
+	while(i--);
+	*(int*)0x1c41a50 =0x103;
+	i = 100;
+	while(i--);
+	GEL_TextOut("ARM968 Reset is done\n");  	
+
+}
+hotmenu KALEIDO_setup()
+{
+	psc_syncReset(LPSC_KALEIDO);
+	psc_enable(LPSC_KALEIDO);
+	Reset_ARM968();
+}
+
+/************************/
+/* Memory Map Functions */
+/************************/
+
+MemorymapOn_XENA_ARM926()
+{
+
+    GEL_MapOn();
+    GEL_MapReset();
+
+    /* Peripheral memory map */
+    GEL_MapAdd( 0x00000000, 0, 0x00008000, 1, 1 );  // ARM Instruction TCM RAM
+    GEL_MapAdd( 0x00008000, 0, 0x00004000, 1, 0 );  // ARM Instruction TCM ROM
+    GEL_MapAdd( 0x00010000, 0, 0x00008000, 1, 1 );  // ARM Data TCM RAM
+    GEL_MapAdd( 0x00018000, 0, 0x00004000, 1, 0 );  // ARM Data TCM ROM
+    GEL_MapAdd( 0x01BC0000, 0, 0x00001000, 1, 1 );  // ARM ETB
+    GEL_MapAdd( 0x01BC1000, 0, 0x00000800, 1, 1 );  // ARM ETB Registers
+    GEL_MapAdd( 0x01BC1800, 0, 0x00000100, 1, 1 );  // ARM ICECrusher
+	GEL_MapAdd( 0x01C00000, 0, 0x0E3FFFFF, 1, 1 );  // CFG Peripheral
+	GEL_MapAdd( 0x20000000, 0, 0x00008000, 1, 1 );  // DDR EMIF Control Regs
+    GEL_MapAdd( 0x01C00000, 0, 0x00010000, 1, 1 );  // 3PCC
+    GEL_MapAdd( 0x01C10000, 0, 0x00000400, 1, 1 );  // 3PTC0
+    GEL_MapAdd( 0x01C10400, 0, 0x00000400, 1, 1 );  // 3PTC1
+    GEL_MapAdd( 0x01C18800, 0, 0x00001800, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01C1A000, 0, 0x00006000, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01C20000, 0, 0x00000400, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01C20400, 0, 0x00000400, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01C20800, 0, 0x00000400, 1, 1 );  // Watchdog Timer (Timer4/5)
+    GEL_MapAdd( 0x01C20C00, 0, 0x00000400, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01C21000, 0, 0x00000400, 1, 1 );  // I2C
+    GEL_MapAdd( 0x01C21400, 0, 0x00000400, 1, 1 );  // Timer0/1
+    GEL_MapAdd( 0x01C21800, 0, 0x00000400, 1, 1 );  // Timer2/3
+    GEL_MapAdd( 0x01C21C00, 0, 0x00000400, 1, 1 );  // Timer 4/5
+    GEL_MapAdd( 0x01C22000, 0, 0x00000400, 1, 1 );  // DFT
+    GEL_MapAdd( 0x01C22400, 0, 0x00000800, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01C22C00, 0, 0x00000400, 1, 1 );  // I2C0
+    GEL_MapAdd( 0x01C23000, 0, 0x00000400, 1, 1 );  // I2C1
+    GEL_MapAdd( 0x01C23400, 0, 0x00000400, 1, 1 );  // I2C2
+    GEL_MapAdd( 0x01C23800, 0, 0x00000400, 1, 1 );  // McASP CFG
+    GEL_MapAdd( 0x01C23C00, 0, 0x00001000, 1, 1 );  // McASP DMA
+	GEL_MapAdd( 0x01C24C00, 0, 0x0001B4000, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01C40000, 0, 0x00000800, 1, 1 );  // System
+    GEL_MapAdd( 0x01C40800, 0, 0x00000400, 1, 1 );  // PLLA
+    GEL_MapAdd( 0x01C40C00, 0, 0x00000400, 1, 1 );  // PLLB
+    GEL_MapAdd( 0x01C41000, 0, 0x00001000, 1, 1 );  // Power Sleep Controller
+    GEL_MapAdd( 0x01C42000, 0, 0x00000400, 1, 1 );  // DFT
+	GEL_MapAdd( 0x01C42400, 0, 0x00000400, 1, 1 );  // PLLC    
+    GEL_MapAdd( 0x01C42800, 0, 0x00005800, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01C48000, 0, 0x00000400, 1, 1 );  // INTC
+    GEL_MapAdd( 0x01C48400, 0, 0x0001B800, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01C63C00, 0, 0x00000400, 1, 1 );  // smart Reflux
+	GEL_MapAdd( 0x01C64000, 0, 0x00001C00, 1, 1 );  // Reserved
+	GEL_MapAdd( 0x01C65C00, 0, 0x00000400, 1, 1 );  // DDR PHY
+    GEL_MapAdd( 0x01C66000, 0, 0x00000800, 1, 1 );  // SPI0
+    GEL_MapAdd( 0x01C66800, 0, 0x00000800, 1, 1 );  // SPI1
+    GEL_MapAdd( 0x01C67000, 0, 0x00000800, 1, 1 );  // GPIO
+    GEL_MapAdd( 0x01C67800, 0, 0x00000800, 1, 1 );  // SPI2
+    GEL_MapAdd( 0x01C68000, 0, 0x00008000, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01C70000, 0, 0x00010000, 1, 1 );  // VPSS
+    GEL_MapAdd( 0x01C80000, 0, 0x00001000, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01C81000, 0, 0x00001000, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01C82000, 0, 0x00002000, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01C84000, 0, 0x00000800, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01C84800, 0, 0x00000800, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01C85000, 0, 0x0003B000, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01CC0000, 0, 0x00020000, 1, 1 );  // IMCOP
+    GEL_MapAdd( 0x01CE0000, 0, 0x00020000, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01D00000, 0, 0x00100000, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01E00000, 0, 0x00002000, 1, 1 );  // MMCSD1
+    GEL_MapAdd( 0x01E02000, 0, 0x00002000, 1, 1 );  // McBSP0
+    GEL_MapAdd( 0x01E04000, 0, 0x00002000, 1, 1 );  // McBSP1
+    GEL_MapAdd( 0x01E06000, 0, 0x00000400, 1, 1 );  // UART2
+    GEL_MapAdd( 0x01E06400, 0, 0x00009C00, 1, 1 );  // Reserved
+    GEL_MapAdd( 0x01E10000, 0, 0x00001000, 1, 1 );  // AEMIF
+    GEL_MapAdd( 0x01E11000, 0, 0x0000F000, 1, 1 );  // MMCSD0
+    GEL_MapAdd( 0x01E20000, 0, 0x00020000, 1, 1 );  // MS
+    GEL_MapAdd( 0x01E40000, 0, 0x001C0000, 1, 1 );  // Reserved*/
+   // GEL_MapAdd( 0x11F00000, 0, 0x00020000, 1, 1 );  // IMCOP memory
+    GEL_MapAdd( 0x01CD0000, 0, 0x00000080, 1, 1 );  // IMX
+    GEL_MapAdd( 0x01CD0080, 0, 0x00000080, 1, 1 );  // BIMX
+ 	GEL_MapAdd( 0x01CD0100, 0, 0x00000080, 1, 1 );  // DCT
+	GEL_MapAdd( 0x01CD0180, 0, 0x00000080, 1, 1 );  // QIQ
+	GEL_MapAdd( 0x01CD0200, 0, 0x00000080, 1, 1 );  // BSP
+	GEL_MapAdd( 0x01CD0280, 0, 0x00000080, 1, 1 );  // VLCD
+	GEL_MapAdd( 0x01CD0300, 0, 0x00000080, 1, 1 );  // RCNT
+	GEL_MapAdd( 0x01CDFF00, 0, 0x00000100, 1, 1 );  // SEQ
+	GEL_MapAdd( 0x01C70000, 0, 0x00000040, 1, 1 );  // VPSSCLK
+	GEL_MapAdd( 0x01C70040, 0, 0x00000040, 1, 1 );  // CCPR
+	GEL_MapAdd( 0x01C70080, 0, 0x00000040, 1, 1 );  // H3A
+	GEL_MapAdd( 0x01C70100, 0, 0x00000100, 1, 1 );  // IPIPEIF
+	GEL_MapAdd( 0x01C70200, 0, 0x00000200, 1, 1 );  // OSD
+	GEL_MapAdd( 0x01C70400, 0, 0x00000200, 1, 1 );  // VENC
+	GEL_MapAdd( 0x01C70600, 0, 0x00000200, 1, 1 );  // CCDC
+	GEL_MapAdd( 0x01C70800, 0, 0x00000100, 1, 1 );  // VPSSBL
+	GEL_MapAdd( 0x01C70900, 0, 0x00000700, 1, 1 );  // CFALD
+	GEL_MapAdd( 0x01C71000, 0, 0x00001000, 1, 1 );  // IPIPE
+	GEL_MapAdd( 0x02000000, 0, 0x003fffff, 1, 1 );  // vimcop
+	
+	/* Off-chip memory map */
+    GEL_MapAdd( 0x80000000, 0, 0x01000000, 1, 1 );  // DDR EMIF  only 16MB of stacked mDDR in Xena
+
+}
+
+MemorymapOn_XENA_ARM968()
+{
+    GEL_MapOn();
+    GEL_MapReset();
+
+    /* Peripheral memory map */
+    GEL_MapAdd( 0x00000000, 0, 0x0000C000, 1, 1 );  // ARM Instruction TCM RAM
+    GEL_MapAdd( 0x00400000, 0, 0x00008000, 1, 1 );  // ARM Instruction TCM ROM
+    GEL_MapAdd( 0x01800000, 0, 0x00001400, 1, 1 );  // ARM Data TCM RAM
+    GEL_MapAdd( 0x01900000, 0, 0x00034000, 1, 1 );  // ARM Data TCM ROM
+    GEL_MapAdd( 0x01C00000, 0, 0x00800000, 1, 1 );  // ARM ETB
+
+}
+menuitem "Custom Initializations: Misc";
+hotmenu Regview_Init()
+{
+	GEL_InitializeRegisterData("C:\\CCStudio_v3.3\\drivers\\TargetDB\\Devices\\dm510.xml");
+	GEL_TextOut("Regview Initialized \n");  	
+}
+
+hotmenu System_PLL_Out_to_GIO13_En()
+{
+	*(unsigned int*)0x01c40000 = 0x01000014;	// OUTCLK1 pin enable
+	*(unsigned int*)0x01c400a0 = 0x00000000;	// OUTCLK1 mux enable from PLLA
+	GEL_TextOut("PLL(A)/2 Routed to GIO13 \n");
+}
+
+OnTargetConnect()
+{
+	MemorymapOn_XENA_ARM926();
+}
+
+/******************/
+/* VPSS Functions */
+/******************/
+
+#define VPSS_BASE        0x01C70000
+#define VPSS_CLK_CTRL	 *( unsigned int* )( VPSS_BASE+0x04 )
+#define VENCBASE         0x01C70400
+#define VMOD	         *( unsigned int* )( VENCBASE+0x00 )
+#define VIDCTL	         *( unsigned int* )( VENCBASE+0x04 )
+#define VDPRO	         *( unsigned int* )( VENCBASE+0x08 )
+#define SYNCCTL	         *( unsigned int* )( VENCBASE+0x0c )
+#define HSPLS	         *( unsigned int* )( VENCBASE+0x10 )
+#define VSPLS	         *( unsigned int* )( VENCBASE+0x14 )
+#define HINT	         *( unsigned int* )( VENCBASE+0x18 )
+#define HSTART	         *( unsigned int* )( VENCBASE+0x1c )
+#define HVALID	         *( unsigned int* )( VENCBASE+0x20 )
+#define VINT	         *( unsigned int* )( VENCBASE+0x24 )
+#define VSTART	         *( unsigned int* )( VENCBASE+0x28 )
+#define VVALID	         *( unsigned int* )( VENCBASE+0x2c )
+#define HSDLY	         *( unsigned int* )( VENCBASE+0x30 )
+#define VSDLY	         *( unsigned int* )( VENCBASE+0x34 )
+#define YCCCTL	         *( unsigned int* )( VENCBASE+0x38 )
+//RSVD in DM510 #define RGBCTL	         *( unsigned int* )( VENCBASE+0x3c )
+//RSVD in DM510 #define RGBCLP	         *( unsigned int* )( VENCBASE+0x40 )
+#define LINECTL	         *( unsigned int* )( VENCBASE+0x44 )
+//RSVD in DM510 #define CULLINE          *( unsigned int* )( VENCBASE+0x48 )
+#define LCDOUT	         *( unsigned int* )( VENCBASE+0x4c )
+//RSVD in DM510 #define BRTS	         *( unsigned int* )( VENCBASE+0x50 )
+//RSVD in DM510 #define BRTW	         *( unsigned int* )( VENCBASE+0x54 )
+//RSVD in DM510 #define ACCTL	         *( unsigned int* )( VENCBASE+0x58 )
+//RSVD in DM510 #define PWMP	         *( unsigned int* )( VENCBASE+0x5c )
+//RSVD in DM510 #define PWMW	         *( unsigned int* )( VENCBASE+0x60 )
+#define DCLKCTL	         *( unsigned int* )( VENCBASE+0x64 )
+#define DCLKPTN0         *( unsigned int* )( VENCBASE+0x68 )
+#define DCLKPTN1         *( unsigned int* )( VENCBASE+0x6C )
+#define DCLKPTN2         *( unsigned int* )( VENCBASE+0x70 )
+#define DCLKPTN3         *( unsigned int* )( VENCBASE+0x74 )
+#define DCLKPTN0A  		 *( unsigned int* )( VENCBASE+0x78 )
+#define DCLKPTN1A  		 *( unsigned int* )( VENCBASE+0x7C )
+#define DCLKPTN2A  		 *( unsigned int* )( VENCBASE+0x80 )
+#define DCLKPTN3A  		 *( unsigned int* )( VENCBASE+0x84 )
+#define DCLKHS	  		 *( unsigned int* )( VENCBASE+0x88 )
+#define DCLKHSA  		 *( unsigned int* )( VENCBASE+0x8c )
+/*several registers equal to default 0x0000*/
+#define DACTST  		 *( unsigned int* )( VENCBASE+0xc4 )
+/*several registers equal to default 0x0000*/
+//RSVD in DM510 #define DRGBX0		     *( unsigned int* )( VENCBASE+0x114 )
+//RSVD in DM510 #define DRGBX1			 *( unsigned int* )( VENCBASE+0x118 )
+//RSVD in DM510 #define DRGBX2        	 *( unsigned int* )( VENCBASE+0x11c )
+//RSVD in DM510 #define DRGBX3		     *( unsigned int* )( VENCBASE+0x120 )
+//RSVD in DM510 #define DRGBX4 	   		 *( unsigned int* )( VENCBASE+0x124 )
+#define VSTARTA        	 *( unsigned int* )( VENCBASE+0x128 )
+#define OSDCLK0		     *( unsigned int* )( VENCBASE+0x12C )
+#define OSDCLK1		     *( unsigned int* )( VENCBASE+0x130 )
+
+#define CLKCTL		     *( unsigned int* )( VENCBASE+0x140 )
+
+#define SYS_BASE         0x01C40000
+#define SYS_PINMUX0		 *( unsigned int* )( SYS_BASE+0x00 )            
+#define SYS_PINMUX1		 *( unsigned int* )( SYS_BASE+0x04 )            
+#define SYS_VDAC_CFG     *( unsigned int* )( SYS_BASE+0x2C )            
+#define SYS_VPSSCLK_CTRL *( unsigned int* )( SYS_BASE+0x44 )            
+
+#define PLLC_BASE	     0x01c42400
+#define PLLC_CTL	     *( unsigned int* )( PLLC_BASE+0x100 )
+
+
+hotmenu Display_ColorBar() {
+	EnableDacClk();
+	psc_enable(LPSC_VPSS);
+	ColorBar();
+	GEL_TextOut("ColorBar Set \n");          
+}
+
+EnableDacClk() {
+
+	*(unsigned long *)0x1C400DC = 9;
+
+	/*Enable VPSS, drive venc clock with Input to PLLC (AUX), enable DAC clock*/
+	//SYS_VPSSCLK_CTRL = 0x0E30; 
+	SYS_VPSSCLK_CTRL = 0x0E10; /*drive venc clock with Output of PLLC (DIV)*/
+	//SYS_VPSSCLK_CTRL = 0x0E12; /*drive venc clock with PLLA Divided down clk*/
+
+	/*Set the PLLC input to VXI input by setting CLKMODE bit to 0 (27MHz external Clk) 0x0048 */
+//	PLLC_CTL &= 0xFFFFFEFF;	   
+	/*Set the PLLC input to SYS input by setting CLKMODE bit to 1 (27MHz external Clk) 0x0148 */
+//	PLLC_CTL |= 0x00000100;	   
+
+	VPSS_CLK_CTRL    = 0x1F9;  		/*Select enc_clk*1, turn on VPBE clk*/
+	SYS_VDAC_CFG     = 0x00000046;  /*Power on and take out of reset*/
+}
+
+ColorBar() {
+	//  VPSS_CLK_CTRL = 0x18;
+
+	//VMOD 	 = 0x0011; /* NonSTD YCC16, Venc enabled*/
+	//VMOD 	 = 0x2011; /* NonSTD Parallel RGB, Venc enabled*/
+	//VMOD 	 = 0x2001; /* Parallel RGB, Venc enabled*/
+	VMOD 	 = 0x0003; /* STD normal composite, Venc enabled*/
+
+	VIDCTL	 = 0x2000; /*Enable VCLK, Output HSYNC and VSYNC, YCDIR is Output*/
+	//VDPRO	 = 0x0100; /*Enable 75% color bars*/
+	VDPRO	 = 0x0300; /*Enable 100% color bars*/
+
+	SYNCCTL	 = 0x0003; /*Enable HSYNC and VSYNC*/
+	HSPLS	 = 0x0001; /*HSYNC pulse width equals 1*/
+	VSPLS	 = 0x0001; /*VSYNC pulse width equals 1*/
+
+	HINT	 = 2*24+2*720+1*2; /*H interval equals 0x05b2=1458*/
+	HSTART   = 2*24;; /*H start equals 0x0030=48*/
+	HVALID	 = 720*2; /*H valid equals 0x0580=1408*/
+	VINT	 = 480+1; /*V interval equals 0x0213=531*/
+	VSTART	 = 1; /*V start equals 0x0001*/
+	VVALID	 = 480; /*V valid equals 0x0212=530*/
+
+	//HINT	 = 0x05B2; /*H interval equals 0x05b2=1458*/
+	//HSTART   = 0x0030; /*H start equals 0x0030=48*/
+	//HVALID	 = 0x0580; /*H valid equals 0x0580=1408*/
+	//VINT	 = 0x0213; /*V interval equals 0x0213=531*/
+	//VSTART	 = 0x0001; /*V start equals 0x0001*/
+	//VVALID	 = 0x0212; /*V valid equals 0x0212=530*/
+
+	HSDLY	 = 0x0000; /* delay equals 0x0000 */
+	VSDLY	 = 0x0000; /* delay equals 0x0000 */
+	YCCCTL	 = 0x0000;
+	//RGBCTL	 = 0x0000;
+	//RGBCLP	 = 0xFF00; /*RGB upper clip equals 0xFF=255*/
+	LINECTL	 = 0x0000;
+	//CULLINE	 = 0x0000;
+	LCDOUT   = 0x0001; /*LCD_OE output is on*/
+	//BRTS	 = 0x0000;
+	//BRTW	 = 0x0000;
+	//ACCTL	 = 0x0000;
+	//PWMP	 = 0x0000;
+	//PWMW	 = 0x0000;
+	DCLKCTL	 = 0x8A00; /*DCLK mask*/
+	DCLKPTN0 = 0x0001;
+	DCLKPTN1 = 0x0000;
+	DCLKPTN2 = 0x0000;
+	DCLKPTN3 = 0x0000;
+	DCLKPTN0A= 0x0002;
+	DCLKPTN1A= 0x0000;
+	DCLKPTN2A= 0x0000;
+	DCLKPTN3A= 0x0000;
+	DCLKHS	 = 0x0000;
+	DCLKHSA	 = 0x0001;
+	/*several registers equal to default 0x0000*/
+	DACTST	 = 0x0000;
+	/*several registers equal to default 0x0000*/
+	//DRGBX0	 = 0x0400;
+	//DRGBX1	 = 0x057C;
+	//DRGBX2	 = 0x0159;
+	//DRGBX3	 = 0x02CB;
+	//DRGBX4	 = 0x06EE;
+	VSTARTA	 = 0x0000;
+	OSDCLK0	 = 0x0001;
+	OSDCLK1	 = 0x0002;
+	CLKCTL = 0x11; // enable venc & digital LCD clock
+	/*several registers equal to default 0x0000*/
+
+
+}
+
+PLLC_Debug()
+{
+	*(unsigned int*)0x01c42504 = 0x11; 			// ADPLLC output mux
+	*(unsigned int*)0x01c40000 = 0x01000014;	// OUTCLK1 pin enable
+	*(unsigned int*)0x01c400a0 = 0x00000003;	// OUTCLK1 mux enable from PLL
+
+	*(unsigned int*)0x01c40004 = 0x00000080;	// VCLK output enable
+	GEL_TextOut("PLLC_Debug \n");  	
+}
+
+hotmenu DAC_powerdown()
+{
+	SYS_VDAC_CFG     = 0x00000000;  //Power off and reset
+	SYS_VPSSCLK_CTRL = 0x00000200; 
+
+	VPSS_CLK_CTRL    = 0x0; 
+}
+
+hotmenu Enable_Timers()
+{
+	psc_enable(LPSC_TIMER_0);
+	psc_enable(LPSC_TIMER_1);
+	psc_enable(LPSC_TIMER_2);
+}

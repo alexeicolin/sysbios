@@ -1,0 +1,241 @@
+<html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>TI Cortex-A8 with hard FP Size Benchmarks</title>
+    <style type="text/css" media="screen">table { border-collapse: collapse; font-family: "Ariel", sans-serif } 
+                   td    { background: white; border: ridge black } 
+                    tr.hdr { font-weight: bolder }</style>
+  </head>
+  <body>
+    <h1>TI Cortex-A8 with hard FP Size Benchmarks</h1>
+    <h2>ti.platforms.evmAM3359 (compiler version: 5.0.1)</h2>
+    <h3>(all sizes are in 8-bit bytes)</h3>
+  </body>
+  <body xmlns="">
+    <div>
+      <h3>Static Module Applications</h3>
+      <table>
+        <tr class="hdr">
+          <td style="width:250px; border-bottom-style:none"/>
+          <td style="background-color:rgb(150,150,255); border-left-style:none; border-right-style:none"/>
+          <td style="background-color:rgb(150,150,255); border-left-style:none; border-right-style:none"/>
+          <td style="background-color:rgb(150,150,255); border-left-style:none; border-right-style:none">ROM</td>
+          <td style="background-color:rgb(150,150,255); border-left-style:none"/>
+          <td style="background-color:rgb(150,255,150); border-left-style:none; border-right-style:none"/>
+          <td style="background-color:rgb(150,255,150); border-left-style:none; border-right-style:none"/>
+          <td style="background-color:rgb(150,255,150); border-left-style:none; border-right-style:none">RAM</td>
+          <td style="background-color:rgb(150,255,150); border-left-style:none; border-right-style:none"/>
+          <td style="background-color:rgb(150,255,150); border-left-style:none"/>
+        </tr>
+        <tr class="hdr">
+          <td style="border-top-style:none"/>
+          <td>Code</td>
+          <td>Initialized Data</td>
+          <td>C-initialization</td>
+          <td>Total ROM</td>
+          <td>ISR/C Stack</td>
+          <td>Task Stacks</td>
+          <td>Heaps</td>
+          <td>BSS</td>
+          <td>Total RAM</td>
+        </tr>
+        <tr>
+          <td>Kernel Only</td>
+          <td>9472</td>
+          <td>373</td>
+          <td>680</td>
+          <td>10525</td>
+          <td>1024</td>
+          <td>0</td>
+          <td>0</td>
+          <td>18412</td>
+          <td>19436</td>
+        </tr>
+        <tr>
+          <td>Hwi application</td>
+          <td>9620</td>
+          <td>373</td>
+          <td>728</td>
+          <td>10721</td>
+          <td>1024</td>
+          <td>0</td>
+          <td>0</td>
+          <td>18448</td>
+          <td>19472</td>
+        </tr>
+        <tr>
+          <td>Clock application</td>
+          <td>14748</td>
+          <td>441</td>
+          <td>1000</td>
+          <td>16189</td>
+          <td>1024</td>
+          <td>0</td>
+          <td>0</td>
+          <td>18920</td>
+          <td>19944</td>
+        </tr>
+        <tr>
+          <td>Clock Object application</td>
+          <td>14748</td>
+          <td>441</td>
+          <td>1024</td>
+          <td>16213</td>
+          <td>1024</td>
+          <td>0</td>
+          <td>0</td>
+          <td>18952</td>
+          <td>19976</td>
+        </tr>
+        <tr>
+          <td>Swi application</td>
+          <td>10480</td>
+          <td>393</td>
+          <td>760</td>
+          <td>11633</td>
+          <td>1024</td>
+          <td>0</td>
+          <td>0</td>
+          <td>18540</td>
+          <td>19564</td>
+        </tr>
+        <tr>
+          <td>Swi Object application</td>
+          <td>10480</td>
+          <td>397</td>
+          <td>792</td>
+          <td>11669</td>
+          <td>1024</td>
+          <td>0</td>
+          <td>0</td>
+          <td>18596</td>
+          <td>19620</td>
+        </tr>
+        <tr>
+          <td>Task application</td>
+          <td>16812</td>
+          <td>481</td>
+          <td>1184</td>
+          <td>18477</td>
+          <td>1024</td>
+          <td>1024</td>
+          <td>0</td>
+          <td>19192</td>
+          <td>21240</td>
+        </tr>
+        <tr>
+          <td>Task Object application</td>
+          <td>16812</td>
+          <td>485</td>
+          <td>1232</td>
+          <td>18529</td>
+          <td>1024</td>
+          <td>1536</td>
+          <td>0</td>
+          <td>19276</td>
+          <td>21836</td>
+        </tr>
+        <tr>
+          <td>Semaphore application</td>
+          <td>17796</td>
+          <td>493</td>
+          <td>1248</td>
+          <td>19537</td>
+          <td>1024</td>
+          <td>1536</td>
+          <td>0</td>
+          <td>19296</td>
+          <td>21856</td>
+        </tr>
+        <tr>
+          <td>Semaphore Object application</td>
+          <td>17796</td>
+          <td>497</td>
+          <td>1264</td>
+          <td>19557</td>
+          <td>1024</td>
+          <td>1536</td>
+          <td>0</td>
+          <td>19316</td>
+          <td>21876</td>
+        </tr>
+        <tr>
+          <td>Default Configuration</td>
+          <td>31272</td>
+          <td>7643</td>
+          <td>1496</td>
+          <td>40411</td>
+          <td>4096</td>
+          <td>2048</td>
+          <td>4096</td>
+          <td>20644</td>
+          <td>30884</td>
+        </tr>
+      </table>
+    </div>
+    <div>
+      <h3>Dynamic Applications</h3>
+      <table>
+        <tr class="hdr">
+          <td style="width:250px; border-bottom-style:none"/>
+          <td style="background-color:rgb(150,150,255); border-left-style:none; border-right-style:none"/>
+          <td style="background-color:rgb(150,150,255); border-left-style:none; border-right-style:none"/>
+          <td style="background-color:rgb(150,150,255); border-left-style:none; border-right-style:none">ROM</td>
+          <td style="background-color:rgb(150,150,255); border-left-style:none"/>
+          <td style="background-color:rgb(150,255,150); border-left-style:none; border-right-style:none"/>
+          <td style="background-color:rgb(150,255,150); border-left-style:none; border-right-style:none"/>
+          <td style="background-color:rgb(150,255,150); border-left-style:none; border-right-style:none">RAM</td>
+          <td style="background-color:rgb(150,255,150); border-left-style:none; border-right-style:none"/>
+          <td style="background-color:rgb(150,255,150); border-left-style:none"/>
+        </tr>
+        <tr class="hdr">
+          <td style="border-top-style:none"/>
+          <td>Code</td>
+          <td>Initialized Data</td>
+          <td>C-initialization</td>
+          <td>Total ROM</td>
+          <td>ISR/C Stack</td>
+          <td>Task Stacks</td>
+          <td>Heaps</td>
+          <td>BSS</td>
+          <td>Total RAM</td>
+        </tr>
+        <tr>
+          <td>Dynamic Memory application</td>
+          <td>18408</td>
+          <td>549</td>
+          <td>1304</td>
+          <td>20261</td>
+          <td>1024</td>
+          <td>1536</td>
+          <td>4096</td>
+          <td>19320</td>
+          <td>25976</td>
+        </tr>
+        <tr>
+          <td>Dynamic Task application</td>
+          <td>20168</td>
+          <td>673</td>
+          <td>1312</td>
+          <td>22153</td>
+          <td>1024</td>
+          <td>1536</td>
+          <td>4096</td>
+          <td>19328</td>
+          <td>25984</td>
+        </tr>
+        <tr>
+          <td>Dynamic Semaphore application</td>
+          <td>21060</td>
+          <td>797</td>
+          <td>1344</td>
+          <td>23201</td>
+          <td>1024</td>
+          <td>1536</td>
+          <td>4096</td>
+          <td>19336</td>
+          <td>25992</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

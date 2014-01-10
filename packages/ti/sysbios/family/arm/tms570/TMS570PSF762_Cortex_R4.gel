@@ -1,0 +1,336 @@
+/*                                                                               */
+/* (C) Texas Instruments 2003-2007, All rights reserved.                         */
+/*                                                                               */
+/*                                                                               */
+/* File: TMS570PSF762_Cortex_R4.gel                                              */
+/* Versions:   1.0   **                                                          */
+/* Author:  Christoph Mendt c-mendt@ti.com                                       */
+/*   Modified to include code from HalCoGen for PLL Init...                      */
+/*                                                                               */
+/* Note: This GEL file is provided as an example and might be used for           */
+/* software development for the TMS570PSF762 microcontroller. Before             */
+/* usage it is recommended to check if the file provides the                     */
+/* functionality expected.                                                       */
+/*                                                                               */
+/*                                                                               */
+/*-------------------------------------------------------------------------------*/
+/* Definitions                                                                   */
+#define FLASH  0
+#define RAM       1
+
+#define R4        0
+#define M3        1
+
+/*----------------------------------------------------------------------------*/
+/* Function - StartUp()                                                       */
+/*                                                                            */
+StartUp(){
+   
+} /* StartUp() */
+
+/*----------------------------------------------------------------------------*/
+/* Function - OnTargetConnect()                                               */
+/*                                                                            */
+OnTargetConnect(){
+
+   /* Halt the CPU */
+   GEL_Halt(); 
+
+   /* Reset the CPU */
+   GEL_Reset();   
+
+   /* Prepare Slave for Connection */
+   CortexM3_Reset();
+
+   setup_mcu();
+   
+} /* OnTargetConnect() */
+
+/*----------------------------------------------------------------------------*/
+/* Function - OnTargetDisconnect()                                            */
+/*                                                                            */
+OnTargetDisconnect(){
+
+} /* OnTargetDisconnect() */
+
+/*----------------------------------------------------------------------------*/
+/* Function - OnReset()                                                       */
+/*                                                                            */
+OnReset(){
+
+} /* OnReset() */
+
+/*----------------------------------------------------------------------------*/
+/* Function - CortexM3_Reset()                                                */
+/*                                                                            */
+CortexM3_Reset(){
+
+   int codeValid, slaveRstSt;
+
+   slaveRstSt  = *(int *) 0xFFF7c400;
+   codeValid   = *(int *) 0xFD000000;
+
+   /* Halt the Slave CPU */
+   *(int *) 0xFFF7c400 = 0x00000000;
+   
+   if(codeValid == -1){
+
+      /* Switch Memory to RAM */
+      *(int *) 0xFFF7c40C = 0x00000005;
+      *(int *) 0xFFF7c410 = 0x0000007F;
+      
+      /* Write valid code to the Slave CPU Memory */
+      *(int *) 0xFD000000 = 0x00000600;
+      *(int *) 0xFD000004 = 0x00000041;
+      *(int *) 0xFD000008 = 0x00000051;
+      *(int *) 0xFD00000C = 0x00000053;
+      *(int *) 0xFD000010 = 0x00000055;
+      *(int *) 0xFD000014 = 0x00000057;
+      *(int *) 0xFD000018 = 0x00000059;
+      *(int *) 0xFD00001C = 0x0000005B;
+      *(int *) 0xFD000020 = 0x0000005B;
+      *(int *) 0xFD000024 = 0x0000005B;
+      *(int *) 0xFD000028 = 0x0000005B;
+      *(int *) 0xFD00002C = 0x0000005D;
+      *(int *) 0xFD000030 = 0x0000005F;
+      *(int *) 0xFD000034 = 0x0000005B;
+      *(int *) 0xFD000038 = 0x00000061;
+      *(int *) 0xFD00003C = 0x00000063;
+      *(int *) 0xFD000040 = 0xBF00BF00;
+      *(int *) 0xFD000044 = 0xBF00BF00;
+      *(int *) 0xFD000048 = 0xBF00BF00;
+      *(int *) 0xFD00004C = 0xBF00E7F7;
+      *(int *) 0xFD000050 = 0xE7FEE7FE;
+      *(int *) 0xFD000054 = 0xE7FEE7FE;
+      *(int *) 0xFD000058 = 0xE7FEE7FE;
+      *(int *) 0xFD00005C = 0xE7FEE7FE;
+      *(int *) 0xFD000060 = 0xE7FEE7FE;
+
+   }  
+      
+   /* Release the Slave CPU from Reset*/
+   *(int *) 0xFFF7c400 = 0x0000000A;
+   
+} /* CortexM3_Reset() */
+
+/*----------------------------------------------------------------------------*/
+/* Function - memmap(memSel)                                                  */
+/*                                                                            */
+memmap(memSel){
+   
+   GEL_MapOn();
+       
+   GEL_MapReset();   
+   
+   /* Flash / RAM Definition */
+   if(memSel == FLASH){
+
+      GEL_MapAdd(0x00000000, 0, 0x00080000, 1, 0); /* Internal Flash (512kB)     */ 
+      GEL_MapAdd(0x08000000, 0, 0x00028000, 1, 1); /* Internal RAM (40kB)        */
+
+   }  
+      
+   if(memSel == RAM){
+
+      GEL_MapAdd(0x00000000, 0, 0x00028000, 1, 1);  /* Internal RAM (40kB)    */ 
+      GEL_MapAdd(0x08000000, 0, 0x00080000, 1, 0);  /* Internal Flash (512kB) */
+
+   }
+   
+   GEL_MapAdd(0xFD000000, 0, 0x00800000, 1, 1);    /* HPI Frame (M3 Subsystem) */ 
+   GEL_MapAdd(0xFE000000, 0, 0x01000000, 1, 1);    /* CRC/PSA Frame            */ 
+      
+   /* System Peripheral Register */
+   GEL_MapAdd(0xFFA00000, 0, 0x00004000, 1, 1);    /* Coresight               */ 
+   GEL_MapAdd(0xFFF80000, 0, 0x00001000, 1, 1);    /* DMA RAM                 */                                  
+   GEL_MapAdd(0xFFF82000, 0, 0x00001000, 1, 1);    /* VIM1 RAM                */                                    
+   GEL_MapAdd(0xFFF87000, 0, 0x00001000, 1, 1);    /* R4 Flash                */
+   GEL_MapAdd(0xFFF88000, 0, 0x00001000, 1, 1);    /* M3 Flash                */
+   GEL_MapAdd(0xFFFFE000, 0, 0x00000100, 1, 1);    /* PCR                     */
+   GEL_MapAdd(0xFFFFE400, 0, 0x00000200, 1, 1);    /* PBIST Controller        */
+   GEL_MapAdd(0xFFFFE600, 0, 0x00000100, 1, 1);    /* STC1 (R4)               */                                   
+   GEL_MapAdd(0xFFFFE700, 0, 0x00000100, 1, 1);    /* STC2 (M3)               */                                   
+   GEL_MapAdd(0xFFFFF000, 0, 0x00000400, 1, 1);    /* DMA                     */
+   GEL_MapAdd(0xFFFFF500, 0, 0x00000100, 1, 1);    /* ESM                     */                       
+   GEL_MapAdd(0xFFFFF900, 0, 0x00000100, 1, 1);    /* R4 RAM0 Odd             */
+   GEL_MapAdd(0xFFFFF800, 0, 0x00000100, 1, 1);    /* R4 RAM1 Even            */
+   GEL_MapAdd(0xFFFFE200, 0, 0x00000100, 1, 1);    /* M3 RAM                  */
+   GEL_MapAdd(0xFFFFFC00, 0, 0x00000100, 1, 1);    /* RTI                     */
+   GEL_MapAdd(0xFFFFFE00, 0, 0x00000100, 1, 1);    /* VIM1                    */
+   GEL_MapAdd(0xFFFFFF00, 0, 0x00000100, 1, 1);    /* R4 System               */                   
+
+   /* Peripheral Register Definition */                                                                                
+   GEL_MapAdd(0xFFF7F800, 0, 0x00000200, 1, 1);    /* SPI3        - PS[1]     */                 
+   GEL_MapAdd(0xFFF7F600, 0, 0x00000200, 1, 1);    /* SPI2        - PS[2]     */                                                                   
+   GEL_MapAdd(0xFFF7F400, 0, 0x00000200, 1, 1);    /* SPI1        - PS[2]     */                          
+   GEL_MapAdd(0xFFF7E400, 0, 0x00000100, 1, 1);    /* SCI1        - PS[6]     */               
+   GEL_MapAdd(0xFFF7DE00, 0, 0x00000200, 1, 1);    /* DCAN2       - PS[8]     */                                                                   
+   GEL_MapAdd(0xFFF7DC00, 0, 0x00000200, 1, 1);    /* DCAN1       - PS[8]     */                       
+   GEL_MapAdd(0xFFF7C800, 0, 0x00000100, 1, 1);    /* SSYS        - PS[13]    */
+   GEL_MapAdd(0xFFF7C400, 0, 0x00000100, 1, 1);    /* DCC         - PS[14]    */
+   GEL_MapAdd(0xFFF7C000, 0, 0x00000200, 1, 1);    /* ADC         - PS[15]    */               
+   GEL_MapAdd(0xFFF7B800, 0, 0x00000100, 1, 1);    /* NHET        - PS[17]    */              
+   GEL_MapAdd(0xFFF7AC00, 0, 0x00000100, 1, 1);    /* IMM         - PS[20]    */               
+   GEL_MapAdd(0xFFF7A400, 0, 0x00000100, 1, 1);    /* HET         - PS[22]    */                         
+   
+   /* Peripheral Memory */
+   GEL_MapAdd(0xFF1C0000, 0, 0x00020000, 1, 1);    /* DCAN2 RAM   - PCS[14]   */
+   GEL_MapAdd(0xFF1E0000, 0, 0x00020000, 1, 1);    /* DCAN1 RAM   - PCS[15]   */
+   GEL_MapAdd(0xFF3E0000, 0, 0x00020000, 1, 1);    /* ADC RAM     - PCS[31]   */
+   GEL_MapAdd(0xFF460000, 0, 0x00020000, 1, 1);    /* NHET RAM    - PCS[35]   */
+   GEL_MapAdd(0xFF4E0000, 0, 0x00020000, 1, 1);    /* HET RAM     - PCS[39]   */
+
+} /* memmap(memSel) */
+
+/*----------------------------------------------------------------------------*/
+/* Function - setup_mcu()                                                     */
+/*                                                                            */
+
+setup_mcu() {
+
+    /* Setup Flash Wrapper */
+	 *(unsigned short int *)(0xFFF87000 + 0x02) = 0x0401;  /* FRDCNTL    */
+	 *(unsigned short int *)(0xFFF87000 + 0x42) = 0x0003;  /* FBFALLBACK */
+    
+
+    /* Power-up Peripharals */
+	 *(unsigned int *)(0xFFFFE000 + 0xA0) = 0xFFFFFFFF;  /* PSPWRDWNCLR0 */
+	 *(unsigned int *)(0xFFFFE000 + 0xA4) = 0xFFFFFFFF;  /* PSPWRDWNCLR1 */
+	 *(unsigned int *)(0xFFFFE000 + 0xA8) = 0xFFFFFFFF;  /* PSPWRDWNCLR2 */
+	 *(unsigned int *)(0xFFFFE000 + 0xAC) = 0xFFFFFFFF;  /* PSPWRDWNCLR3 */
+
+    /* Enable Peripherals */
+	 *(unsigned char *)(0xFFFFFF00 + 0xD2) = 0xFFFFFFFF;  /* PENA */
+
+    /* Setup Pll */
+	 *(unsigned int *)(0xFFFFFF00 + 0x70) = 0x01079500;  /* PLLCTL1 */
+	 *(unsigned int *)(0xFFFFFF00 + 0x74) = 0x2A44100B;  /* PLLCTL2 */
+	 *(unsigned int *)(0xFFFFFF00 + 0x44) = 0x00000002;  /* CSDISCLR */
+
+    /* Distribute GHV, GHV Wakeup and GHV Low Power Mode Source */
+	 *(unsigned int *)(0xFFFFFF00 + 0x48) = 0x01010001;  /* GHVSRC */
+	 *(unsigned char *)(0xFFFFFF00 + 0xD1) = 0x00000001;  /* VCLKR */
+	 *(unsigned char *)(0xFFFFFF00 + 0xD0) = 0x00000001;  /* VCLK2R */
+
+    /* Distribute and Setup Rti and Rti2 clock */
+	 *(unsigned int *)(0xFFFFFF00 + 0x50) = 0x00090009;  /* RCLKSRC */
+
+    /* Distribute Vclk and Vclka */
+	 *(unsigned int *)(0xFFFFFF00 + 0x4C) = 0x00000909;  /* VCLKASRC */
+
+}
+
+
+/*----------------------------------------------------------------------------*/
+/* Function - swap_mem(memSel, cpuType)                                       */
+/*                                                                            */
+swap_mem(memSel, cpuType){
+
+   if(cpuType == R4){
+   
+      if(memSel == RAM){
+         
+         *(int *) 0xffffffc4 = 0x05050505;
+         *(int *) 0xffffffcc = 0x00000001;
+         *(int *) 0xffffffcc = 0x00000000;
+      
+      }
+      if(memSel == FLASH){
+         
+         *(int *) 0xffffffc4 = 0x0A0A0A0A;
+         *(int *) 0xffffffcc = 0x00000001;
+         *(int *) 0xffffffcc = 0x00000000;
+      }
+
+   }
+   
+   if(cpuType == M3){
+   
+      if(memSel == RAM){
+         
+         *(int *) 0xFFF7c40C = 0x00000005;
+         *(int *) 0xFFF7c410 = 0x0000007F;
+
+      }
+      if(memSel == FLASH){
+         
+         *(int *) 0xFFF7c40C = 0x0000000A;
+         *(int *) 0xFFF7c410 = 0x00000000;
+      
+      }
+   
+   }
+ 
+} /* swap_mem(memSel, cpuType) */
+
+/*----------------------------------------------------------------------------*/
+/* MenuItem - "Cortex R4 Memory Setup"                                        */
+/*                                                                            */
+menuitem "Cortex R4 Memory Setup"
+hotmenu Enable_MemMap_FLASH_0_R4()
+{
+   memmap(FLASH);
+}
+
+hotmenu Enable_MemMap_RAM_0_R4()
+{
+   memmap(RAM);
+}
+
+hotmenu Switch_Target_Flash_to_0_R4()         
+{                             
+   swap_mem(FLASH, R4);
+   memmap(FLASH);
+}
+    
+hotmenu Switch_Target_RAM_to_0_R4()        
+{                             
+   swap_mem(RAM, R4);
+   memmap(RAM);
+}
+
+hotmenu SetupMCU()
+{
+	setup_mcu();
+}
+
+/*----------------------------------------------------------------------------*/
+/* MenuItem - "Cortex M3 Memory Setup"                                        */
+/*                                                                            */
+menuitem "Cortex M3 Memory Setup"
+hotmenu Switch_Target_FLASH_to_0_M3()      
+{                          
+   swap_mem(FLASH, M3);
+}
+    
+hotmenu Switch_Target_RAM_to_0_M3()        
+{                          
+   swap_mem(RAM, M3);
+}
+
+/*----------------------------------------------------------------------------*/
+/* MenuItem - "Cortex M3 Setup"                                               */
+/*                                                                            */
+menuitem "Cortex M3 Setup"
+
+hotmenu SlaveRestart(){
+
+   CortexM3_Reset();
+     
+}
+
+hotmenu SlaveReset(){
+
+   /* Halt the Slave CPU */
+   *(int *) 0xFFF7c400 = 0x00000000;
+
+}
+
+hotmenu SlaveRelease(){
+
+   /* Start the Slave CPU */
+   *(int *) 0xFFF7c400 = 0x0000000A;
+
+}
+
+

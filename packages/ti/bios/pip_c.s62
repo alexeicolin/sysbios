@@ -1,0 +1,150 @@
+;
+;  ======== pip_c.s62 ========
+;  C-callable interface to PIP
+;
+;
+
+        .include "ti/bios/include/pip.h62"
+
+    .if $isdefed("__TI_ELFABI__")
+    .if __TI_ELFABI__
+        .asg PIP_alloc,         _PIP_alloc
+        .asg PIP_get,           _PIP_get
+        .asg PIP_put,           _PIP_put
+        .asg PIP_free,          _PIP_free
+    .endif
+    .endif
+
+;
+;# ======== _PIP_alloc ========
+;
+;  Void     PIP_alloc(PIP_Obj *pipe);
+;
+        .global _PIP_alloc
+_PIP_alloc:
+        .asmfunc
+        stw b3,*b15--[2]                ; save b3
+
+        mvkl _PIP_take,b3
+        mvkh _PIP_take,b3
+        b  b3                   ; start branch to frame take function
+
+                                ; form offset of writerNumFrames in PIP_Obj
+        mvk (PIP_O_TLBASE + PIP_O_NUMFRAMES),a1 
+
+        addu a4,a1,a5:a4        ; form address of writerNumFrames
+
+        mvkl pipa?,b3           ; set temp return pointer to here
+        mvkh pipa?,b3
+
+        nop
+pipa?:  
+
+        ldw *++b15[2],b3                ; restore b3
+        nop 4
+
+        b b3
+        nop 5   
+        .endasmfunc
+
+;
+;# ======== _PIP_put ========
+;
+;  Void     PIP_put(PIP_Obj *pipe);
+;
+        .global _PIP_put
+_PIP_put:
+        .asmfunc
+        stw b3,*b15--[2]                ; save b3
+
+        mvkl _PIP_give, b3
+        mvkh _PIP_give, b3
+                                ; form offset of writerSize in PIP_Obj
+        mvk (PIP_O_TLBASE + PIP_O_FSIZE),a1 
+        addu a4,a1,a1:a0        ; form address of writerSize in a0 
+        ldw *a0,b4              ; load writerSize into b4
+
+        b  b3                   ; start branch to frame give function
+
+                                ; form offset of writerCurdesc in PIP_Obj
+        mvk (PIP_O_TLBASE + PIP_O_CURDESC),a1 
+        addu a4,a1,a5:a4        ; form address of writerCurdesc in a4
+        mvkl pipp?,b3           ; set temp return pointer to here
+        mvkh pipp?,b3
+        nop
+pipp?:  
+ 
+        ldw *++b15[2],b3                ; restore b3
+        nop 4
+
+        b b3                    ; return to caller
+        nop 5   
+        .endasmfunc
+
+;
+;# ======== _PIP_get ========
+;
+;  Void     PIP_get(PIP_Obj *pipe);
+;
+        .global _PIP_get
+_PIP_get:
+        .asmfunc
+        stw b3,*b15--[2]                ; save b3
+
+        mvkl _PIP_take, b3
+        mvkh _PIP_take, b3
+
+        b  b3                   ; start branch to frame take function
+
+                                ; form offset of readerNumFrames in PIP_Obj
+        mvk (PIP_O_HDBASE + PIP_O_NUMFRAMES),a1 
+
+        addu a4,a1,a5:a4        ; form address of readerNumFrames
+
+        mvkl pipg?,b3           ; set temp return pointer to here
+        mvkh pipg?,b3
+        nop
+
+pipg?:
+ 
+        ldw *++b15[2],b3                ; restore b3
+        nop 4
+
+        b b3                    ; return to caller
+        nop 5   
+        .endasmfunc
+
+;
+;# ======== _PIP_free ========
+;
+;  Void     PIP_free(PIP_Obj *pipe);
+;
+        .global _PIP_free
+_PIP_free:
+        .asmfunc
+        stw b3,*b15--[2]                ; save b3
+
+        mvkl _PIP_give,b3
+        mvkh _PIP_give,b3
+
+        ldw *a4,b4              ; fetch framesize from 'threshold' in PIP_Obj
+
+        b  b3                   ; start branch to frame give function
+
+                                ; form offset of readerCurdesc in PIP_Obj
+        mvk (PIP_O_HDBASE + PIP_O_CURDESC),a1 
+        addu a4,a1,a5:a4        ; form address of readerCurdesc in a4
+
+        mvkl pipf?,b3           ; set temp return pointer to here
+        mvkh pipf?,b3
+        nop
+
+pipf?:
+ 
+        ldw *++b15[2],b3                ; restore b3
+        nop 4
+
+        b b3                    ; return to caller
+        nop 5   
+        .endasmfunc
+

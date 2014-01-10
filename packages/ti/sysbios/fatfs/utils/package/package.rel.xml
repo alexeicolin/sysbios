@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  This file conforms to the DTD xdc/bld/release.dtd -->
+<release name="ti_sysbios_fatfs_utils" label="default" date="1374702844514" buildCount="1" producerId="undefined">
+<package name="ti.sysbios.fatfs.utils"
+    version="1, 0, 0"/>
+<imports>
+</imports>
+<references>
+    <package name="xdc"
+        version="1, 1, 1, 1362511735121"
+        providerId="xdccore">
+        <file name="IPackage.xdc"/>
+        <file name="IPackage.xs"/>
+        <file name="om2.xs"/>
+        <file name="package.xs"/>
+        <file name="std.h"/>
+        <file name="template.xs"/>
+        <file name="xdc.tci"/>
+        <file name="xmlgen.xs"/>
+        <file name="xmlgen2.xs"/>
+    </package>
+    <package name="xdc.services.global"
+        version="1, 0, 0, 1362511752734"
+        providerId="xdccore">
+        <file name="Clock.xs"/>
+        <file name="Trace.xs"/>
+        <file name="java/package.jar"/>
+    </package>
+    <package name="xdc.bld"
+        version="1, 0, 2, 1362511736987"
+        providerId="xdccore">
+        <file name="BuildEnvironment.xs"/>
+        <file name="Configuration.xs"/>
+        <file name="Executable.xs"/>
+        <file name="ITarget.xs"/>
+        <file name="ITarget2.xs"/>
+        <file name="ITargetFilter.xs"/>
+        <file name="Library.xs"/>
+        <file name="Manifest.xs"/>
+        <file name="PackageContents.xs"/>
+        <file name="Repository.xs"/>
+        <file name="Script.xs"/>
+        <file name="Utils.xs"/>
+        <file name="_gen.xs"/>
+        <file name="bld.js"/>
+        <file name="package.xs"/>
+    </package>
+    <package name="gnu.targets"
+        version="1, 0, 1, 1364511882130"
+        providerId="xdccore">
+        <file name="ITarget.xs"/>
+        <file name="Linux86.h"/>
+        <file name="Linux86.xs"/>
+        <file name="MVArm9.xs"/>
+        <file name="Mingw.xs"/>
+        <file name="UCArm9.xs"/>
+        <file name="linkUtils.xs"/>
+        <file name="linkcmd.xdt"/>
+        <file name="package.xs"/>
+        <file name="std.h"/>
+    </package>
+    <package name="xdc.shelf"
+        version="1, 0, 0, 1362511763662"
+        providerId="xdccore">
+        <file name="java/antlr.jar"/>
+        <file name="java/ecj.jar"/>
+        <file name="java/js.jar"/>
+        <file name="java/tar.jar"/>
+    </package>
+    <package name="xdc.services.intern.cmd"
+        version="1, 0, 0, 0, 1362511755365"
+        providerId="xdccore">
+        <file name="java/package.jar"/>
+    </package>
+    <package name="xdc.services.spec"
+        version="1, 0, 0, 0, 1362511757889"
+        providerId="xdccore">
+        <file name="java/package.jar"/>
+    </package>
+    <package name="xdc.services.intern.xsr"
+        version="1, 0, 0, 1362511756230"
+        providerId="xdccore">
+        <file name="java/package.jar"/>
+    </package>
+    <package name="xdc.services.intern.gen"
+        version="1, 0, 0, 0, 1362511755787"
+        providerId="xdccore">
+        <file name="java/package.jar"/>
+    </package>
+    <targetRoot base="/db/toolsrc/library/vendors2005/opensource/gcc/4.3.4-2.9glibc-2.6.9headers/Linux/"
+        trgs="gnu.targets.Linux86">
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/_G_config.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/alloca.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/assert.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/bits/byteswap.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/bits/endian.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/bits/pthreadtypes.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/bits/select.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/bits/sigset.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/bits/stat.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/bits/stdio.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/bits/stdio_lim.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/bits/string.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/bits/string2.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/bits/sys_errlist.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/bits/time.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/bits/types.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/bits/typesizes.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/bits/wordsize.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/endian.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/features.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/gnu/stubs-32.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/gnu/stubs.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/libio.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/stdio.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/stdlib.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/string.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/sys/cdefs.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/sys/select.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/sys/stat.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/sys/sysmacros.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/sys/types.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/time.h"/>
+        <file name="i686-unknown-linux-gnu/sys-root/usr/include/wchar.h"/>
+        <file name="lib/gcc/i686-unknown-linux-gnu/4.3.4/include/stdarg.h"/>
+        <file name="lib/gcc/i686-unknown-linux-gnu/4.3.4/include/stddef.h"/>
+    </targetRoot>
+    <package name="host.platforms.PC"
+        version="1, 0, 0, 1362511730698"
+        providerId="xdccore">
+        <file name="Intel80586.xs"/>
+        <file name="Platform.xs"/>
+        <file name="package.xs"/>
+    </package>
+    <package name="xdc.cfg"
+        version="1, 0, 2, 0, 1362511739943"
+        providerId="xdccore">
+        <file name="Main.xs"/>
+        <file name="Program.xdt"/>
+        <file name="Program.xs"/>
+        <file name="SourceDir.xs"/>
+        <file name="package.xs"/>
+    </package>
+    <package name="xdc.platform"
+        version="1, 0, 1, 0, 1362511742475"
+        providerId="xdccore">
+        <file name="ExeContext.xs"/>
+        <file name="IPeripheral.xs"/>
+        <file name="IPlatform.xs"/>
+        <file name="Utils.xs"/>
+        <file name="package.xs"/>
+    </package>
+    <package name="ti.targets"
+        version="1, 0, 3, 1364511904523"
+        providerId="xdccore">
+        <file name="select.h"/>
+    </package>
+    <package name="ti.sysbios.fatfs"
+        version="1, 0, 0, 1374701278000"
+        providerId="/db/vtree/library/trees/avala/avala-s53/src">
+        <file name="integer.h"/>
+    </package>
+    <xdcRoot base="/db/rtree/library/trees/xdcprod/xdcprod-q74/product/Linux/xdctools_3_24_08_74_eng/">
+        <file name="/packages/xdc/package.xdc"/>
+        <file name="include/utils.tci"/>
+        <xdcCorePkg version="16, 0, 2, 0, 1362511740932" producerId="/db/ztree/library/trees/xdc/xdc-y51x/src/packages" buildCount="392" releaseName="xdc_corevers" label="default" date="1362511740932"/>
+    </xdcRoot>
+</references>
+<orphans>
+</orphans>
+</release>

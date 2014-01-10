@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<gep name="Agent" title="SYS/BIOS Agent" version="1">
+
+<page name="Module" title="Module Settings">
+<html><body>
+<table>
+  <tr>
+    <td>
+      <form>
+        <p>The Agent module for supporting Real-Time Analysis (RTA) has been
+        deprecated. Please use System Analyzer and UIA LoggingSetup for RTA
+        support.</p>
+        <p> </p>
+      </form>
+    </td>
+  </tr>
+</table></body></html>
+</page>
+<properties name="Advanced" title="All Options" enabled="true" visible="true" link="this"/>
+</gep>

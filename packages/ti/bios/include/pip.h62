@@ -1,0 +1,114 @@
+;
+;  ======== pip.h62 ========
+;  Pipe Manager.
+;
+;  Pipes allow two clients (a producer and a consumer) to transfer
+;  frames of data without copying the data.
+;
+;  The consumer does the following:
+;	PIP_get &pip 
+;	`use pip.readcnt words of data from the frame pip.readptr`
+;	PIP_free &pip
+;
+;  The producer does the following:
+;	PIP_alloc &pip
+;	`fill the frame pip.writeptr with up to pip.writecnt words`
+;	`set pip.writecnt to the number of words in frame`
+;	PIP_put &pip
+;
+;  The selectors pip.fullbufs and pip.emptybufs represent the
+;  number of full and empty frames in the pipe
+;
+;  The pipe manager allows for probing of data transfered through each
+;  pipe.  This probing is accomplished using the PIP_<read|write>probeSET and
+;  PIP_<read|write>probeCLR operations which attach a separate PIP probe to the
+;  specified pipe.
+;
+;! Revision History
+;! ================
+;! 19-Jan-2009 nitya	copied from cuda-u06
+;
+
+	.include fxn.h62
+
+	.if ($isdefed("PIP_") = 0)    ; prevent multiple includes of this file
+PIP_	.set	1
+
+STD_TARGWORDMAUS        .set 4
+
+PIP_Sock        .struct
+O_TPROBE        .word   1
+O_FADDR         .word   1
+O_FSIZE         .word   1
+O_CURDESC       .word   1
+O_PFXNOBJ       .word   1
+O_NUMFRAMES     .word   1
+O_GPROBE        .word   1
+O_PNUMFRAMES    .word   1
+O_FXNOBJ        .tag    FXN_Obj
+O_STSHDL        .word   1
+PIP_A_SOCKSIZE  .endstruct
+
+;
+; ======== PIP_Obj ========
+;
+
+PIP_Obj         .struct
+
+threshold               .word   1 ; (Uns) max size of frames in pip
+
+preaderTakeProbe        .word   1 ; (PIP_Obj *) take (get) probe
+readerAddr              .word   1 ; (Ptr) set by PIP_get()
+readerSize              .word   1 ; (Uns) ditto
+readerCurdesc           .word   1 ; (Ptr) pointer to list of pipe descs
+pnotifyReader           .word   1 ; (FXN_Obj *) ptr to notify reader function
+readerNumFrames         .word   1 ; (Uns) number of frames at reader end
+preaderGiveProbe        .word   1 ; (PIP_Obj *) give (free) probe
+pwriterNumFrames        .word   1 ; (Uns *) ptr to numframes on writer end
+notifyWriter            .tag    FXN_Obj ; (FXN_Obj) notify writer function
+preaderSts              .word   1 ; (STS_Obj *) statistics configured for reader
+
+pwriterTakeProbe        .word   1 ; (PIP_Obj *) take (alloc) probe
+writerAddr              .word   1 ; (Ptr) set by PIP_alloc()
+writerSize              .word   1 ; (Uns) ditto
+writerCurdesc           .word   1 ; (Ptr) pointer to list of pipe descs
+pnotifyWriter           .word   1 ; (FXN_Obj *) ptr to notify writer function
+writerNumFrames         .word   1 ; (Uns) number of frames at writer end
+pwriterGiveProbe        .word   1 ; (PIP_Obj *) give (put) probe
+preaderNumFrames        .word   1 ; (Uns *) ptr to numframes at reader end
+notifyReader            .tag    FXN_Obj ; (FXN_Obj) notify reader function
+pwriterSts              .word   1 ; (STS_Obj *) statistics configured for writer
+
+PIP_A_OBJSIZE   .endstruct
+
+;
+;  ======== PIP OFFSETS ========
+;
+
+PIP_O_TPROBE    .set    PIP_Sock.O_TPROBE
+PIP_O_FADDR     .set    PIP_Sock.O_FADDR
+PIP_O_FSIZE     .set    PIP_Sock.O_FSIZE
+PIP_O_CURDESC   .set    PIP_Sock.O_CURDESC
+PIP_O_PFXNOBJ   .set    PIP_Sock.O_PFXNOBJ
+PIP_O_NUMFRAMES .set    PIP_Sock.O_NUMFRAMES
+PIP_O_GPROBE    .set    PIP_Sock.O_GPROBE
+PIP_O_PNUMFRAMES .set    PIP_Sock.O_PNUMFRAMES
+PIP_O_FXNOBJ    .set    PIP_Sock.O_FXNOBJ
+PIP_O_STSHDL    .set    PIP_Sock.O_STSHDL
+
+PIP_O_HDBASE    .set    STD_TARGWORDMAUS 
+PIP_O_TLBASE    .set    PIP_A_SOCKSIZE+(STD_TARGWORDMAUS) 
+
+PIP_READPTR     .set    PIP_O_HDBASE+PIP_O_FADDR
+PIP_READCNT     .set    PIP_O_HDBASE+PIP_O_FSIZE
+PIP_WRITEPTR    .set    PIP_O_TLBASE+PIP_O_FADDR
+PIP_WRITECNT    .set    PIP_O_TLBASE+PIP_O_FSIZE
+PIP_FULLBUFS    .set    PIP_O_HDBASE+PIP_O_NUMFRAMES
+PIP_EMPTYBUFS   .set    PIP_O_TLBASE+PIP_O_NUMFRAMES
+
+
+        .global _PIP_give, _PIP_take, _PIP_probe, _PIP_start
+	.global _PIP_tablen, _PIP_tabbeg
+        
+	.endif          ; if PIP_ is not defined
+

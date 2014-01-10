@@ -1,0 +1,120 @@
+/*
+ *  ======== bios_6413.tci ========
+ *  This file contains BIOS settings for 6413.
+ *
+ */
+
+/*
+ *  ======== bios.internal.setupMemory6413 ========
+ *  This function is the top-level function that will remove all MEM segments
+ *  from the cdb file.  It will take your physical memory map from calling
+ *  getMemoryMap() and create MEM instances in cdb.
+ *  It will then set sections to the default segment specified and fix up
+ *  the length and/or base of MEM segments if needed.
+ */
+bios.internal.setupMemory6413 = function (prog)
+{
+    /*
+     *  BIOS MEM segments will be created from object model memory definitions.
+     *  Place default code and data sections into specified memory segments.
+     */
+    bios.initializeMemory(prog, "IRAM", "IRAM");
+
+    var cpu = prog.cpu;
+    var MEM = prog.module("MEM");
+    var iram = MEM.instance("IRAM");
+    var cache = MEM.instance("CACHE_L2");
+    cache.len  = 0x0;
+    cache.base = 0x40000;
+
+    /* We need to set the CACHE_L2 base here, because c64xx.cdb became generic
+     * and does NOT set the base address for CACHE_L2. The size of CACHE_L2 is
+     * set in bios.internal.initializeRegisterMap(), base on l2Mode.
+     */
+    if (cpu.registers.l2Mode != null) {
+        if (cpu.registers.l2Mode == "4-way cache (0k)") {
+            iram.len   = 0x40000;
+        }
+        else if (cpu.registers.l2Mode == "4-way cache (32k)") {
+            iram.len   = 0x38000;
+        }
+        else if (cpu.registers.l2Mode == "4-way cache (64k)") {
+            iram.len   = 0x30000;
+        }
+        else if (cpu.registers.l2Mode == "4-way cache (128k)") {
+            iram.len   = 0x20000;
+        }
+        else if (cpu.registers.l2Mode == "4-way cache (256k)") {
+            iram.len   = 0x00000;
+            /* All references to IRAM need to be changed to point to some other
+             * available MEM instance.
+             */
+            var memInst = MEM.instances();
+            var seg = null;
+            for (var i=0; i < memInst.length; i++) {
+                if (memInst[i].space == "code/data" && memInst[i] != iram) {
+                    seg = memInst[i];
+                }
+            }
+            if (seg == null) {
+                throw new Error("All of IRAM is used for cache " + 
+                    "and there is no external memory in the configuration");
+            }
+            else {
+                bios.setMemCodeSections(prog, seg);
+                bios.setMemDataNoHeapSections(prog, seg);
+            }
+            iram.destroy();
+        }
+    }
+    else {
+        iram.len = 0x40000;
+    }
+}
+
+/*
+ *  ======== bios.init6413 ========
+ *  BIOS initialization for the 6413
+ */
+bios.init6413 = function (prog, baseseed)
+{
+    /*
+     *  Find configuration seed files to load
+     */
+    if (baseseed == null) {
+        baseseed = "ti/bios/config/cdb/c64xx.cdb";
+    }
+
+    var seed = utils.findSeed(baseseed);
+    if (seed != null) {
+        try {
+            prog.load(seed);
+        }
+        catch (e) {
+            throw new Error ("Can't load configuration seed '" + seed + "' : "
+                + e);
+        }
+    }
+    else {
+        throw new Error ("Can't find configuration seed: " + baseseed);
+
+    }
+
+    /* Set CHIPTYPE to cpu number */
+    prog.module("GBL").CHIPTYPE = prog.cpu.deviceName;
+
+    /* set CLKOUT to be the value of cpu.clockRate. */
+    bios.internal.setClkout(prog);
+
+    /* Set endian mode based on build options */
+    prog.module("GBL").ENDIANMODE = prog.build.target.model.endian;
+
+    /* set the L2 Cache configuration to false here */
+    prog.module("GBL").C641XCONFIGUREL2 = false;
+
+    /* set the default memory segments for 6413 using new memory names */
+    bios.internal.setupMemory6413(prog);
+
+    /* initialize some memory map registers */
+    bios.internal.initializeRegisterMap(prog);
+}

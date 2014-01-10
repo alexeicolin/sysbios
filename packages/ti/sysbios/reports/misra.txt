@@ -1,0 +1,415 @@
+==== Results for ti.sysbios ====
+File: BIOS.oe674, Defects: 0
+File: BIOS.oearp32, Defects: 0
+File: BIOS.oea8f, Defects: 0
+File: BIOS.oem3, Defects: 0
+Files: 4, Defects: 0
+
+==== Results for ti.sysbios.family.arm ====
+File: IntrinsicsSupport.oea8f, Defects: 0
+File: IntrinsicsSupport_asm.oea8f, Defects: 0
+File: TaskSupport.oea8f, Defects: 0
+File: TaskSupport_asm.oea8f, Defects: 0
+File: HwiCommon.oea8f, Defects: 0
+File: HwiCommon_asm.oea8f, Defects: 0
+Files: 6, Defects: 0
+
+==== Results for ti.sysbios.family.arm.a8 ====
+File: Cache.oea8f, Defects: 0
+File: Cache_asm.oea8f, Defects: 0
+File: Mmu.oea8f, Defects: 0
+File: Mmu_asm.oea8f, Defects: 0
+File: TimestampProvider.oea8f, Defects: 0
+File: TimestampProvider_asm.oea8f, Defects: 0
+Files: 6, Defects: 0
+
+==== Results for ti.sysbios.family.arm.a8.intcps ====
+File: Hwi.oea8f, Defects: 0
+File: Hwi_asm.oea8f, Defects: 0
+File: Hwi_asm_switch.oea8f, Defects: 0
+Files: 3, Defects: 0
+
+==== Results for ti.sysbios.family.arm.a8.omap3430 ====
+File: TimerSupport.oea8f, Defects: 0
+Files: 1, Defects: 0
+
+==== Results for ti.sysbios.family.arm.a8.sim ====
+File: TaskSupport_asm.oea8f, Defects: 0
+File: TaskSupport.oea8f, Defects: 0
+Files: 2, Defects: 0
+
+==== Results for ti.sysbios.family.arm.a8.ti81xx ====
+File: TimerSupport.oea8f, Defects: 0
+Files: 1, Defects: 0
+
+==== Results for ti.sysbios.family.arm.ducati ====
+File: Core.oem3, Defects: 0
+File: Core_asm.oem3, Defects: 0
+File: CTM_asm.oem3, Defects: 0
+File: GateDualCore.oem3, Defects: 0
+File: GateSmp.oem3, Defects: 0
+File: Timer.oem3, Defects: 0
+File: TimerSupport.oem3, Defects: 0
+File: TimestampProvider.oem3, Defects: 0
+File: Wugen.oem3, Defects: 0
+Files: 9, Defects: 0
+
+==== Results for ti.sysbios.family.arm.ducati.dm8148 ====
+File: IntMux.oem3, Defects: 0
+Files: 1, Defects: 0
+
+==== Results for ti.sysbios.family.arm.ducati.omap4430 ====
+File: Power.oem3, Defects: 0
+File: Power_saveCpu.oem3, Defects: 0
+File: Power_resumeCpu.oem3, Defects: 0
+Files: 3, Defects: 0
+
+==== Results for ti.sysbios.family.arm.ducati.smp ====
+File: Power.oem3, Defects: 0
+File: Power_saveCpu.oem3, Defects: 0
+File: Power_resumeCpu.oem3, Defects: 0
+Files: 3, Defects: 0
+
+==== Results for ti.sysbios.family.arm.exc ====
+File: Exception.oea8f, Defects: 0
+File: Exception_asm.oea8f, Defects: 0
+Files: 2, Defects: 0
+
+==== Results for ti.sysbios.family.arm.f28m35x ====
+File: TimestampProvider.oem3, Defects: 0
+Files: 1, Defects: 0
+
+==== Results for ti.sysbios.family.arm.lm3 ====
+File: Timer.oem3, Defects: 0
+File: TimestampProvider.oem3, Defects: 0
+Files: 2, Defects: 0
+
+==== Results for ti.sysbios.family.arm.m3 ====
+File: Clobber_asm.oem3, Defects: 0
+File: IntrinsicsSupport_asm.oem3, Defects: 0
+File: TaskSupport.oem3, Defects: 0
+File: TaskSupport_asm.oem3, Defects: 0
+File: Hwi_asm.oem3, Defects: 0
+File: Hwi_asm_switch.oem3, Defects: 0
+File: Hwi.oem3, Defects: 0
+File: Timer.oem3, Defects: 0
+File: TimestampProvider.oem3, Defects: 0
+Files: 9, Defects: 0
+
+==== Results for ti.sysbios.family.arp32 ====
+File: IntrinsicsSupport.oearp32, Defects: 0
+File: TaskSupport_asm.oearp32, Defects: 0
+File: TaskSupport.oearp32, Defects: 0
+File: Hwi.oearp32, Defects: 0
+File: Hwi_switch_asm.oearp32, Defects: 0
+File: Hwi_disp_always.oearp32, Defects: 0
+File: Timer.oearp32, Defects: 0
+File: TimestampProvider.oearp32, Defects: 0
+File: CTM_asm.oearp32, Defects: 0
+File: Cache.oearp32, Defects: 0
+Files: 10, Defects: 0
+
+==== Results for ti.sysbios.family.c62 ====
+File: IntrinsicsSupport.oe674, Defects: 0
+File: TaskSupport.oe674, Defects: 0
+File: TaskSupport_asm.oe674, Defects: 0
+Files: 3, Defects: 0
+
+==== Results for ti.sysbios.family.c64p ====
+File: Cache.oe674, Defects: 0
+File: Hwi_disp_always.oe674, Defects: 0
+File: Hwi_startup.oe674, Defects: 0
+File: Hwi.oe674, Defects: 0
+File: Hwi_asm.oe674, Defects: 0
+File: Hwi_asm_switch.oe674, Defects: 0
+File: Clobber_asm.oe674, Defects: 0
+File: TimestampProvider.oe674, Defects: 0
+File: Exception.oe674, Defects: 0
+File: Exception_asm.oe674, Defects: 0
+File: EventCombiner.oe674, Defects: 0
+File: MemoryProtect_asm.oe674, Defects: 0
+File: MemoryProtect.oe674, Defects: 0
+Files: 13, Defects: 0
+
+==== Results for ti.sysbios.family.c64p.omap3430 ====
+File: TimerSupport.oe674, Defects: 0
+File: Wugen.oe674, Defects: 0
+Files: 2, Defects: 0
+
+==== Results for ti.sysbios.family.c64p.primus ====
+File: TimerSupport.oe674, Defects: 0
+Files: 1, Defects: 0
+
+==== Results for ti.sysbios.family.c64p.ti81xx ====
+File: TimerSupport.oe674, Defects: 0
+Files: 1, Defects: 0
+
+==== Results for ti.sysbios.family.c674 ====
+File: Power.oe674, Defects: 0
+Files: 1, Defects: 0
+
+==== Results for ti.sysbios.family.shared.vayu ====
+File: IntXbar.oearp32, Defects: 0
+Files: 1, Defects: 0
+
+==== Results for ti.sysbios.gates ====
+File: GateHwi.oe674, Defects: 0
+File: GateAll.oe674, Defects: 0
+File: GateSwi.oe674, Defects: 0
+File: GateTask.oe674, Defects: 0
+File: GateTest.oe674, Defects: 0
+File: GateMutex.oe674, Defects: 0
+File: GateMutexPri.oe674, Defects: 0
+File: GateHwi.oearp32, Defects: 0
+File: GateAll.oearp32, Defects: 0
+File: GateSwi.oearp32, Defects: 0
+File: GateTask.oearp32, Defects: 0
+File: GateTest.oearp32, Defects: 0
+File: GateMutex.oearp32, Defects: 0
+File: GateMutexPri.oearp32, Defects: 0
+File: GateHwi.oea8f, Defects: 0
+File: GateAll.oea8f, Defects: 0
+File: GateSwi.oea8f, Defects: 0
+File: GateTask.oea8f, Defects: 0
+File: GateTest.oea8f, Defects: 0
+File: GateMutex.oea8f, Defects: 0
+File: GateMutexPri.oea8f, Defects: 0
+File: GateHwi.oem3, Defects: 0
+File: GateAll.oem3, Defects: 0
+File: GateSwi.oem3, Defects: 0
+File: GateTask.oem3, Defects: 0
+File: GateTest.oem3, Defects: 0
+File: GateMutex.oem3, Defects: 0
+File: GateMutexPri.oem3, Defects: 0
+Files: 28, Defects: 0
+
+==== Results for ti.sysbios.hal ====
+File: Hwi.oe674, Defects: 0
+File: Hwi_stack.oe674, Defects: 0
+File: Hwi_startup.oe674, Defects: 0
+File: Timer.oe674, Defects: 0
+File: TimerNull.oe674, Defects: 0
+File: Cache.oe674, Defects: 0
+File: CacheNull.oe674, Defects: 0
+File: Core.oe674, Defects: 0
+File: CoreNull.oe674, Defects: 0
+File: Hwi.oearp32, Defects: 0
+File: Hwi_stack.oearp32, Defects: 0
+File: Hwi_startup.oearp32, Defects: 0
+File: Timer.oearp32, Defects: 0
+File: TimerNull.oearp32, Defects: 0
+File: Cache.oearp32, Defects: 0
+File: CacheNull.oearp32, Defects: 0
+File: Core.oearp32, Defects: 0
+File: CoreNull.oearp32, Defects: 0
+File: Hwi.oea8f, Defects: 0
+File: Hwi_stack.oea8f, Defects: 0
+File: Hwi_startup.oea8f, Defects: 0
+File: Timer.oea8f, Defects: 0
+File: TimerNull.oea8f, Defects: 0
+File: Cache.oea8f, Defects: 0
+File: CacheNull.oea8f, Defects: 0
+File: Core.oea8f, Defects: 0
+File: CoreNull.oea8f, Defects: 0
+File: Hwi.oem3, Defects: 0
+File: Hwi_stack.oem3, Defects: 0
+File: Hwi_startup.oem3, Defects: 0
+File: Timer.oem3, Defects: 0
+File: TimerNull.oem3, Defects: 0
+File: Cache.oem3, Defects: 0
+File: CacheNull.oem3, Defects: 0
+File: Core.oem3, Defects: 0
+File: CoreNull.oem3, Defects: 0
+Files: 36, Defects: 0
+
+==== Results for ti.sysbios.hal.ammu ====
+File: AMMU.oem3, Defects: 0
+Files: 1, Defects: 0
+
+==== Results for ti.sysbios.hal.unicache ====
+File: Cache.oem3, Defects: 0
+Files: 1, Defects: 0
+
+==== Results for ti.sysbios.heaps ====
+File: HeapBuf.oe674, Defects: 0
+File: HeapMem.oe674, Defects: 0
+File: HeapMultiBuf.oe674, Defects: 0
+File: HeapNull.oe674, Defects: 0
+File: HeapTrack.oe674, Defects: 0
+File: HeapCallback.oe674, Defects: 0
+File: HeapBuf.oearp32, Defects: 0
+File: HeapMem.oearp32, Defects: 0
+File: HeapMultiBuf.oearp32, Defects: 0
+File: HeapNull.oearp32, Defects: 0
+File: HeapTrack.oearp32, Defects: 0
+File: HeapCallback.oearp32, Defects: 0
+File: HeapBuf.oea8f, Defects: 0
+File: HeapMem.oea8f, Defects: 0
+File: HeapMultiBuf.oea8f, Defects: 0
+File: HeapNull.oea8f, Defects: 0
+File: HeapCallback.oea8f, Defects: 0
+File: HeapTrack.oea8f, Defects: 0
+File: HeapBuf.oem3, Defects: 0
+File: HeapMem.oem3, Defects: 0
+File: HeapMultiBuf.oem3, Defects: 0
+File: HeapNull.oem3, Defects: 0
+File: HeapTrack.oem3, Defects: 0
+File: HeapCallback.oem3, Defects: 0
+Files: 24, Defects: 0
+
+==== Results for ti.sysbios.io ====
+File: DEV.oe674, Defects: 0
+File: GIO.oe674, Defects: 0
+File: IOM_stub.oe674, Defects: 0
+File: DEV.oearp32, Defects: 0
+File: GIO.oearp32, Defects: 0
+File: IOM_stub.oearp32, Defects: 0
+File: DEV.oea8f, Defects: 0
+File: IOM_stub.oea8f, Defects: 0
+File: GIO.oea8f, Defects: 0
+File: DEV.oem3, Defects: 0
+File: GIO.oem3, Defects: 0
+File: IOM_stub.oem3, Defects: 0
+Files: 12, Defects: 0
+
+==== Results for ti.sysbios.knl ====
+File: Idle.oe674, Defects: 0
+File: Intrinsics.oe674, Defects: 0
+File: Clock.oe674, Defects: 0
+File: Swi.oe674, Defects: 0
+File: Swi_andn.oe674, Defects: 0
+File: Task.oe674, Defects: 0
+File: Event.oe674, Defects: 0
+File: Semaphore.oe674, Defects: 0
+File: Mailbox.oe674, Defects: 0
+File: Queue.oe674, Defects: 0
+File: Clock.oearp32, Defects: 0
+File: Idle.oearp32, Defects: 0
+File: Intrinsics.oearp32, Defects: 0
+File: Swi.oearp32, Defects: 0
+File: Swi_andn.oearp32, Defects: 0
+File: Task.oearp32, Defects: 0
+File: Event.oearp32, Defects: 0
+File: Semaphore.oearp32, Defects: 0
+File: Mailbox.oearp32, Defects: 0
+File: Queue.oearp32, Defects: 0
+File: Clock.oea8f, Defects: 0
+File: Idle.oea8f, Defects: 0
+File: Intrinsics.oea8f, Defects: 0
+File: Swi.oea8f, Defects: 0
+File: Swi_andn.oea8f, Defects: 0
+File: Task.oea8f, Defects: 0
+File: Event.oea8f, Defects: 0
+File: Semaphore.oea8f, Defects: 0
+File: Mailbox.oea8f, Defects: 0
+File: Queue.oea8f, Defects: 0
+File: Idle.oem3, Defects: 0
+File: Clock.oem3, Defects: 0
+File: Intrinsics.oem3, Defects: 0
+File: Swi.oem3, Defects: 0
+File: Swi_andn.oem3, Defects: 0
+File: Event.oem3, Defects: 0
+File: Task.oem3, Defects: 0
+File: Semaphore.oem3, Defects: 0
+File: Mailbox.oem3, Defects: 0
+File: Queue.oem3, Defects: 0
+Files: 40, Defects: 0
+
+==== Results for ti.sysbios.misc ====
+File: Stats.oe674, Defects: 0
+File: Stats.oearp32, Defects: 0
+File: Stats.oea8f, Defects: 0
+File: Stats.oem3, Defects: 0
+Files: 4, Defects: 0
+
+==== Results for ti.sysbios.rta ====
+File: SupportLogger.oe674, Defects: 0
+File: SupportLogger.oearp32, Defects: 0
+File: SupportLogger.oea8f, Defects: 0
+File: SupportLogger.oem3, Defects: 0
+Files: 4, Defects: 0
+
+==== Results for ti.sysbios.smp ====
+File: Load.oem3, Defects: 0
+File: LoggerBuf.oem3, Defects: 0
+File: SysMin.oem3, Defects: 0
+File: SysStd.oem3, Defects: 4
+"SysStd.c", line 138: warning: (MISRA-C:2004 20.9/R) The input/output library <stdio.h> shall not be used in production code ("stdout")
+"SysStd.c", line 43: warning: (MISRA-C:2004 20.9/R) The input/output library <stdio.h> shall not be used in production code
+"SysStd.c", line 65: warning: (MISRA-C:2004 20.9/R) The input/output library <stdio.h> shall not be used in production code ("stdout")
+"SysStd.c", line 85: warning: (MISRA-C:2004 20.9/R) The input/output library <stdio.h> shall not be used in production code ("stdout")
+Files: 4, Defects: 4
+
+==== Results for ti.sysbios.syncs ====
+File: SyncSem.oe674, Defects: 0
+File: SyncSwi.oe674, Defects: 0
+File: SyncEvent.oe674, Defects: 0
+File: SyncSem.oearp32, Defects: 0
+File: SyncSwi.oearp32, Defects: 0
+File: SyncEvent.oearp32, Defects: 0
+File: SyncSem.oea8f, Defects: 0
+File: SyncSwi.oea8f, Defects: 0
+File: SyncEvent.oea8f, Defects: 0
+File: SyncSem.oem3, Defects: 0
+File: SyncSwi.oem3, Defects: 0
+File: SyncEvent.oem3, Defects: 0
+Files: 12, Defects: 0
+
+==== Results for ti.sysbios.timers.dmtimer ====
+File: Timer.oe674, Defects: 0
+File: Timer_asm.oe674, Defects: 0
+File: TimestampProvider.oe674, Defects: 0
+File: Timer.oea8f, Defects: 0
+File: Timer_asm.oea8f, Defects: 0
+File: TimestampProvider.oea8f, Defects: 0
+File: Timer.oem3, Defects: 0
+File: Timer_asm.oem3, Defects: 0
+File: TimestampProvider.oem3, Defects: 0
+Files: 9, Defects: 0
+
+==== Results for ti.sysbios.timers.gptimer ====
+File: Timer.oea8f, Defects: 0
+File: Timer_asm.oea8f, Defects: 0
+Files: 2, Defects: 0
+
+==== Results for ti.sysbios.timers.timer64 ====
+File: Timer.oe674, Defects: 0
+File: Timer_asm.oe674, Defects: 0
+File: TimestampProvider.oe674, Defects: 0
+Files: 3, Defects: 0
+
+==== Results for ti.sysbios.utils ====
+File: Load.oe674, Defects: 0
+File: Load.oearp32, Defects: 0
+File: Load.oea8f, Defects: 0
+File: Load.oem3, Defects: 0
+Files: 4, Defects: 0
+
+==== Results for ti.sysbios.xdcruntime ====
+File: GateThreadSupport.oe674, Defects: 0
+File: GateProcessSupport.oe674, Defects: 0
+File: SemThreadSupport.oe674, Defects: 0
+File: CacheSupport.oe674, Defects: 0
+File: SemProcessSupport.oe674, Defects: 0
+File: ThreadSupport.oe674, Defects: 0
+File: GateThreadSupport.oearp32, Defects: 0
+File: GateProcessSupport.oearp32, Defects: 0
+File: SemThreadSupport.oearp32, Defects: 0
+File: SemProcessSupport.oearp32, Defects: 0
+File: ThreadSupport.oearp32, Defects: 0
+File: CacheSupport.oearp32, Defects: 0
+File: GateThreadSupport.oea8f, Defects: 0
+File: GateProcessSupport.oea8f, Defects: 0
+File: SemProcessSupport.oea8f, Defects: 0
+File: SemThreadSupport.oea8f, Defects: 0
+File: ThreadSupport.oea8f, Defects: 0
+File: CacheSupport.oea8f, Defects: 0
+File: GateThreadSupport.oem3, Defects: 0
+File: GateProcessSupport.oem3, Defects: 0
+File: SemThreadSupport.oem3, Defects: 0
+File: SemProcessSupport.oem3, Defects: 0
+File: ThreadSupport.oem3, Defects: 0
+File: CacheSupport.oem3, Defects: 0
+Files: 24, Defects: 0
+
+Totals - Files: 293, Defects: 4

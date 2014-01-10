@@ -1,0 +1,56 @@
+;
+;  ======== fxn.h62 ========
+;
+;! Revision History
+;! ================
+;! 19-Jan-2009 nitya	Copied from cuda-u06
+;
+
+	.if ($isdefed("FXN_") = 0)    ; prevent multiple includes of this file
+FXN_	.set	1
+
+;
+;  ======== FXN_Obj ========
+;
+FXN_Obj         .struct
+fxn             .word   1
+arg1            .word   1
+arg0            .word   1
+FXN_A_OBJSIZE   .endstruct
+
+FXN_BASE	.set	FXN_Obj.fxn
+
+FXN_O_FXN	.set	FXN_Obj.fxn - FXN_BASE
+FXN_O_ARG1	.set	FXN_Obj.arg1 - FXN_BASE
+FXN_O_ARG0	.set	FXN_Obj.arg0 - FXN_BASE
+
+	.global FXN_execute, _FXN_execute
+
+;
+;# ======== FXN_execute ========
+;
+;# Preconditions:
+;#      a4 = FXN_Obj handle
+;#
+;# Postconditions:
+;#      none
+;#
+;  Modifies:
+;	Since FXN_execute can call an arbitrary C function, we list the
+;	entire set of C temporary registers.
+;
+FXN_execute	.macro
+	; load FXN_obj params into registers
+	ldw *+a4(0),a0		; get fxn addr
+	ldw *+a4(4),b4		; load arg1 to proper C register
+	ldw *+a4(8),a4		; load arg0 to proper C register 
+	mvkl fxne?,b3		; setup fxn return to end of macro
+	mvkh fxne?,b3
+
+	b a0			; branch to function
+	nop 5
+fxne?:
+	.endm
+
+	.endif
+

@@ -1,0 +1,635 @@
+/* ------------------------------------------------------------------------ *
+ *                                                                          *
+ *  DaVinciEVM_arm.gel                                                      *
+ *  Version 3.00                                                            *
+ *                                                                          *
+ *  This GEL file is designed to be used in conjunction with                *
+ *  CCS 3.2X and the Davinci based EVM.                                     *
+ *                                                                          *
+ * ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ *
+ *                                                                          *
+ *  StartUp( )                                                              *
+ *                                                                          *
+ *      Setup Memory Map                                                    *
+ *                                                                          *
+ * ------------------------------------------------------------------------ */
+StartUp( )
+{
+  //setup_memory_map_arm( );
+    clear_memory_map_arm( );
+}
+
+/* ------------------------------------------------------------------------ *
+ *                                                                          *
+ *  OnTargetConnect( )                                                      *
+ *                                                                          *
+ *      Setup PinMux, Power, PLLs, DDR, & EMIFs                             *
+ *                                                                          *
+ * ------------------------------------------------------------------------ */
+OnTargetConnect( )
+{
+    GEL_TextOut( "\n!!! BIOS 6 evmDM6446 ARM GEL settings require !!!");
+    GEL_TextOut( "\n!!! jumper CS2 to be strapped to 'SRAM'       !!!\n\n" );
+    setup_pin_mux( );               // Setup Pin Mux
+    turn_on_dsp( );                 // Turn on DSP
+    setup_psc_all_on( );            // Setup PSC
+
+    setup_pll_1( 0, 16 );           // Setup Pll1 ( Clk @ 459 MHz )
+  //setup_pll_1( 0, 21 );           // Setup Pll1 ( Clk @ 594 MHz )
+
+  //setup_pll_2( 0, 27, 13, 2 );    // Setup Pll2 ( DDR @ 126 MHz )
+    setup_pll_2( 0, 19, 9, 1 );     // Setup Pll2 ( DDR @ 135 MHz )
+
+    setup_ddr2( );                  // Setup DDR2
+
+    setup_general_16bit_emif( );    // Setup AEMIF
+
+    GEL_TextOut( "\nStartup Complete\n\n" );
+}
+
+/* ------------------------------------------------------------------------ *
+ *                                                                          *
+ *  setup_memory_map_arm( )                                                 *
+ *                                                                          *
+ *      Setup the Memory Map for ARM side only.                             *
+ *                                                                          *
+ * ------------------------------------------------------------------------ */
+setup_memory_map_arm( )
+{
+    GEL_MapOn( );
+    GEL_MapReset( );
+
+    /* RAM/ROM memory map */
+    GEL_MapAddStr( 0x00000000, 0, 0x00004000, "R|W|AS4", 0 );   // ARM Instruction RAM
+    GEL_MapAddStr( 0x00004000, 0, 0x00004000, "R|AS4",   0 );   // ARM Instruction ROM
+    GEL_MapAddStr( 0x00008000, 0, 0x00004000, "R|W|AS4", 0 );   // ARM Data RAM
+    GEL_MapAddStr( 0x0000C000, 0, 0x00004000, "R|AS4",   0 );   // ARM Data ROM
+
+    /* Extend Trace memory map */
+    GEL_MapAddStr( 0x01BC0000, 0, 0x00001900, "R|W|AS4", 0 );   // ARM ETB
+
+    /* Peripheral memory map */
+    GEL_MapAddStr( 0x01C00000, 0, 0x00010000, "R|W|AS4", 0 );   // EDMA CC
+    GEL_MapAddStr( 0x01C10000, 0, 0x00000400, "R|W|AS4", 0 );   // EDMA TC0
+    GEL_MapAddStr( 0x01C10400, 0, 0x00000400, "R|W|AS4", 0 );   // EDMA TC1
+    GEL_MapAddStr( 0x01C20000, 0, 0x00000034, "R|W|AS4", 0 );   // UART 0
+    GEL_MapAddStr( 0x01C20400, 0, 0x00000034, "R|W|AS4", 0 );   // UART 1
+    GEL_MapAddStr( 0x01C20800, 0, 0x00000034, "R|W|AS4", 0 );   // UART 2
+    GEL_MapAddStr( 0x01C21000, 0, 0x00000060, "R|W|AS4", 0 );   // I2C
+    GEL_MapAddStr( 0x01C21400, 0, 0x0000002C, "R|W|AS4", 0 );   // Timer 0/1
+    GEL_MapAddStr( 0x01C21800, 0, 0x0000002C, "R|W|AS4", 0 );   // Timer 2/3
+    GEL_MapAddStr( 0x01C21C00, 0, 0x0000002C, "R|W|AS4", 0 );   // Watchdog Timer
+    GEL_MapAddStr( 0x01C22000, 0, 0x0000001C, "R|W|AS4", 0 );   // PWM 0
+    GEL_MapAddStr( 0x01C22400, 0, 0x0000001C, "R|W|AS4", 0 );   // PWM 1
+    GEL_MapAddStr( 0x01C22800, 0, 0x0000001C, "R|W|AS4", 0 );   // PWM 2
+    GEL_MapAddStr( 0x01C40000, 0, 0x00000264, "R|W|AS4", 0 );   // System Module
+    GEL_MapAddStr( 0x01C40800, 0, 0x00000174, "R|W|AS4", 0 );   // PLL 1
+    GEL_MapAddStr( 0x01C40C00, 0, 0x00000174, "R|W|AS4", 0 );   // PLL 2
+    GEL_MapAddStr( 0x01C41000, 0, 0x00000AA8, "R|W|AS4", 0 );   // Power Sleep Controller
+    GEL_MapAddStr( 0x01C48000, 0, 0x00000050, "R|W|AS4", 0 );   // ARM Interrupts
+    GEL_MapAddStr( 0x01C60000, 0, 0x00004000, "R|W|AS4", 0 );   // IEEE 1394
+    GEL_MapAddStr( 0x01C64000, 0, 0x00002000, "R|W|AS4", 0 );   // USB 2.0 OTG
+    GEL_MapAddStr( 0x01C66000, 0, 0x00000800, "R|W|AS2", 0 );   // ATA / CF
+    GEL_MapAddStr( 0x01C66800, 0, 0x00000074, "R|W|AS4", 0 );   // SPI
+    GEL_MapAddStr( 0x01C67000, 0, 0x00000038, "R|W|AS4", 0 );   // GPIO
+    GEL_MapAddStr( 0x01C67800, 0, 0x00000104, "R|W|AS4", 0 );   // UHPI
+    GEL_MapAddStr( 0x01C70000, 0, 0x00004000, "R|W|AS4", 0 );   // VPSS
+    GEL_MapAddStr( 0x01C80000, 0, 0x00001000, "R|W|AS4", 0 );   // EMAC Control
+    GEL_MapAddStr( 0x01C81000, 0, 0x00001000, "R|W|AS4", 0 );   // EMAC Wrapper
+    GEL_MapAddStr( 0x01C82000, 0, 0x00002000, "R|W|AS4", 0 );   // EMAC Wrapper RAM
+    GEL_MapAddStr( 0x01C84000, 0, 0x00000090, "R|W|AS4", 0 );   // MDIO
+    GEL_MapAddStr( 0x01CC0000, 0, 0x00020000, "R|W|AS4", 0 );   // Image Coprocessor
+    GEL_MapAddStr( 0x01E00000, 0, 0x000000b4, "R|W|AS4", 0 );   // AEMIF Control
+    GEL_MapAddStr( 0x01E01000, 0, 0x00000560, "R|W|AS4", 0 );   // VYLNQ Control
+    GEL_MapAddStr( 0x01E02000, 0, 0x0000005C, "R|W|AS4", 0 );   // McBSP
+    GEL_MapAddStr( 0x01E10000, 0, 0x00000078, "R|W|AS4", 0 );   // MMC / SD
+    GEL_MapAddStr( 0x01E20000, 0, 0x00000024, "R|W|AS4", 0 );   // Memory Stick / Pro
+
+    /* Off-chip memory map */
+    GEL_MapAddStr( 0x02000000, 0, 0x02000000, "R|W|AS4", 0 );   // AEMIF CS2
+    GEL_MapAddStr( 0x04000000, 0, 0x02000000, "R|W|AS4", 0 );   // AEMIF CS3
+    GEL_MapAddStr( 0x06000000, 0, 0x02000000, "R|W|AS4", 0 );   // AEMIF CS4
+    GEL_MapAddStr( 0x08000000, 0, 0x02000000, "R|W|AS4", 0 );   // AEMIF CS5
+    GEL_MapAddStr( 0x0C000000, 0, 0x04000000, "R|W|AS4", 0 );   // VLYNQ Remote
+
+    /* DSP RAM memory map */
+    GEL_MapAddStr( 0x11100000, 0, 0x00100000, "R|W|AS4", 0 );   // DSP UMAP1 ImgCop
+    GEL_MapAddStr( 0x11800000, 0, 0x00010000, "R|W|AS4", 0 );   // DSP UMAP0 L2 Cache
+    GEL_MapAddStr( 0x11E08000, 0, 0x00008000, "R|W|AS4", 0 );   // DSP L1P Cache
+    GEL_MapAddStr( 0x11F04000, 0, 0x0000C000, "R|W|AS4", 0 );   // DSP L1D RAM
+    GEL_MapAddStr( 0x11F10000, 0, 0x00008000, "R|W|AS4", 0 );   // DSP L1D Cache
+
+    /* DDR2 memory map */
+    GEL_MapAddStr( 0x20000000, 0, 0x000000E8, "R|W|AS4", 0 );   // DDR2 Control
+    GEL_MapAddStr( 0x80000000, 0, 0x10000000, "R|W|AS4", 0 );   // DDR2 SDRAM
+}
+
+clear_memory_map_arm( )
+{
+    GEL_MapOff( );
+}
+
+sw_wait( int delay )
+{
+    int i;
+    for( i = 0 ; i < delay ; i++ ){}
+}
+
+/* ------------------------------------------------------------------------ *
+ *                                                                          *
+ *  setup_pin_mux( )                                                        *
+ *                                                                          *
+ *                                                                          *
+ * ------------------------------------------------------------------------ */
+setup_pin_mux( )
+{
+    #define PINMUX0             *( unsigned int* )( 0x01C40000 )
+    #define PINMUX1             *( unsigned int* )( 0x01C40004 )
+    #define VDD3P3V_PWDN        *( unsigned int* )( 0x01C40048 )
+
+    PINMUX0 = 0x80000C1F;
+                /*
+                | ( 1 << 31 )   // EMACEN
+                | ( 0 << 30 )   // EN1394
+                | ( 0 << 29 )   // HPIEN
+                | ( 0 << 27 )   // CFLDEN
+                | ( 0 << 26 )   // CWEN
+                | ( 0 << 25 )   // LFLDEN
+                | ( 0 << 24 )   // LOEEN
+                | ( 0 << 23 )   // RGB888
+                | ( 0 << 22 )   // RGB666
+                | ( 0 << 17 )   // ATAEN
+                | ( 0 << 16 )   // HDIREN
+                | ( 0 << 15 )   // VLYNQEN
+                | ( 0 << 14 )   // VLSCREN
+                | ( 0 << 12 )   // VLYNQWD
+                | ( 1 << 11 )   // AECS5
+                | ( 1 << 10 )   // AECS4
+                | ( 31 << 0 )   // AEAW
+                */
+    PINMUX1 = 0x000404F1;
+                /*
+                | ( 1 << 18 )   // TIMIN
+                | ( 0 << 17 )   // CLK1
+                | ( 0 << 16 )   // CLK0
+                | ( 1 << 10 )   // MCBSP
+                | ( 0 << 9 )    // MSTK
+                | ( 0 << 8 )    // SPI
+                | ( 1 << 7 )    // I2C
+                | ( 1 << 6 )    // PWM2
+                | ( 1 << 5 )    // PWM1
+                | ( 1 << 4 )    // PWM0
+                | ( 0 << 3 )    // U2FLO
+                | ( 0 << 2 )    // UART2
+                | ( 0 << 1 )    // UART1
+                | ( 1 << 0 )    // UART0
+                */
+    VDD3P3V_PWDN = 0;
+                /*
+                | ( 0 << 1 )    // MMC/SD/MS I/O cells [Normal]
+                | ( 0 << 0 )    // EMAC I/O cells      [Normal]
+                */
+}
+
+/* ------------------------------------------------------------------------ *
+ *                                                                          *
+ *  setup_pll_on( )                                                         *
+ *                                                                          *
+ *      Setup either PLL1 or PLL2                                           *
+ *                                                                          *
+ *      pll_number      <- 1: PLL1                                          *
+ *                         2: PLL2                                          *
+ *                                                                          *
+ *      clock_source    <- 0: Onchip Oscillator                             *
+ *                         1: External Oscillator                           *
+ *                                                                          *
+ *      pll_multiplier  <- 16: Normal mode  ( For PLL1 )                    *
+ *                         21: Turbo mode                                   *
+ *                                                                          *
+ *      pll_divider1    <- Divider #1 ( For PLL2 )                          *
+ *                                                                          *
+ *      pll_divider2    <- Divider #2 ( For PLL2 )                          *
+ *                                                                          *
+ * ------------------------------------------------------------------------ */
+setup_pll_on( unsigned int pll_number, unsigned int clock_source,
+              unsigned int pll_multipler, unsigned int pll_divider1,
+              unsigned int pll_divider2 )
+{
+    #define PLL1_BASE           0x01C40800
+    #define PLL1_PLLCTL         ( PLL1_BASE + 0x100 )   // PLL Control
+    #define PLL1_PLLM           ( PLL1_BASE + 0x110 )   // PLL Multiplier
+
+    #define PLL2_BASE           0x01C40C00
+    #define PLL2_PLLCTL         ( PLL2_BASE + 0x100 )   // PLL Control
+    #define PLL2_PLLM           ( PLL2_BASE + 0x110 )   // PLL Multiplier
+    #define PLL2_PLLDIV1        ( PLL2_BASE + 0x118 )   // PLL Div1
+    #define PLL2_PLLDIV2        ( PLL2_BASE + 0x11C )   // PLL Div2
+    #define PLL2_PLLCMD         ( PLL2_BASE + 0x138 )   // PLL Command
+    #define PLL2_PLLSTAT        ( PLL2_BASE + 0x13C )   // PLL Status
+
+    unsigned int* pll_ctl;
+    unsigned int* pll_pllm;
+    unsigned int* pll_div1;
+    unsigned int* pll_div2;
+    unsigned int* pll_cmd;
+    unsigned int* pll_stat;
+
+    if ( pll_number == 1 )
+    {
+        pll_ctl  = ( unsigned int* )PLL1_PLLCTL;
+        pll_pllm = ( unsigned int* )PLL1_PLLM;
+    }
+    else
+    {
+        pll_ctl  = ( unsigned int* )PLL2_PLLCTL;
+        pll_pllm = ( unsigned int* )PLL2_PLLM;
+        pll_div1 = ( unsigned int* )PLL2_PLLDIV1;
+        pll_div2 = ( unsigned int* )PLL2_PLLDIV2;
+        pll_cmd  = ( unsigned int* )PLL2_PLLCMD;
+        pll_stat = ( unsigned int* )PLL2_PLLSTAT;
+    }
+
+    *pll_ctl &= 0xFFFFFEFF;             // Clear clock source mode
+    *pll_ctl |= ( clock_source << 8 );  // Set clock source mode
+    *pll_ctl &= 0xFFFFFFDE;             // Set PLL to Bypass mode
+
+    sw_wait( 0x20 );                    // Wait Bypass mode switch
+
+    *pll_ctl &= 0xFFFFFFF7;             // Reset PLL
+    *pll_ctl |= 0x00000010;             // Disable PLL
+    *pll_ctl &= 0xFFFFFFFD;             // Power up PLL
+    *pll_ctl &= 0xFFFFFFEF;             // Enable PLL
+
+    *pll_pllm = pll_multipler;          // Set PLL multipler
+
+    /*
+     *  For PLL1: DSP, ARM, VBUS, ImCop, CFG are fixed
+     *
+     *  For PLL2: DDR2 and VPBE are programmable
+     */
+    if ( pll_number != 1 )
+    {
+        *pll_div1 = pll_divider1;       // Set PLL dividers
+        *pll_div2 = pll_divider2;
+        *pll_div1 |= 0x00008000;        // Enable PLL dividers
+        *pll_div2 |= 0x00008000;
+
+        *pll_cmd |= 0x00000001;         // Set phase alignment
+        while( ( pll_stat & 1 ) == 1 ){}// Wait for operation to finish
+    }
+
+    sw_wait( 0x100 );                   // Wait for PLL to Reset
+    *pll_ctl |= 0x00000008;             // Release PLL from Reset
+    sw_wait( 0x1000 );                  // Wait for PLL to LOCK
+    *pll_ctl |= 0x00000001;             // Set PLL to PLL mode
+}
+
+/* ------------------------------------------------------------------------ *
+ *                                                                          *
+ *  setup_pll_1( )                                                          *
+ *                                                                          *
+ *      Setup PLL1                                                          *
+ *                                                                          *
+ *      clock_source    <- 0: Onchip Oscillator                             *
+ *                         1: External Oscillator                           *
+ *                                                                          *
+ *      pll_multiplier  <- 16: Normal mode ( For PLL1 )                     *
+ *                         21: Turbo mode                                   *
+ *                                                                          *
+ * ------------------------------------------------------------------------ */
+setup_pll_1( int clock_source, int pll_multiplier )
+{
+    setup_pll_on( 1, clock_source, pll_multiplier, 0, 0 );
+
+    if ( ( pll_multiplier == 16 ) && ( clock_source == 0 ) )
+        GEL_TextOut( "PLL1 started ( Normal Mode @ 459 MHz ) w/ Crystal Oscilator\n" );
+
+    else if ( ( pll_multiplier == 21 ) && ( clock_source == 0 ) )
+        GEL_TextOut( "PLL1 started ( Turbo Mode @ 594 MHz ) w/ Crystal Oscilator\n" );
+
+    else if ( ( pll_multiplier == 16 ) && ( clock_source == 1 ) )
+        GEL_TextOut( "PLL1 started ( Normal Mode @ 459 MHz ) w/ External Clock\n" );
+
+    else if ( ( pll_multiplier == 21 ) && ( clock_source == 1 ) )
+        GEL_TextOut( "PLL1 started ( Turbo Mode @ 594 MHz ) w/ External Clock\n" );
+}
+
+/* ------------------------------------------------------------------------ *
+ *                                                                          *
+ *  setup_pll_2( )                                                          *
+ *                                                                          *
+ *      Setup PLL2                                                          *
+ *                                                                          *
+ *      clock_source    <- 0: Onchip Oscillator                             *
+ *                         1: External Oscillator                           *
+ *                                                                          *
+ *      pll_multiplier  <- X                                                *
+ *                                                                          *
+ *      pll_divider1    <- VPSS divider ( For PLL2 )                        *
+ *                                                                          *
+ *      pll_divider2    <- DDR2 divider ( For PLL2 )                        *
+ *                                                                          *
+ * ------------------------------------------------------------------------ */
+setup_pll_2( int clock_source, int pll_multiplier, int vpss_divider, int ddr2_divider )
+{
+    setup_pll_on( 2, clock_source, pll_multiplier, vpss_divider, ddr2_divider );
+
+    if ( ( pll_multiplier == 19 ) && ( ddr2_divider == 1 ) && ( clock_source == 0 ) )
+        GEL_TextOut( "PLL2 started ( DDR2 @ 135 MHz ) w/ Crystal Oscilator\n" );
+
+    else if ( ( pll_multiplier == 19 ) && ( ddr2_divider == 1 ) && ( clock_source == 1 ) )
+        GEL_TextOut( "PLL2 started ( DDR2 @ 135 MHz ) w/ External Clock\n" );
+
+    else if ( ( pll_multiplier == 27 ) && ( ddr2_divider == 2 ) && ( clock_source == 0 ) )
+        GEL_TextOut( "PLL2 started ( DDR2 @ 126 MHz ) w/ Crystal Oscilator\n" );
+
+    else if ( ( pll_multiplier == 27 ) && ( ddr2_divider == 2 ) && ( clock_source == 1 ) )
+        GEL_TextOut( "PLL2 started ( DDR2 @ 126 MHz ) w/ External Clock\n" );
+}
+
+/* ------------------------------------------------------------------------ *
+ *                                                                          *
+ *  setup_psc_on( )                                                         *
+ *                                                                          *
+ *      Setup the PSC                                                       *
+ *                                                                          *
+ * ------------------------------------------------------------------------ */
+setup_psc_on( int domain, int id )
+{
+    #define PSC_BASE            0x01C41000
+    #define PSC_EPCPR           *( unsigned int* )( 0x01C41070 )
+    #define PSC_PTCMD           *( unsigned int* )( 0x01C41120 )
+    #define PSC_PTSTAT          *( unsigned int* )( 0x01C41128 )
+    #define PSC_PDSTAT0         *( unsigned int* )( 0x01C41200 )
+    #define PSC_PDSTAT1         *( unsigned int* )( 0x01C41204 )
+    #define PSC_PDCTL0          *( unsigned int* )( 0x01C41300 )
+    #define PSC_PDCTL1          *( unsigned int* )( 0x01C41304 )
+    #define PSC_EPCCR           *( unsigned int* )( 0x01C41078 )
+    #define PSC_MDSTAT_BASE     ( 0x01C41800 )
+    #define PSC_MDCTL_BASE      ( 0x01C41A00 )
+
+    unsigned int* mdstat        = ( unsigned int* )( PSC_MDSTAT_BASE + 4 * id );
+    unsigned int* mdctl         = ( unsigned int* )( PSC_MDCTL_BASE  + 4 * id );
+    unsigned int domainbit      = ( 1 << domain );  // ALWAYSON or DSP domain
+
+    *mdctl &= ~0x001F;                              // Clear next module state
+    *mdctl |= 0x0003;                               // Set next module state to enable
+    if ( ( id == 1 )
+        || ( ( id >= 5 ) && ( id <= 7 ) )
+        || ( ( id >= 9 ) && ( id <= 17 ) )
+        || ( id == 26 )
+        || ( id == 40 ) )
+        *mdctl |= 0x0203;                           // Set EMURSTIE to 0x1
+
+    if ( ( PSC_PDSTAT0 & 1 ) == 0 )                 // Check if PSC is OFF
+    {
+        PSC_PDCTL1 |= 0x0001;                       // Turn ON power domain
+        PSC_PTCMD = domainbit;                      // Start power state transition
+        while ( ( PSC_EPCPR & domainbit ) == 0 );   // Wait for external power request
+        PSC_PDCTL1 |= 0x0100;                       // Turn ON external power
+        while( ( PSC_PTSTAT & domainbit ) != 0 );   // Wait for power state transtion to finish
+    }
+    else                                            // Check if PSC is ON
+    {
+        PSC_PTCMD = domainbit;                      // Start power state transition
+        while( ( PSC_PTSTAT & domainbit ) != 0 );   // Wait for power state transtion to finish
+    }
+
+    while( ( *mdstat & 0x001F ) != 0x3 );           // Wait for module state enable
+}
+
+/* ------------------------------------------------------------------------ *
+ *                                                                          *
+ *  setup_psc_all_on( )                                                     *
+ *                                                                          *
+ *      Enable all PSC modules on ALWAYSON and DSP power dominas.           *
+ *                                                                          *
+ * ------------------------------------------------------------------------ */
+setup_psc_all_on( )
+{
+    int i;
+
+    #define PSC_BASE            0x01C41000
+    #define PSC_EPCPR           *( unsigned int* )( 0x01C41070 )
+    #define PSC_PTCMD           *( unsigned int* )( 0x01C41120 )
+    #define PSC_PTSTAT          *( unsigned int* )( 0x01C41128 )
+    #define PSC_PDSTAT0         *( unsigned int* )( 0x01C41200 )
+    #define PSC_PDSTAT1         *( unsigned int* )( 0x01C41204 )
+    #define PSC_PDCTL0          *( unsigned int* )( 0x01C41300 )
+    #define PSC_PDCTL1          *( unsigned int* )( 0x01C41304 )
+    #define PSC_EPCCR           *( unsigned int* )( 0x01C41078 )
+    #define PSC_MDSTAT_BASE     ( 0x01C41800 )
+    #define PSC_MDCTL_BASE      ( 0x01C41A00 )
+
+    for( i = 0 ; i < 41 ; i++ )
+        *( unsigned int* )( PSC_MDCTL_BASE + 4 * i ) |= 0x0003; // Enable all 41 power domains
+
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 8 )   = 0x0000; // IEEE1394A - OFF
+
+    /*
+     *  Set EMURSTIE to 1 on the following
+     */
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 1 )  |= 0x0203; // VPSS MMR
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 5 )  |= 0x0203; // EMAC
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 6 )  |= 0x0203; // EMAC Wrapper
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 7 )  |= 0x0203; // MDIO
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 9 )  |= 0x0203; // USB
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 10 ) |= 0x0203; // ATA/CF
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 11 ) |= 0x0203; // VLYNQ
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 12 ) |= 0x0203; // HPI
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 13 ) |= 0x0203; // DDR2
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 14 ) |= 0x0203; // AEMIF
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 15 ) |= 0x0203; // MMC/SD
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 16 ) |= 0x0203; // MemoryStick
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 17 ) |= 0x0203; // ASP
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 26 ) |= 0x0203; // GPIO
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 40 ) |= 0x0203; // IMCOP
+
+    PSC_PTCMD = 0x0001;                             // Start power state transition for ALWAYSON
+    while( ( PSC_PTSTAT & 0x0001 ) != 0 );          // Wait for power state transtion to finish
+
+    PSC_PTCMD = 0x0002;                             // Start power state transition for DSP
+    while( ( PSC_PTSTAT & 0x0002 ) != 0 );          // Wait for power state transtion to finish
+
+    /*
+     *  Clear EMURSTIE to 0 on the following
+     */
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 1 )  &= 0x0003; // VPSS MMR
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 5 )  &= 0x0003; // EMAC
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 6 )  &= 0x0003; // EMAC Wrapper
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 7 )  &= 0x0003; // MDIO
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 9 )  &= 0x0003; // USB
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 10 ) &= 0x0003; // ATA/CF
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 11 ) &= 0x0003; // VLYNQ
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 12 ) &= 0x0003; // HPI
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 13 ) &= 0x0003; // DDR2
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 14 ) &= 0x0003; // AEMIF
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 15 ) &= 0x0003; // MMC/SD
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 16 ) &= 0x0003; // MemoryStick
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 17 ) &= 0x0003; // ASP
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 26 ) &= 0x0003; // GPIO
+    *( unsigned int* )( PSC_MDCTL_BASE + 4 * 40 ) &= 0x0003; // IMCOP
+
+    GEL_TextOut( "All power and clocks are turned on\n" );
+}
+
+/* ------------------------------------------------------------------------ *
+ *                                                                          *
+ *  setup_ddr2( )                                                           *
+ *                                                                          *
+ *                                                                          *
+ * ------------------------------------------------------------------------ */
+setup_ddr2( )
+{
+    #define DDR_BASE            0x20000000
+    #define SDCFG               *( unsigned int* )( 0x20000008 )
+    #define SDREF               *( unsigned int* )( 0x2000000C )
+    #define SDTIM0              *( unsigned int* )( 0x20000010 )
+    #define SDTIM1              *( unsigned int* )( 0x20000014 )
+    #define DDRCTL              *( unsigned int* )( 0x200000E4 )
+
+    #define PSC_BASE            0x01C41000
+    #define PSC_EPCPR           *( unsigned int* )( 0x01C41070 )
+    #define PSC_PTCMD           *( unsigned int* )( 0x01C41120 )
+    #define PSC_PTSTAT          *( unsigned int* )( 0x01C41128 )
+    #define PSC_PDSTAT0         *( unsigned int* )( 0x01C41200 )
+    #define PSC_PDSTAT1         *( unsigned int* )( 0x01C41204 )
+    #define PSC_PDCTL0          *( unsigned int* )( 0x01C41300 )
+    #define PSC_PDCTL1          *( unsigned int* )( 0x01C41304 )
+    #define PSC_EPCCR           *( unsigned int* )( 0x01C41078 )
+    #define PSC_MDSTAT_BASE     ( 0x01C41800 )
+    #define PSC_MDCTL_BASE      ( 0x01C41A00 )
+    #define PSC_MDSTAT_DDR      *( unsigned int* )( PSC_MDSTAT_BASE + 4 * 13 )
+    #define PSC_MDCTL_DDR       *( unsigned int* )( PSC_MDCTL_BASE  + 4 * 13 )
+
+  //setup_psc_on( 0, 13 );      // Setup Power
+
+    /*
+     *  DDR Initialization
+     */
+    DDRCTL = 0x50006405;        // DDR PHY Ctrl - DLL powered, ReadLatency=6
+    SDCFG  = 0x00008632;        // DDR Bank Cfg - 32-bit bus, CAS=3, 8 banks, 1024-word pages
+    SDTIM0 = 0x229229c9;        // DDR Timing
+    SDTIM1 = 0x0012c722;        // DDR Timing
+    SDCFG  = 0x00000632;        // DDR Bank Cfg - disable timing reg access
+  //SDREF  = 0x000003D6;        // DDR Refresh Ctrl - 126 MHz * 7.8us
+    SDREF  = 0x0000041D;        // DDR Refresh Ctrl - 135 MHz * 7.8us
+
+    /*
+     *  Reset DDR2 PHY
+     */
+    PSC_MDCTL_DDR &= 0xFFFFFFE0;                // Clear state
+    PSC_MDCTL_DDR |= 0x00000001;                // Set to SyncReset
+    PSC_PTCMD = 0x0001;                         // Start power state transition
+    while( ( PSC_PTSTAT & 0x0001 ) != 0 );      // Wait for power state transtion to finish
+    while( ( PSC_MDSTAT_DDR & 0x001F ) != 1 );  // Wait for module state syncreset
+
+    /*
+     *  Enable DDR2 PHY
+     */
+    PSC_MDCTL_DDR &= 0xFFFFFFE0;                // Clear state
+    PSC_MDCTL_DDR |= 0x00000003;                // Set to Enable
+    PSC_PTCMD = 0x0001;                         // Start power state transition
+    while( ( PSC_PTSTAT & 0x0001 ) != 0 );      // Wait for power state transtion to finish
+    while( ( PSC_MDSTAT_DDR & 0x001F ) != 3 );  // Wait for module state enable
+
+    GEL_TextOut( "DDR2 initialized for 32-bit Interface\n" );
+}
+
+/* ------------------------------------------------------------------------ *
+ *                                                                          *
+ *  setup_general_16bit_emif( )                                             *
+ *                                                                          *
+ * ------------------------------------------------------------------------ */
+setup_general_16bit_emif( )
+{
+    #define AEMIF_BASE          0x01E00000
+    #define WAITCFG             *( unsigned int* )( 0x01E00004 )    // Async Wait Cycle Config Register
+    #define ACFG2               *( unsigned int* )( 0x01E00010 )    // Async Bank1 Config Register
+    #define ACFG3               *( unsigned int* )( 0x01E00014 )    // Async Bank2 Config Register
+    #define ACFG4               *( unsigned int* )( 0x01E00018 )    // Async Bank3 Config Register
+    #define ACFG5               *( unsigned int* )( 0x01E0001C )    // Async Bank4 Config Register
+    #define NANDCTL             *( unsigned int* )( 0x01E00060 )    // NAND Flash Control Register
+
+    WAITCFG = 0x00000000;   // Asynchronous Wait Cycles Configuration Control Register
+
+//    ACFG2 = 0x3FFFFFFD;     // Asynchronous Banks - MAX TIMEOUT
+    ACFG2 = 0x00900305;
+    ACFG3 = 0x3FFFFFFD;
+    ACFG4 = 0x3FFFFFFD;
+    ACFG5 = 0x3FFFFFFD;
+
+    NANDCTL = 0x00000000;
+
+    GEL_TextOut( "AEMIF initialized for 16-bit interface\n" );
+}
+
+/* ------------------------------------------------------------------------ *
+ *                                                                          *
+ *  turn_on_dsp( )                                                          *
+ *                                                                          *
+ * ------------------------------------------------------------------------ */
+turn_on_dsp( )
+{
+	unsigned int *addr;
+    unsigned int domainbit = 0x0002;
+
+    #define PSC_BASE            0x01C41000
+    #define PSC_EPCPR           *( unsigned int* )( 0x01C41070 )
+    #define PSC_PTCMD           *( unsigned int* )( 0x01C41120 )
+    #define PSC_PTSTAT          *( unsigned int* )( 0x01C41128 )
+    #define PSC_PDSTAT0         *( unsigned int* )( 0x01C41200 )
+    #define PSC_PDSTAT1         *( unsigned int* )( 0x01C41204 )
+    #define PSC_PDCTL0          *( unsigned int* )( 0x01C41300 )
+    #define PSC_PDCTL1          *( unsigned int* )( 0x01C41304 )
+    #define PSC_EPCCR           *( unsigned int* )( 0x01C41078 )
+    #define PSC_MDSTAT_BASE     ( 0x01C41800 )
+    #define PSC_MDCTL_BASE      ( 0x01C41A00 )
+    #define PSC_MDSTAT_DSP      *( unsigned int* )( PSC_MDSTAT_BASE + 4 * 39 )
+    #define PSC_MDCTL_DSP       *( unsigned int* )( PSC_MDCTL_BASE  + 4 * 39 )
+    #define PSC_MDSTAT_IMCOP    *( unsigned int* )( PSC_MDSTAT_BASE + 4 * 40 )
+    #define PSC_MDCTL_IMCOP     *( unsigned int* )( PSC_MDCTL_BASE  + 4 * 40 )
+
+	#define DSPBOOTADDR			*( unsigned int* )( 0x01C40008 )
+	#define DSP_L2_ADDR			0x11800000
+	#define DSP_BRANCH_INST		0x00000120
+	#define DSP_NOP_INST		0x00000000
+
+    if ( ( PSC_MDSTAT_DSP & 0x001F ) != 0x0003 )
+    {
+        while( ( PSC_PTSTAT & domainbit ) != 0 );   // Wait for state transtion to finish
+        PSC_PDCTL1 |= 0x0001;                       // Turn ON power domain
+        PSC_MDCTL_DSP |= 0x0003;                    // Set DSP module state to enable
+        PSC_MDCTL_IMCOP |= 0x003;                   // Set IMCOP module state to enable
+        PSC_PTCMD = domainbit;                      // Start state transition
+        while( ( PSC_EPCPR & domainbit ) == 0 );    // Wait for external power request
+
+        /*
+         *  Apply External Power if needed.
+         */
+
+        PSC_PDCTL1 |= 0x0100;                       // Turn ON external power
+        while( ( PSC_PTSTAT & domainbit ) != 0 );   // Wait for state transtion to finish
+    }
+
+    // Set DSP boot address
+	DSPBOOTADDR = DSP_L2_ADDR;
+
+	// Write DSP self-loop
+	addr = (unsigned int *)DSP_L2_ADDR;
+	*addr++ = DSP_BRANCH_INST;
+	*addr++ = DSP_NOP_INST;
+	*addr++ = DSP_NOP_INST;
+	*addr++ = DSP_NOP_INST;
+	*addr++ = DSP_NOP_INST;
+	*addr++ = DSP_NOP_INST;
+
+    // Release DSP from reset
+	PSC_MDCTL_DSP |= 0x100;
+
+	// Wait for reset to be released
+	while((PSC_MDSTAT_DSP & 0x100) == 0);
+
+    GEL_TextOut( "DSP is On\n" );
+}

@@ -1,0 +1,151 @@
+;
+; ======== atm.s62 ========
+;
+;
+
+    .if $isdefed("__TI_ELFABI__")
+    .if __TI_ELFABI__
+        .asg ATM_andi,          _ATM_andi
+        .asg ATM_andu,          _ATM_andu
+        .asg ATM_cleari,        _ATM_cleari
+        .asg ATM_clearu,        _ATM_clearu
+        .asg ATM_deci,          _ATM_deci
+        .asg ATM_decu,          _ATM_decu
+        .asg ATM_inci,          _ATM_inci
+        .asg ATM_incu,          _ATM_incu
+        .asg ATM_ori,           _ATM_ori
+        .asg ATM_oru,           _ATM_oru
+        .asg ATM_seti,          _ATM_seti
+        .asg ATM_setu,          _ATM_setu
+    .endif
+    .endif
+
+;   symbols defined in this module:
+        .global _ATM_andi,      _ATM_andu
+        .global _ATM_cleari,    _ATM_clearu
+        .global _ATM_deci,      _ATM_decu
+        .global _ATM_inci,      _ATM_incu
+        .global _ATM_ori,       _ATM_oru
+        .global _ATM_seti,      _ATM_setu
+
+        .text
+
+;
+;  ======== ATM_and ========
+;  atomic 'and' operation, (*dst = *dst & mask), returns old value
+;
+;  Int ATM_andi(Int *dst, Int mask)
+;  Uns ATM_andu(Uns *dst, Uns mask)
+;       a4 = *dst
+;       b4 = mask
+;
+_ATM_andi:
+_ATM_andu:
+        .asmfunc
+        b       l1              ; prevent interrupts
+||      ldw     *a4, a5         ; ldw: 4 delay slots
+        b       b3              ; delayed return: 5 delay slots
+        nop     3
+        and     a5, b4, a6      ; *dst &= mask
+l1:     stw     a6, *a4
+||      mv      a5, a4          ; return old value
+        .endasmfunc
+
+;
+; ======== ATM_clear ========
+; atomically clear integer and return old value
+;
+; Int ATM_cleari(Int * dst)
+; Uns ATM_clearu(Uns * dst)
+;       a4 = *dst
+;
+_ATM_cleari:
+_ATM_clearu:
+        .asmfunc
+        b       b3              ; delayed return: 5 delay slots
+||      ldw     *a4, a5         ; ldw: 4 delay slots
+        nop     2
+        mvk     0, a6
+        stw     a6, *a4         ; *dst = 0
+        mv      a5, a4          ; return old value
+        .endasmfunc
+
+;
+; ======== ATM_dec ========
+; atomically decrement integer and return new value
+;
+; Int ATM_deci(Int * dst)
+; Uns ATM_decu(Uns * dst)
+;       a4 = *dst
+;
+_ATM_deci:
+_ATM_decu:
+        .asmfunc
+        b       l2
+||      ldw     *a4, a5         ; ldw: 4 delay slots
+        b       b3              ; delayed return: 5 delay slots
+        nop     3
+        sub     a5, 1, a6       ; -- *dst
+l2:     stw     a6, *a4
+||      mv      a6, a4          ; return new value
+        .endasmfunc
+
+;
+; ======== ATM_inc ========
+; atomically increment integer and return new value
+;
+; Int ATM_inci(Int * dst)
+; Uns ATM_incu(Uns * dst)
+;       a4 = *dst
+;
+_ATM_inci:
+_ATM_incu:
+        .asmfunc
+        b       l3
+||      ldw     *a4, a5         ; ldw: 4 delay slots
+        b       b3              ; delayed return: 5 delay slots
+        nop     3
+        add     a5, 1, a6       ; ++ *dst
+l3:     stw     a6, *a4
+||      mv      a6, a4          ; return new value
+        .endasmfunc
+
+;
+;  ======== ATM_or ========
+;  atomic 'or' operation, (*dst = *dst | mask), returns *dst
+;
+;  Int ATM_ori(Int *dst, Int mask)
+;  Uns ATM_oru(Uns *dst, Uns mask)
+;       a4 = *dst
+;       b4 = mask
+;
+_ATM_ori:
+_ATM_oru:
+        .asmfunc
+        b       l4
+||      ldw     *a4, a5         ; ldw: 4 delay slots
+        b       b3              ; delayed return: 5 delay slots
+        nop     3
+        or      a5, b4, a6      ; *dst |= mask
+l4:     stw     a6, *a4
+||      mv      a5, a4          ; return old value
+        .endasmfunc
+
+;
+; ======== ATM_set ========
+; atomically set integer and return old value
+;
+; Int ATM_seti(Int * dst, Int x)
+; Uns ATM_setu(Uns * dst, Uns x)
+;       a4 = *dst
+;       b4 = x
+;
+_ATM_seti:
+_ATM_setu:
+        .asmfunc
+        b       b3              ; delayed return: 5 delay slots
+||      ldw     *a4, a5         ; ldw: 4 delay slots
+        nop     3
+        stw     b4, *a4         ; *dst = x
+        mv      a5, a4          ; return old value
+        .endasmfunc

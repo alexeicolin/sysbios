@@ -1,0 +1,20 @@
+To test the linux utilities of the package ti.sysbios.fatfs.utils:
+==================================================================
+
+1. build the ti.sysbios.fatfs.utils package.
+
+2. run the shell script: addFiles.sh
+
+3. the shell script will:
+
+    a. create a new RAM disk image and save it as binary file: imageWithFiles.bin
+
+    b. copy the 2 text files "file1.txt" and "file2.txt" into
+       the RAM disk image 'imageWithFiles.bin'.
+
+    c. generates a C file 'ramdiskWithFiles.c' which contains a C array
+       containing the contents of the RAM disk.
+
+    d. this C file may then be compiled into a ti.sysbios.fatfs target side
+       application and loaded as the RAM disk image.  The 2 *.txt files will
+       then be accessible within the target program, using the fatfs APIs.

@@ -1,0 +1,81 @@
+%%{
+/*
+ * Copyright (c) 2012, Texas Instruments Incorporated
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * *  Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * *  Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * *  Neither the name of Texas Instruments Incorporated nor the names of
+ *    its contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+*/
+%%}
+%var DGN = xdc.module("ti.bios.DGN");
+%if (DGN.$instances.length > 0) {
+/* extern functions */
+    %for(var i = 0; i < DGN.$instances.length; i++) {
+    %var match = false;
+        %for(var j = 0; j < i; j++) {            
+            %if (DGN.$instances[i].fxn == DGN.$instances[j].fxn) {
+                %match = true;
+            %}    
+        %}
+        %if (match == false) {
+            %if (DGN.$instances[i].fxn != null) {
+extern Fxn `DGN.$instances[i].fxn`();
+    	    %}
+        %}
+    %}
+
+/* extern arguments */
+    %for(var i = 0; i < DGN.$instances.length; i++) {
+        %if (typeof(DGN.$instances[i].arg) == "string") {
+extern __FAR__ UArg `DGN.$instances[i].arg.substring(7)`;
+	%}
+    %}
+
+/* DGN Parameters */
+    %for(var i = 0; i < DGN.$instances.length; i++) {
+        %var paramsName = DGN.$instances[i].name + "instance_params";
+        %var paramsType = DGN.$instances[i].paramsType;
+__FAR__ `paramsType` `paramsName` = {
+    `DGN.$instances[i].constant`,
+    `DGN.$instances[i].seedValue`,
+    `DGN.$instances[i].lowerLimit`,
+    `DGN.$instances[i].upperLimit`,
+    `DGN.$instances[i].gain`,
+    `DGN.$instances[i].frequency`, 
+    `DGN.$instances[i].phase`, 
+    `DGN.$instances[i].rate`, 
+    %if (DGN.$instances[i].fxn == null) {
+    NULL,
+    %}
+    %else {
+    (Fxn)&`DGN.$instances[i].fxn`, 
+    %}
+    `DGN.$instances[i].arg`, 
+};
+    %}
+%}

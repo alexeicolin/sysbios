@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<gep name="FatFS" title="FAT File System Settings" version="1">
+
+<page name="Welcome" title="Welcome">
+  <instance href="ti/sysbios/fatfs/Welcome.html"/>
+</page>
+
+<page name="Basic" title="Basic Options">
+<html><body><table>
+  <tr>
+    <td>
+      <form>
+        <p>Configuration and integration of the open-source FAT filesystem project, FatFs, with SYS/BIOS.</p>
+      </form>
+    </td>
+  </tr>
+
+  <tr><td colspan="2">
+    <control type="checkbox" label="Enable FAT File System In My Application" value="value:this.$used" bold="true"/></td>
+  </tr>
+
+<!-- Row 1 (contains 1 columns) -->
+  <tr>
+    <td>
+    <h1>General Settings</h1>
+
+    <table>
+      <tr>
+        <td><control type="label" label="File Name Prefix" align="left"/></td>
+        <td><control type="editbox" 
+             value="value:this.fatfsPrefix"
+             tooltip="value:this.fatfsPrefix.$summary"/></td>
+      </tr>
+      <tr>
+        <td><control type="label" label="Hook Function To Get The Current Time" align="left"/></td>
+        <td><control type="editbox" 
+             value="value:this.getFatTimeHook"
+             tooltip="value:this.getFatTimeHook.$summary"/></td>
+      </tr>
+    </table>
+    </td>
+  </tr>
+<!-- End Row 1 -->
+
+<!-- Row 2 (contains 2 columns) -->
+  <tr>
+    <td>
+    <h1>RAM Disk Settings</h1>
+    <table>
+      <tr>
+        <td><control type="label" label="RAM Disk Symbol Name" align="left"/></td>
+        <td><control type="editbox" 
+             value="value:this.ramdiskSymbolName"
+             tooltip="value:this.ramdiskSymbolName.$summary"/></td>
+      </tr>
+      <tr>
+        <td><control type="label" label="RAM Disk Size" align="left"/></td>
+        <td><control type="editbox" 
+             value="value:this.ramdiskSize"
+             tooltip="value:this.ramdiskSize.$summary"/></td>
+      </tr>
+      <tr>
+        <td><control type="label" label="RAM Disk Drive ID" align="left"/></td>
+        <td><control type="editbox" 
+             value="value:this.ramdiskDriveId"
+             tooltip="value:this.ramdiskDriveId.$summary"/></td>
+      </tr>
+    </table>
+    </td>
+  </tr>
+<!-- End Row 2 -->
+
+</table></body></html>
+
+</page>
+
+<properties name="Advanced" title="All Options" enabled="true" visible="true" link="this"/>
+</gep>
+

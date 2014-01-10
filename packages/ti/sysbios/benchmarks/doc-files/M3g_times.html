@@ -1,0 +1,128 @@
+<html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>GCC Cortex-M3 Timing Benchmarks</title>
+    <style type="text/css" media="screen">table { border-collapse: collapse; font-family: "Ariel", sans-serif } 
+ 		  td    { background: white; border: ridge black } 
+  		  tr.hdr { font-weight: bolder }</style>
+  </head>
+  <body>
+    <h2>GCC Cortex-M3 Timing Benchmarks</h2>
+    <h3>ti.platforms.stellaris:LM4F232H5QD:1 (compiler version: 4.7.3)</h3>
+  </body>
+  <body xmlns="">
+    <table>
+      <tr class="hdr">
+        <td>Benchmark</td>
+        <td>Cycles</td>
+        <td style="border-top-style:none;border-right-style:none;border-bottom-style:none">
+          <cite>(1)</cite>
+        </td>
+      </tr>
+      <tr>
+        <td>Interrupt Latency</td>
+        <td>93</td>
+        <td style="border-top-style:none;border-right-style:none;border-bottom-style:none">
+          <cite>(2)</cite>
+        </td>
+      </tr>
+      <tr>
+        <td>Hwi_restore()</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>Hwi_disable()</td>
+        <td>4</td>
+      </tr>
+      <tr>
+        <td>Hwi dispatcher prolog</td>
+        <td>117</td>
+      </tr>
+      <tr>
+        <td>Hwi dispatcher epilog</td>
+        <td>216</td>
+      </tr>
+      <tr>
+        <td>Hwi dispatcher()</td>
+        <td>321</td>
+      </tr>
+      <tr>
+        <td>Hardware Interrupt to Blocked Task</td>
+        <td>624</td>
+      </tr>
+      <tr>
+        <td>Hardware Interrupt to Software Interrupt</td>
+        <td>367</td>
+      </tr>
+      <tr>
+        <td>Swi_enable()</td>
+        <td>60</td>
+      </tr>
+      <tr>
+        <td>Swi_disable()</td>
+        <td>11</td>
+      </tr>
+      <tr>
+        <td>Post Software Interrupt Again</td>
+        <td>30</td>
+      </tr>
+      <tr>
+        <td>Post Software Interrupt without Context Switch</td>
+        <td>116</td>
+      </tr>
+      <tr>
+        <td>Post Software Interrupt with Context Switch</td>
+        <td>195</td>
+      </tr>
+      <tr>
+        <td>Create a New Task without Context Switch</td>
+        <td>2181</td>
+      </tr>
+      <tr>
+        <td>Set a Task Priority without a Context Switch</td>
+        <td>156</td>
+      </tr>
+      <tr>
+        <td>Task_yield</td>
+        <td>254</td>
+      </tr>
+      <tr>
+        <td>Post Semaphore, No Waiting Task</td>
+        <td>48</td>
+      </tr>
+      <tr>
+        <td>Post Semaphore No Task Switch</td>
+        <td>245</td>
+      </tr>
+      <tr>
+        <td>Post Semaphore with Task Switch</td>
+        <td>350</td>
+      </tr>
+      <tr>
+        <td>Pend on Semaphore, No Context Switch</td>
+        <td>50</td>
+      </tr>
+      <tr>
+        <td>Pend on Semaphore with Task Switch</td>
+        <td>360</td>
+      </tr>
+      <tr>
+        <td>Clock_getTicks</td>
+        <td>9</td>
+      </tr>
+    </table>
+    <div>
+      <p style="margin: 0px;width: 400px">
+        <cite>(1) The benchmark application was built using BIOS.LibType_Custom with the following BIOS.customCCOpts settings:</cite>
+      </p>
+      <p style="margin: 0px;width: 400px">
+        <cite>"-mcpu=cortex-m3 -mthumb -mabi=aapcs -O3 -Wunused -Wunknown-pragmas -ffunction-sections -fdata-sections -Dti_sysbios_Build_useHwiMacros -Dfar= -D__DYNAMIC_REENT__".</cite>
+      </p>
+      <p style="margin: 0px;width: 400px">
+        <cite>Timings were obtained using the Tiva Launchpad TM4C123GH6PM board running at 40MHz.</cite>
+      </p>
+      <p style="margin: 0px;width: 400px">
+        <cite>(2) The M3 target also supports zero latency interrupts. See ti.sysbios.family.arm.m3.Hwi cdocs for details.</cite>
+      </p>
+    </div>
+  </body>
+</html>

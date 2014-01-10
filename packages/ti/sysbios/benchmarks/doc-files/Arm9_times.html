@@ -1,0 +1,122 @@
+<html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Arm926 Timing Benchmarks</title>
+    <style type="text/css" media="screen">table { border-collapse: collapse; font-family: "Ariel", sans-serif } 
+ 		  td    { background: white; border: ridge black } 
+  		  tr.hdr { font-weight: bolder }</style>
+  </head>
+  <body>
+    <h2>Arm926 Timing Benchmarks</h2>
+    <h3>ti.platforms.evmOMAPL138 (compiler version: 5.0.1)</h3>
+  </body>
+  <body xmlns="">
+    <table>
+      <tr class="hdr">
+        <td>Benchmark</td>
+        <td>Cycles</td>
+        <td style="border-top-style:none;border-right-style:none;border-bottom-style:none">
+          <cite>(1)</cite>
+        </td>
+      </tr>
+      <tr>
+        <td>Interrupt Latency</td>
+        <td>131</td>
+      </tr>
+      <tr>
+        <td>Hwi_restore()</td>
+        <td>12</td>
+      </tr>
+      <tr>
+        <td>Hwi_disable()</td>
+        <td>12</td>
+      </tr>
+      <tr>
+        <td>Hwi dispatcher prolog</td>
+        <td>412</td>
+      </tr>
+      <tr>
+        <td>Hwi dispatcher epilog</td>
+        <td>200</td>
+      </tr>
+      <tr>
+        <td>Hwi dispatcher()</td>
+        <td>600</td>
+      </tr>
+      <tr>
+        <td>Hardware Interrupt to Blocked Task</td>
+        <td>800</td>
+      </tr>
+      <tr>
+        <td>Hardware Interrupt to Software Interrupt</td>
+        <td>625</td>
+      </tr>
+      <tr>
+        <td>Swi_enable()</td>
+        <td>112</td>
+      </tr>
+      <tr>
+        <td>Swi_disable()</td>
+        <td>25</td>
+      </tr>
+      <tr>
+        <td>Post Software Interrupt Again</td>
+        <td>50</td>
+      </tr>
+      <tr>
+        <td>Post Software Interrupt without Context Switch</td>
+        <td>125</td>
+      </tr>
+      <tr>
+        <td>Post Software Interrupt with Context Switch</td>
+        <td>200</td>
+      </tr>
+      <tr>
+        <td>Create a New Task without Context Switch</td>
+        <td>1862</td>
+      </tr>
+      <tr>
+        <td>Set a Task Priority without a Context Switch</td>
+        <td>187</td>
+      </tr>
+      <tr>
+        <td>Task_yield</td>
+        <td>225</td>
+      </tr>
+      <tr>
+        <td>Post Semaphore, No Waiting Task</td>
+        <td>62</td>
+      </tr>
+      <tr>
+        <td>Post Semaphore No Task Switch</td>
+        <td>212</td>
+      </tr>
+      <tr>
+        <td>Post Semaphore with Task Switch</td>
+        <td>275</td>
+      </tr>
+      <tr>
+        <td>Pend on Semaphore, No Context Switch</td>
+        <td>87</td>
+      </tr>
+      <tr>
+        <td>Pend on Semaphore with Task Switch</td>
+        <td>287</td>
+      </tr>
+      <tr>
+        <td>Clock_getTicks</td>
+        <td>25</td>
+      </tr>
+    </table>
+    <div>
+      <p style="margin: 0px;width: 400px">
+        <cite>(1) The benchmark application was built using BIOS.LibType_Custom with the following BIOS.customCCOpts settings: "-me -mv5e --abi=eabi -ms --opt_for_speed=2 --program_level_compile -o3".</cite>
+      </p>
+      <p style="margin: 0px;width: 400px">
+        <cite>Timings were obtained using the OMAP-L138</cite>
+      </p>
+      <p style="margin: 0px;width: 400px">
+        <cite>The Timestamp Provider used for this test runs at 24Mhz with the core at 300Mhz. Figures could be off by +- 12.5 cycles.</cite>
+      </p>
+    </div>
+  </body>
+</html>

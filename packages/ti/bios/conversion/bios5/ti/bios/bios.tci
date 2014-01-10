@@ -1,0 +1,962 @@
+/*
+ * Copyright (c) 2012, Texas Instruments Incorporated
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * *  Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * *  Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * *  Neither the name of Texas Instruments Incorporated nor the names of
+ *    its contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+/*
+ *  ======== bios.tci ========
+ *  This is the BIOS package.
+ *
+ */
+
+bios = {};
+bios.internal = {};
+bios.supportOldMemoryNames = false;
+
+/* Table of code section for each ISA supported */
+bios.internal.codeSectionTable = {
+
+    "2800":["BIOSSEG", "LOADBIOSSEG", "SYSINITSEG", "LOADSYSINITSEG", "HWISEG",
+            "LOADHWISEG", "RTDXTEXTSEG", "LOADRTDXTEXTSEG", "STUBMEMSEG",
+            "TEXTSEG", "LOADTEXTSEG", "GBLINITSEG", "LOADGBLINITSEG", 
+            "TRCDATASEG", "LOADTRCDATASEG", "SWITCHSEG", "LOADSWITCHSEG",
+            "CINITSEG", "LOADCINITSEG", "PINITSEG", "LOADPINITSEG",
+            "HWIVECSEG", "LOADHWIVECSEG", "VECMEMSEG", "TEXTMEMSEG" ],
+
+    "5400":["BIOSSEG", "LOADBIOSSEG", "SYSINITSEG", "LOADSYSINITSEG", "HWISEG",
+            "LOADHWISEG", "RTDXTEXTSEG", "LOADRTDXTEXTSEG", "STUBMEMSEG",
+            "TEXTSEG", "LOADTEXTSEG", "GBLINITSEG", "LOADGBLINITSEG", 
+            "TRCDATASEG", "LOADTRCDATASEG", "SWITCHSEG", "LOADSWITCHSEG",
+            "CINITSEG", "LOADCINITSEG", "PINITSEG", "LOADPINITSEG",
+            "BIOSNORPTBSEG", "LOADBIOSNORPTBSEG", "TEXTMEMSEG" ],
+
+    "5500":["BIOSSEG", "LOADBIOSSEG", "SYSINITSEG", "LOADSYSINITSEG", "HWISEG",
+            "LOADHWISEG", "RTDXTEXTSEG", "LOADRTDXTEXTSEG", "STUBMEMSEG",
+            "TEXTSEG", "LOADTEXTSEG", "GBLINITSEG", "LOADGBLINITSEG", 
+            "TRCDATASEG", "LOADTRCDATASEG", "SWITCHSEG", "LOADSWITCHSEG",
+            "CINITSEG", "LOADCINITSEG", "PINITSEG", "LOADPINITSEG",
+            "HWIVECSEG", "LOADHWIVECSEG", "VECMEMSEG", "TEXTMEMSEG" ],
+
+    "6000":["BIOSSEG", "LOADBIOSSEG", "SYSINITSEG", "LOADSYSINITSEG", "HWISEG",
+            "LOADHWISEG", "RTDXTEXTSEG", "LOADRTDXTEXTSEG", "STUBMEMSEG",
+            "TEXTSEG", "LOADTEXTSEG", "HWIVECSEG", "LOADHWIVECSEG",
+            "VECMEMSEG", "TEXTMEMSEG", "RESTOREMEMSEG" ]
+};
+
+/**
+ *  ======== bios.checkMemOverlap ========
+ *  Checks to see if input MEM segment may overlap with another.
+ *  This function is called from the platform wizard when creating memory.
+ *
+ *  @param prog instance of a Program object
+ *  @param memInput MEM instance to check for overlap 
+ *  @return "ok" if no overlap, otherwise error message.
+ */
+bios.checkMemOverlap = function (prog, memInput)
+{
+    var ret = "ok";
+    var MEM = prog.module("MEM");
+
+    ret = MEM.$checkMemOverlap(memInput);
+
+    return (ret);
+}
+
+/**
+ *  ======== bios.createMemoryHeap ========
+ *  This function creates a memory heap with the specified size in the
+ *  specified MEM instance.  If no MEM instance is specified or no size
+ *  is specified then it will attempt to find the largest "data" segment
+ *  and use the default size. If the default size is too large then it
+ *  throw an error that a heap could not be created.
+ *
+ *  @param prog instance of a Program object
+ *  @param memInput MEM instance to create heap from
+ *  @param heapSize size of heap to create.
+ *
+ *  @return The memory segment which a heap was created in, otherwise
+ *          null if a heap was not created.
+ */
+bios.createMemoryHeap = function (prog, memInput, heapSize)
+{
+    var core = prog.cpu.attrs.cpuCore;
+    var MEM = prog.module("MEM");
+    var isa = null;
+    var result = null;
+    var heapSizeTable = {       // default heap size for different ISA's.
+        "2800": 0x0200,
+        "5400": 0x0400,
+        "5500": 0x3f80,
+        "6000": 0x4000,
+    };
+
+    /* if no MEM segment specified, search for the largest data segment */
+    if (memInput == null) {
+        var memInst = MEM.instances();
+        for (var i=0; i < memInst.length; i++) {
+            if (memInst[i].space == "data" ||
+                memInst[i].space == "code/data") {
+                if (core == "2800") {
+                    if (memInput == null &&
+                        (memInst[i].base + memInst[i].len < 0xffff)) {
+                        memInput = memInst[i];
+                    }
+                    else if ((memInst[i].base + memInst[i].len < 0xffff) &&
+                        memInst[i].len > memInput.len) {
+                        memInput = memInst[i];
+                    }
+                }
+                else {
+                    if (memInput == null) {
+                        memInput = memInst[i];
+                    }
+                    else if (memInst[i].len > memInput.len) {
+                        memInput = memInst[i];
+                    }
+                }
+            }
+        }
+    }
+    
+    /* if no heap size specified, use ISA default */
+    if (heapSize == null) {
+        for (isa in heapSizeTable) {
+            result = core.match(isa);
+            if (result != null) {
+                break;
+            }
+        }
+        if (result == null) {
+            result = core.match(/6\d+/);
+            if (result != null) {
+                isa = "6000";
+            }
+        }
+        heapSize = heapSizeTable[isa];
+    }
+
+    /* create the heap or throw error if heap cannot be created */
+    if (heapSize > memInput.len) {
+        throw new Error("Cannot create heap with size: " + heapSize + 
+            "in MEM segment: " + memInput.name);
+        return (null);
+    }
+    else {
+        memInput.createHeap = true;
+        memInput.heapSize = heapSize;
+    }
+
+    return (memInput);
+}
+
+/*
+ *  ======== bios.disableCsl ========
+ *  disables CSL from being part of program
+ */
+bios.disableCsl = function (prog)
+{
+    /*
+     * BIOS does not depend on CSL any longer
+     * so no need to do any additional thing here
+     * We use to do the following:
+     *     prog.module("GBL").CHIPTYPE = "other";
+     */
+}
+
+/*
+ *  ======== bios.disableMemoryHeaps ========
+ *  Disable Dynamic Memory Heaps in MEM Manager
+ */
+bios.disableMemoryHeaps = function (prog)
+{
+    prog.module("MEM").NOMEMORYHEAPS = true;
+}
+
+/*
+ *  ======== bios.disableRealTimeAnalysis ========
+ *  Disables Real-Time Analysis in global settings Manager
+ */
+bios.disableRealTimeAnalysis = function (prog)
+{
+    prog.module("GBL").ENABLEINST = false;
+}
+
+/*
+ *  ======== bios.disableRtdx ========
+ *  Disables RTDX in RTDX Manager
+ */
+bios.disableRtdx = function (prog)
+{
+    prog.module("HST").HOSTLINKTYPE = "NONE";
+    prog.module("RTDX").ENABLERTDX = false;
+}
+
+/*
+ *  ======== bios.disableTskManager ========
+ *  Disable TSK Manager
+ */
+bios.disableTskManager = function (prog)
+{
+    prog.module("TSK").ENABLETSK = false;
+}   
+
+/*
+ *  ======== bios.enableCsl ========
+ *  Enables CSL
+ */
+bios.enableCsl = function (prog)
+{
+    var GBL = prog.module("GBL");
+    var cpu = prog.cpu;
+
+    GBL.CHIPTYPE = cpu.deviceName;
+}
+
+/*
+ *  ======== bios.enableFullBios ========
+ *  Enables all heaps, enables RTDX,
+ *  enables Real-Time Analysis, enables TSK Manager.
+ */
+bios.enableFullBios = function (prog)
+{
+    bios.enableRealTimeAnalysis(prog);
+    bios.enableMemoryHeaps(prog);
+    bios.enableRtdx(prog);
+    bios.enableTskManager(prog);
+}
+
+/*
+ *  ======== bios.enableMemoryHeaps ========
+ *  Enable Dynamic Memory Heaps in MEM Manager
+ */
+bios.enableMemoryHeaps = function (prog)
+{
+    prog.module("MEM").NOMEMORYHEAPS = false;
+}
+
+/*
+ *  ======== bios.enableRealTimeAnalysis ========
+ *  Enable Real-Time Analysis in global settings property
+ *  !FEATURE Real-Time Analysis!        "bios.enableRealTimeAnalysis(prog)"
+ */
+bios.enableRealTimeAnalysis = function (prog)
+{
+    prog.module("GBL").ENABLEINST = true;
+}
+
+/*
+ *  ======== bios.enableRtdx ========
+ *  Enables RTDX in RTDX Manager
+ *  !FEATURE RTDX!      "bios.enableRtdx(prog)"
+ */
+bios.enableRtdx = function (prog)
+{
+    /*
+     *  Get the enumerated list of Host Link Types.
+     *  If "RTDX" is an option, set HOSTLINKTYPE to "RTDX".
+     */
+    var hostLinkTypeEnum = prog.module("HST").HOSTLINKTYPE$Enum();
+
+    if (hostLinkTypeEnum.match("RTDX")) {
+        prog.module("RTDX").ENABLERTDX = true;
+        prog.module("HST").HOSTLINKTYPE = "RTDX";
+    }
+    else {
+        print("Warning: RTDX not supported on " + prog.cpu.deviceName);
+    }
+}
+
+/*
+ *  ======== bios.enableTskManager ========
+ *  Enable TSK Manager
+ *  !FEATURE TSK Manager!       "bios.enableTskManager(prog)"
+ */
+bios.enableTskManager = function (prog)
+{
+    prog.module("TSK").ENABLETSK = true;
+}
+
+/**
+ *  ======== bios.internal.populatePlatformMemory ========
+ *  This function takes the platform memory and creates instances in the MEM
+ *  module if it does not already exists.  Then it sets the comment, base,
+ *  len, and space field if their writable property is set to true.
+ *
+ *  Preconditions:
+ *    MEM heaps must be disabled before calling this function.
+ *  Note:  All platform memory specified on the C55xx should be in bytes
+ *         but cdb expects word so we do a divide by 2 here.
+ *
+ *  @param prog program object
+ */
+bios.internal.populatePlatformMemory = function (prog)
+{
+    var cpu = prog.cpu;
+    var MEM = prog.module("MEM");
+    var brdMem = cpu.board.getMemoryMap();
+    var divFactor = cpu.attrs.minDataUnitSize / cpu.attrs.minProgUnitSize;
+
+    for (var i = 0; i < brdMem.length; i++) {
+        if (brdMem[i].len > 0) {
+            if (!(MEM.instance(brdMem[i].name))) {
+                MEM.create(brdMem[i].name);
+            }
+
+            if (brdMem[i].comment != null) {
+                if (MEM.instance(brdMem[i].name).comment$Writable()) {
+                    MEM.instance(brdMem[i].name).comment = brdMem[i].comment;
+                }
+            }
+
+            if (MEM.instance(brdMem[i].name).space$Writable()) {
+                if (MEM.instance(brdMem[i].name).createHeap$Writable()) {
+                    MEM.instance(brdMem[i].name).createHeap = false;
+                }
+                MEM.instance(brdMem[i].name).space = brdMem[i].space;
+            }
+        
+            if (MEM.instance(brdMem[i].name).base$Writable()) {
+                MEM.instance(brdMem[i].name).base = brdMem[i].base / divFactor;
+            }
+
+            if (MEM.instance(brdMem[i].name).len$Writable()) {
+                MEM.instance(brdMem[i].name).len = brdMem[i].len / divFactor;
+            }
+        }
+    }
+}
+
+/**
+ *  ======== bios.internal.oldMemoryNames ========
+ *  This function bypasses the function bios.initializeMemory, which removes
+ *  all memory segments and creates new ones from the memory maps returned from
+ *  board.getMemoryMap and cpu.getMemoryMap.
+ *  This function ensures that the board.getMemoryMap returns only the
+ *  external memory names by ensuring that cpu.getMemoryMap returns an empty
+ *  map (board.getMemoryMap internally calls cpu.getMemoryMap).
+ *  After that the function bios.internal.populatePlatformMemory, which calls
+ *  board.getMemoryMap, is called. 
+ *
+ *  @param prog program object
+ */
+bios.internal.oldMemoryNames = function (prog)
+{
+    prog.cpu.getMemoryMap = function()
+    {
+        var map = [];
+        return (map);
+    }
+    bios.internal.populatePlatformMemory(prog);
+}
+
+/**
+ *  ======== bios.initializeMemory ========
+ *  This is the top-level function that will take memory specified in the
+ *  platform and populate the MEM module.  This function creates a couple of
+ *  temporary MEM instances "codeSect" and "dataSect".  First, it sets all
+ *  code sections to "codeSect", all data sections without a heap to "dataSect",
+ *  and all data sections with a heap to MEM_NULL.  Next it loops through and
+ *  destroy's all possible MEM instances. Then it populates MEM with the memory
+ *  specified in the platform.  Finally, it places all code sections to
+ *  codeSeg and all data sections to dataSeg.  If no default code or data
+ *  sections were specified then it will loop through all MEM instances and
+ *  find an appropriate default.
+ *
+ *  @param prog     program object
+ *  @param codeSeg  name of default segment to place all code sections
+ *  @param dataSeg  name of default segment to place all data sections
+ *                  that don't require a heap
+ */
+bios.initializeMemory = function (prog, codeSeg, dataSeg)
+{
+    var MEM = prog.module("MEM");
+    var MEM_NULL = MEM.instance("MEM_NULL");
+
+    /*  Create temporary code segment */
+    var codeSect;
+    
+    codeSect = MEM.create("__codeSect");
+    codeSect.createHeap = false;
+    if (prog.cpu.attrs.cpuCore == "5400" ||
+        prog.cpu.attrs.cpuCore == "2800") {
+        codeSect.space = "code";
+    }
+    else {
+        codeSect.space = "code/data";
+    }
+    codeSect.base = -1;
+    codeSect.len = 0;
+
+    var dataSect;
+
+    dataSect = MEM.create("__dataSect");
+    dataSect.createHeap = false;
+    if (prog.cpu.attrs.cpuCore == "5400" ||
+        prog.cpu.attrs.cpuCore == "2800") {
+        dataSect.space = "data";
+    }
+    else {
+        dataSect.space = "code/data";
+    }
+    dataSect.base = -1;
+    dataSect.len = 0;
+
+    /*
+     *  Set all "code" sections to codeSect
+     *  Set all "data" sections that don't require a heap to dataSect
+     *  Set all "data" sections that require a heap to MEM_NULL
+     */
+    bios.setMemCodeSections(prog, codeSect);
+    bios.setMemDataNoHeapSections(prog, dataSect);
+    bios.setMemDataHeapSections(prog, MEM_NULL);
+
+    /*
+     *  Loop through and remove existing BIOS.MEM instances with no reference.
+     *  Note: BIOSREGS, CSLREGS, and CACHE_L2 may contain references which
+     *        does not show in cdb so these BIOS.MEM instances
+     *        cannot be destroyed because they are required.
+     */
+    var memInst = MEM.instances();
+    for (var i=0; i < memInst.length; i++) {
+        var refs = memInst[i].references();
+        if (refs.length == 0 &&
+            memInst[i] != MEM.instance("VECT") &&
+            memInst[i] != MEM.instance("PIEVECT") &&
+            memInst[i] != MEM.instance("BIOSREGS") &&
+            memInst[i] != MEM.instance("CACHE_L2") &&
+            memInst[i] != MEM.instance("CACHE_L1P") &&
+            memInst[i] != MEM.instance("CACHE_L1D") &&
+            memInst[i] != MEM.instance("CSLREGS")) {
+            memInst[i].destroy();
+        }
+    }
+
+    /*  Populate BIOS.MEM with memory defined from the platform file */
+    bios.internal.populatePlatformMemory(prog);
+
+    /*  Select default segments for "code" and "data" segments */
+    if (codeSeg != null && dataSeg != null) {
+        bios.setMemCodeSections(prog, MEM.instance(codeSeg));
+        bios.setMemDataNoHeapSections(prog, MEM.instance(dataSeg));
+    }
+    else {
+        var memInst = MEM.instances();
+        var largestCodeSect = codeSect;
+        for (var i=0; i < memInst.length; i++) {
+            if (memInst[i].space == "code" ||
+                memInst[i].space == "code/data") {
+                if (memInst[i].len > largestCodeSect.len) {
+                    largestCodeSect = memInst[i];
+                }
+            }
+        }
+
+        var largestDataSect = dataSect;
+        for (var i=0; i < memInst.length; i++) {
+            if (memInst[i].space == "data" ||
+                memInst[i].space == "code/data") {
+                if (memInst[i].len > largestDataSect.len) {
+                    largestDataSect = memInst[i];
+                }
+            }
+        }
+
+        bios.setMemCodeSections(prog, largestCodeSect);
+        bios.setMemDataNoHeapSections(prog, largestDataSect);
+    }
+        
+    /*  Remove temporary memory segments */
+    codeSect.destroy();
+    dataSect.destroy();
+}
+
+/*
+ *  ======== bios.initializeRegisterMap ========
+ *  Initializes the memory map registers settings in BIOS base
+ *  cpu information.
+ */
+bios.internal.initializeRegisterMap = function (prog)
+{
+    var cpu = prog.cpu;
+    var GBL = prog.module("GBL");
+
+    /*
+     * The Upper PMST value is determined by the Interrupt Vectors.
+     * Lower PMST value is set here based on cpu pmst value in platform.
+     * The mask value is 0x007f to mask out upper PMST value.
+     */
+    if (cpu.registers.pmst != null) {
+        if (GBL.LOWERPMST != null) {
+            GBL.LOWERPMST = cpu.registers.pmst & 0x007f;
+        }
+    }
+
+    if (cpu.registers.swwsr != null) {
+        if (GBL.SWWSR != null) {
+            GBL.SWWSR = cpu.registers.swwsr;
+        }
+    }
+
+    /* SWCR will be set to 0 (wait-states not multiplied) by default */
+    if (cpu.registers.swcr != null) {
+        if (GBL.SWCR != null) {
+            GBL.MODIFYSWCR = true;
+            GBL.SWCR = cpu.registers.swcr;
+        }
+    }
+
+    if (cpu.registers.bscr != null) {
+        if (GBL.BSCR != null) {
+            GBL.BSCR = cpu.registers.bscr;
+        }
+    }
+
+    if (cpu.registers.clkmd != null) {
+        if (GBL.CLKMD != null) {
+            GBL.MODIFYCLKMD = true;
+            GBL.CLKMD = cpu.registers.clkmd;
+        }
+    }
+    
+    /* set the PLLM register */
+    if (cpu.registers.pllm != null) {
+        if (GBL.MODIFYCLKMD != null) {
+            GBL.MODIFYCLKMD = true;
+            GBL.PLLM = cpu.registers.pllm;
+        }
+    }
+
+    /* set the PLLDIV0 register */
+    if (cpu.registers.plldiv0 != null) {
+        if (GBL.MODIFYCLKMD != null) {
+            GBL.MODIFYCLKMD = true;
+            GBL.PLLDIV0 = cpu.registers.plldiv0;
+        }
+    }
+
+    /* set the L2 mode register on C6x1x parts according to specified value */
+    if (cpu.registers.l2Mode != null) {
+        if (cpu.attrs.cpuCore == "6400") {
+            GBL.C641XCONFIGUREL2 = true;
+            GBL.C641XCCFGL2MODE = cpu.registers.l2Mode;
+        }
+        else if (cpu.attrs.cpuCore == "6200" ||
+            cpu.attrs.cpuCore == "6700") {
+            GBL.C621XCONFIGUREL2 = true;
+            GBL.C621XCCFGL2MODE = cpu.registers.l2Mode;
+        }
+        else if (cpu.attrs.cpuCore == "64x+") {
+            GBL.C64PLUSCONFIGURE = true;
+            GBL.C64PLUSL2CFG = cpu.registers.l2Mode;
+        }
+    }
+
+    if (cpu.registers.l1PMode != null) {
+        if (cpu.attrs.cpuCore == "64x+") {
+            GBL.C64PLUSCONFIGURE = true;
+            GBL.C64PLUSL1PCFG = cpu.registers.l1PMode;
+        }
+    }
+
+    if (cpu.registers.l1DMode != null) {
+        if (cpu.attrs.cpuCore == "64x+") {
+            GBL.C64PLUSCONFIGURE = true;
+            GBL.C64PLUSL1DCFG = cpu.registers.l1DMode;
+        }
+    }
+
+    /* set the PLLCR field in the c28xx cdb file */
+    if (cpu.registers.pllcr != null) {
+        GBL.MODIFYPLLCR = true;
+        GBL.PLLCR = cpu.registers.pllcr;
+        if (cpu.registers.plldiv != null) {
+            GBL.PLLDIV = cpu.registers.plldiv;
+        }
+    }
+
+    /* set the CLKIN field in the c28xx cdb file */
+    if (cpu.registers.clkin != null) {
+        GBL.CLKIN = cpu.registers.clkin;
+    }
+}
+
+/*
+ *  ======== bios.isMemCodeSection ========
+ *  This function is use to determine if a field property is a code section
+ *  or not.  The code sections for every supported ISA is listed in a table
+ *  above.  Note that some sections may be listed as "code" in on ISA and
+ *  "data" in another.  Any section which is not "code" is assumed to be a
+ *  "data" section.
+ */
+bios.internal.isMemCodeSection = function (prog, field)
+{
+    var retVal = false;
+    var core = prog.cpu.attrs.cpuCore;
+    var table = bios.internal.codeSectionTable;
+    var isa = null;
+    var result = null;
+
+    /* Determine the ISA of the program object */
+    for (isa in table) {
+        result = core.match(isa);
+        if (result != null) {
+            break;
+        }
+    }
+    if (result == null) {
+        result = core.match(/6\d+/);
+        if (result != null) {
+            isa = "6000";
+        }
+    }
+
+    /* If field is found in the table then it must be a code section */
+    if (result != null) {
+        for (var i=0; i < table[isa].length; i++) {
+            if (table[isa][i] == field) {
+                retVal = true;
+                break;
+            }
+        }
+    }
+    else {
+        throw new Error("Unsupported Architecture: " + core);
+    }
+
+    return retVal;
+}
+
+/*
+ *  ======== bios.minimizeBios ========
+ *  Disables all heaps, disables RTDX,
+ *  disables Real-Time Analysis, disables TSK Manager.
+ */
+bios.minimizeBios = function (prog)
+{
+    bios.disableRealTimeAnalysis(prog);
+    bios.disableMemoryHeaps(prog);
+    bios.disableRtdx(prog);
+    bios.disableTskManager(prog);
+}
+
+/*
+ *  ======== bios.internal.setClkout ========
+ *  set CLKOUT value in module("GBL").
+ *  prog.cpu.clockRate must be defined in platform file.
+ */
+bios.internal.setClkout = function (prog)
+{
+    /* set CLKOUT to be the value of cpu.clockRate. */
+    if (prog.cpu.clockRate != null) {
+        prog.module("GBL").CLKOUT = prog.cpu.clockRate;
+    }
+}
+
+/*
+ *  ======== bios.internal.setBiosNoRepeatBSeg ========
+ *  set BIOSNORPTBSEG value in module("MEM").
+ */
+bios.internal.setBiosNoRepeatSeg = function (prog)
+{
+    var MEM = prog.module("MEM");
+    var memInst = MEM.instances();
+    var progSeg = null;
+
+    if (prog.build.target.model.codeModel == "far") {
+        for (var i=0; i < memInst.length; i++) {
+            if (memInst[i].space == "code" ||
+                memInst[i].space == "code/data" &&
+                memInst[i] != MEM.instance("VECT")) {
+                if (memInst[i].base + memInst[i].len < 0x8000) {
+                    progSeg = memInst[i];
+                }
+            }
+        }
+        if (progSeg == null) {
+            print("Warning: No suitable program memory segment below 0x8000");
+        }
+        else {
+            MEM.BIOSNORPTBSEG = progSeg;
+        }
+    }
+}
+
+/*
+ *  ======== bios.setMemCodeSections ========
+ *  Set all code sections in cdb to memSegment.
+ */
+bios.setMemCodeSections = function (prog, memSegment)
+{
+    if (memSegment.space != "code" && memSegment.space != "code/data") {
+        throw new Error(memSegment.name + " is not a code segment");
+    }
+
+    var GBL = prog.module("GBL");
+    var MEM = prog.module("MEM");
+    var MEM_NULL = MEM.instance("MEM_NULL");
+
+    /* save original values of these fields so we can restore them later. */
+    var prevEnableLoadAddr = MEM.ENABLELOADADDR;
+    var prevUserCommandFile = MEM.USERCOMMANDFILE;
+
+    if (prog.cpu.attrs.cpuCore == "5400") {
+        var prevCallModel = GBL.CALLMODEL;
+        GBL.CALLMODEL = "far";
+    }
+
+    /* Enable here so when can modify load address references */
+    MEM.ENABLELOADADDR = true;
+    MEM.USERCOMMANDFILE = false;
+
+    /* Set any memory reference in "code" space to memSegment */
+    var modules = prog.modules();
+    for (var i=0; i < modules.length; i++) {
+        for (var j in modules[i]) {
+            if (bios.internal.isMemCodeSection(prog, j)) {
+                if (modules[i][j + "$MemberTest"](memSegment) &&
+                    modules[i][j] != MEM_NULL) {
+                    modules[i][j] = memSegment;
+                }
+                else {
+                    if (prog.cpu.attrs.cpuCore == "5400"
+                        && j == "BIOSNORPTBSEG") {
+                        if (memSegment.base + memSegment.len > 0x8000) {
+                            modules[i][j] = MEM_NULL;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (prog.cpu.attrs.cpuCore == "2800") {
+        MEM.HWIVECSEG = MEM.instance("PIEVECT");
+        MEM.LOADHWIVECSEG = MEM.instance("PIEVECT");
+    }
+
+    if (prog.cpu.attrs.cpuCore == "5500") {
+        MEM.HWIVECSEG = MEM.instance("VECT");
+        MEM.LOADHWIVECSEG = MEM.instance("VECT");
+    }
+
+    /* Restore orginal values here */
+    MEM.ENABLELOADADDR = prevEnableLoadAddr;
+    MEM.USERCOMMANDFILE = prevUserCommandFile;
+    if (prog.cpu.attrs.cpuCore == "5400") {
+        GBL.CALLMODEL = prevCallModel;
+    }
+}
+
+/*
+ *  ======== bios.setMemDataHeapSections ========
+ *  Set all "data" sections that require a heap to memSegment.
+ *  Make sure memSegment has a heap created in it.
+ *  The algorithm will loop through every field of every module.
+ *    makes sure reference is not null and contains a property called 'base'.
+ *    makes sure the MemberType is of type MEM.
+ *    makes sure every MEM object in the drop down lists has a heap created
+ *      in it to determine that this field requires a heap.
+ *    makes sure the field is writable before it changes it.
+ *
+ *  Preconditions:
+ *    MEM heaps must be enabled for all settings to be applied.
+ *    TSK must be enabled for TSK settings to be applied.
+ */
+bios.setMemDataHeapSections = function (prog, memSegment)
+{
+    if (memSegment.space != "data" && memSegment.space != "code/data") {
+        throw new Error(memSegment.name + " is not a data segment");
+    }
+    if (memSegment.createHeap == false) {
+        throw new Error(memSegment.name + " does not have a heap enabled");
+    }
+
+    var MEM = prog.module("MEM");
+    var memInst = MEM.instances();
+
+    /* set memory references which require a heap to memSegment */
+    var modules = prog.modules();
+    for (var i=0; i < modules.length; i++) {
+        for (var j in modules[i]) {
+            if (modules[i][j] != null && modules[i][j].base != null) {
+                if (modules[i][j + "$MemberType"]() == MEM) {
+                    var heapSection = true;
+
+                    for (var k=0; k < memInst.length; k++) {
+                        if (modules[i][j + "$MemberTest"](memInst[k])) {
+                            if (!(memInst[k].createHeap)) {
+                                heapSection = false;
+                            }
+                        }
+                    }
+                }
+                if (modules[i][j + "$MemberTest"](memSegment) &&
+                    modules[i][j + "$Writable"]() &&
+                    heapSection == true) {
+                    modules[i][j] = memSegment;
+                }
+            }
+        }
+    }
+}
+
+
+/*
+ *  ======== bios.setMemDataNoHeapSections ========
+ *  Set all "data" sections that don't require a heap to memSegment
+ *  The algorithm will loop through every field of every module.
+ *    makes sure reference is not null and contains a property called 'base'.
+ *    makes sure the MemberType is of type MEM.
+ *    makes sure its not a code sections
+ *    makes sure the field is writable before it changes it.
+ */
+bios.setMemDataNoHeapSections = function (prog, memSegment)
+{
+    if (memSegment.space != "data" && memSegment.space != "code/data") {
+        throw new Error(memSegment.name + " is not a data segment");
+    }
+
+    var GBL = prog.module("GBL")
+    var MEM = prog.module("MEM");
+    var MEM_NULL = MEM.instance("MEM_NULL");
+
+    /* save original values of these fields so we can restore them later. */
+    var prevEnableLoadAddr = MEM.ENABLELOADADDR;
+    var prevUserCommandFile = MEM.USERCOMMANDFILE;
+
+    /* Need to set these fields so we can change the references */
+    MEM.ENABLELOADADDR = true;
+    MEM.USERCOMMANDFILE = false;
+
+    if (prog.module('PWRM') != undefined) {
+       var prevEnablePwrm = prog.module('PWRM').ENABLE;
+       prog.module('PWRM').ENABLE = 1;  
+    }
+
+    /*
+     * set memory references in "data" space which do not require a heap to be
+     * set to memSegment.
+     */
+    var modules = prog.modules();
+    for (var i=0; i < modules.length; i++) {
+        for (var j in modules[i]) {
+            if (modules[i][j] != null && modules[i][j].base != null) {
+                if (!(bios.internal.isMemCodeSection(prog, j))) {
+                    if (modules[i][j + "$MemberTest"](memSegment) &&
+                        modules[i][j + "$Writable"]()) {
+                        modules[i][j] = memSegment;
+                    }
+                }
+            }
+        }
+        var instObjs = modules[i].instances();
+        for (var k=0; k < instObjs.length; k++) {
+            for (var m in instObjs[k]) {
+                if (instObjs[k][m] != null && instObjs[k][m].base != null) {
+                    if (instObjs[k][m + "$MemberTest"](memSegment) &&
+                        instObjs[k][m + "$Writable"]()) {
+                        instObjs[k][m] = memSegment;
+                    }
+                }
+            }
+        }
+    }
+
+    if (prog.module('PWRM') != undefined) {
+       prog.module('PWRM').ENABLE = prevEnablePwrm;     
+    }
+
+    /* Restore values to their original values */
+    MEM.ENABLELOADADDR = prevEnableLoadAddr;
+    MEM.USERCOMMANDFILE = prevUserCommandFile;
+}
+
+/*
+ *  ======== bios.init ========
+ *  Init the program to be a BIOS program.
+ */
+bios.init = function (platform, prog, baseseed)
+{
+    /* Check if the support for old memory names is requested. */
+    if (environment["ti.bios.oldMemoryNames"] != undefined) {
+        if (environment["ti.bios.oldMemoryNames"] == '0' ||
+            environment["ti.bios.oldMemoryNames"] == 'false') {
+            bios.supportOldMemoryNames = false;
+        }
+        else {
+            bios.supportOldMemoryNames = true; 
+        }
+    }
+    else {
+        bios.supportOldMemoryNames = false;
+    }
+
+    var biosChipFile = "ti/bios/config/bios_" + prog.cpu.deviceName + ".tci";
+
+    /*
+     * Attemp to load bios_<cpu.deviceName>.tci file.
+     * Throw an error if it doesn't exist because it must not be supported
+     */
+    try {
+        utils.importFile(biosChipFile);
+    }
+    catch (e) {
+        throw new Error ("Can't load '" + biosChipFile + "': " + e);
+    }
+
+    /*
+     * Execute function called bios.init<cpu.deviceName>
+     */
+    bios["init" + prog.cpu.deviceName](prog, baseseed);
+
+    /*
+     * Minimize the BIOS footprint
+     */
+    bios.minimizeBios(prog);
+
+    platform_path = platform.replace('.', '/', "g");
+
+    /*
+     * Try to import a file named bios_<platform>.tci
+     * which contains platform specific changes to the configuration.
+     * This file is optional so the call to import this file will fail
+     * silently if the file does not exists.
+     */
+    utils.importFile(platform_path + "/bios_platform.tci", null, true);
+        
+    if (bios["init_" + platform.replace('.', '_', "g")] != null) {
+        bios["init_" + platform.replace('.', '_', "g")](prog);
+    }
+
+    /*
+     *  Set all bios config modules, instances, and properties
+     *  under 'bios' namespace.
+     */
+    utils.getProgObjs(prog, bios);
+}

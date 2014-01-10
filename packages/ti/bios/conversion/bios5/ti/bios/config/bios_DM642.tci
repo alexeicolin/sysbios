@@ -1,0 +1,151 @@
+/*
+ *  ======== bios_DM642.tci ========
+ *  This file contains BIOS settings for DM642.
+ *
+ */
+
+/*
+ *  ======== bios.internal.setupMemoryDM642 ========
+ *  This function is the top-level function that will remove all MEM segments
+ *  from the cdb file.  It will take your physical memory map from calling
+ *  getMemoryMap() and create MEM instances in cdb.
+ *  It will then set sections to the default segment specified and fix up
+ *  the length and/or base of MEM segments if needed.
+ */
+bios.internal.setupMemoryDM642 = function (prog)
+{
+    /*
+     *  BIOS MEM segments will be created from object model memory definitions.
+     *  Place default code and data sections into specified memory segments.
+     */
+    if (bios.supportOldMemoryNames) {
+        bios.initializeMemory(prog, "ISRAM", "ISRAM");
+    }
+    else {
+        bios.initializeMemory(prog, "IRAM", "IRAM");
+    }
+
+    var cpu = prog.cpu;
+    var MEM = prog.module("MEM");
+    var iram;
+    if (bios.supportOldMemoryNames) {
+        iram = MEM.instance("ISRAM");
+    }
+    else {
+        iram = MEM.instance("IRAM");
+    }
+
+    var cache = MEM.instance("CACHE_L2");
+    cache.len  = 0x0;
+    cache.base = 0x40000;
+
+    if (cpu.registers.l2Mode != null) {
+        if (cpu.registers.l2Mode == "4-way cache (0k)") {
+            iram.len   = 0x40000;
+        }
+        else if (cpu.registers.l2Mode == "4-way cache (32k)") {
+            iram.len   = 0x38000;
+        }
+        else if (cpu.registers.l2Mode == "4-way cache (64k)") {
+            iram.len   = 0x30000;
+        }
+        else if (cpu.registers.l2Mode == "4-way cache (128k)") {
+            iram.len   = 0x20000;
+        }
+        else if (cpu.registers.l2Mode == "4-way cache (256k)") {
+            iram.len   = 0x0;
+            /* All references to IRAM need to be changed to point to some other
+             * available MEM instance.
+             */
+            var memInst = MEM.instances();
+            var seg = null;
+            for (var i=0; i < memInst.length; i++) {
+                if (memInst[i].space == "code/data" && memInst[i] != iram) {
+                    seg = memInst[i];
+                }
+            }
+            if (seg == null) {
+                throw new Error("All of IRAM is used for cache " + 
+                    "and there is no external memory in the configuration");
+            }
+            else {
+                bios.setMemCodeSections(prog, seg);
+                bios.setMemDataNoHeapSections(prog, seg);
+            }
+            iram.destroy();
+        }
+    }
+    else {
+        iram.len = 0x40000;
+    }
+}
+
+/*
+ *  ======== bios.initDM642 ========
+ *  BIOS initialization for the DM642 platform
+ */
+bios.initDM642 = function (prog, baseseed)
+{
+    /*
+     *  Find configuration seed files to load
+     */
+    if (baseseed == null) {
+        baseseed = "ti/bios/config/cdb/c64xx.cdb";
+    }
+
+    var seed = utils.findSeed(baseseed);
+    if (seed != null) {
+        try {
+            prog.load(seed);
+        }
+        catch (e) {
+            throw new Error ("Can't load configuration seed '" + seed + "' : "
+                + e);
+        }
+    }
+    else {
+        throw new Error ("Can't find configuration seed: " + baseseed);
+    }
+
+    /* Set CHIPTYPE to cpu number */
+    prog.module("GBL").CHIPTYPE = prog.cpu.deviceName;
+
+    /* set CLKOUT to be the value of cpu.clockRate. */
+    bios.internal.setClkout(prog);
+
+    /* Set endian mode based on build options */
+    prog.module("GBL").ENDIANMODE = prog.build.target.model.endian;
+
+    /* Do Not Configure the L2 Cache */
+    prog.module("GBL").C641XCONFIGUREL2 = false;
+
+    /* Before, BIOS used to load DM642.cdb for this architecture. That file
+     * contains a memory block named ISRAM. Now, BIOS loads c64xx.cdb, which
+     * contains IRAM, same as the new CDM642.tci. So, to get the name ISRAM,
+     * when the old memory names are used, the solution for this chip is
+     * different from all others.
+     */
+    if (bios.supportOldMemoryNames) {
+        prog.cpu.getMemoryMap = function() {
+            var map = [];
+
+            prog.cpu.memBlock["ISRAM"] = {
+                comment: "Internal L2 memory",
+                name: "ISRAM",
+                base: 0x0,
+                len:  0x40000,
+                space: "code/data"
+            };
+
+
+            map[0] = prog.cpu.memBlock["ISRAM"];
+            return (map);
+        }
+    }
+
+    /* initialize the default memory segments for DM642 */
+    bios.internal.setupMemoryDM642(prog);
+
+    /* initialize some memory map registers */
+    bios.internal.initializeRegisterMap(prog);
+}

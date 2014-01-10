@@ -1,0 +1,98 @@
+;
+;  Copyright (c) 2012, Texas Instruments Incorporated
+;  All rights reserved.
+; 
+;  Redistribution and use in source and binary forms, with or without
+;  modification, are permitted provided that the following conditions
+;  are met:
+; 
+;  *  Redistributions of source code must retain the above copyright
+;     notice, this list of conditions and the following disclaimer.
+; 
+;  *  Redistributions in binary form must reproduce the above copyright
+;     notice, this list of conditions and the following disclaimer in the
+;     documentation and/or other materials provided with the distribution.
+; 
+;  *  Neither the name of Texas Instruments Incorporated nor the names of
+;     its contributors may be used to endorse or promote products derived
+;     from this software without specific prior written permission.
+; 
+;  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+;  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+;  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+;  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+;  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+;  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+;  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+;  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+;  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+;  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+;  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+;
+;
+; ======== que_get.s64T ========
+;
+;
+
+    .if $isdefed("__TI_ELFABI__")
+    .if __TI_ELFABI__
+        .asg QUE_get,          _QUE_get
+        .asg QUE_put,          _QUE_put
+    .endif
+    .endif
+
+        .global _QUE_get, _QUE_put
+
+PREV    .set    4               ; prev
+
+;
+; ======== QUE_get ========
+;
+; Void *QUE_get(QUE_Handle queue):
+;       a4 <- queue
+;       a4 <- elem   (at return)
+;
+
+_QUE_get:
+        .asmfunc
+        b       l1                      ; prevent interrupts
+||      ldw     *a4, a1                 ; elem = a1 = queue->next
+        mv      a4, b1                  ; b1 = queue
+        nop     3
+
+        b       l2                      ; return
+||      ldw     *a1, a2                 ; a2 = queue->next->next
+||      mv      a1, a4                  ; return elem
+l1:
+        b       b3
+        nop     3
+        stw     a2, *b1                 ; queue->next = elem->next
+l2:
+        stw     b1, *+a2(PREV)          ; queue->next->prev = queue
+        .endasmfunc
+
+
+;
+; ======== QUE_put ========
+;
+; Void QUE_put(QUE_Handle queue, Void *elem):
+;       a4 <- queue
+;       b4  <- elem
+;
+
+_QUE_put:
+        .asmfunc
+        b       l3                      ; return and prevent interrupts
+||      ldw     *+a4(PREV), a3          ; a3 = queue->prev
+        nop     1
+        b       b3                      ; return and prevent interrupts
+        nop     1
+        stw     a4, *b4                 ; elem->next = queue
+        stw     b4, *+a4(PREV)          ; queue->prev = elem
+l3:
+        stw     a3, *+b4(PREV)          ; elem->prev = queue->prev
+        stw     b4, *a3                 ; queue->prev->next = elem
+        .endasmfunc
+
+        .end
+

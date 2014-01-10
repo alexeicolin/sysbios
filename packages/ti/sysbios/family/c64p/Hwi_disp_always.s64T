@@ -1,0 +1,189 @@
+;
+;  Copyright (c) 2012, Texas Instruments Incorporated
+;  All rights reserved.
+; 
+;  Redistribution and use in source and binary forms, with or without
+;  modification, are permitted provided that the following conditions
+;  are met:
+; 
+;  *  Redistributions of source code must retain the above copyright
+;     notice, this list of conditions and the following disclaimer.
+; 
+;  *  Redistributions in binary form must reproduce the above copyright
+;     notice, this list of conditions and the following disclaimer in the
+;     documentation and/or other materials provided with the distribution.
+; 
+;  *  Neither the name of Texas Instruments Incorporated nor the names of
+;     its contributors may be used to endorse or promote products derived
+;     from this software without specific prior written permission.
+; 
+;  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+;  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+;  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+;  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+;  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+;  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+;  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+;  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+;  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+;  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+;  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+;
+;
+;  ======== Hwi_disp_always.s64T ========
+;
+;
+ 
+        .cdecls C,NOLIST,"package/internal/Hwi.xdc.h"
+
+;
+; We should probably define a C struct for the stack frame below ...
+;
+
+;
+; The following are double word offsets
+;
+Hwi_SFSSRITSR   .set    1
+Hwi_SFILCRILC   .set    2
+Hwi_SFGPLYAB    .set    3
+Hwi_SFAMRCSR    .set    4
+Hwi_SFIRPB14    .set    5
+Hwi_SFA1A0      .set    6
+Hwi_SFA3A2      .set    7
+Hwi_SFA5A4      .set    8
+Hwi_SFA7A6      .set    9
+Hwi_SFA9A8      .set    10
+Hwi_SFB1B0      .set    11
+Hwi_SFB3B2      .set    12
+Hwi_SFB5B4      .set    13
+Hwi_SFB7B6      .set    14
+Hwi_SFB9B8      .set    15
+
+Hwi_STACKFRAMESIZE      .set    16      ; DW (8 byte) size
+
+SP              .set    b15
+b3_intNum       .set    b3
+TSR_XEN_BIT     .set    0x0008  ; eXternal exception ENable bit in TSR
+
+    .if $isdefed("__TI_ELFABI__")
+    .if __TI_ELFABI__
+        .asg ti_sysbios_family_c64p_Hwi_dispatchC__I, _ti_sysbios_family_c64p_Hwi_dispatchC__I
+        .asg ti_sysbios_family_c64p_Hwi_dispatchAlways, _ti_sysbios_family_c64p_Hwi_dispatchAlways
+        .asg ti_sysbios_family_c64p_Hwi_Module__state__V, _ti_sysbios_family_c64p_Hwi_Module__state__V
+    .endif
+    .endif
+
+        .global _ti_sysbios_family_c64p_Hwi_dispatchC__I
+        .global _ti_sysbios_family_c64p_Hwi_dispatchAlways
+
+_ti_sysbios_family_c64p_Hwi_Module__state__V .tag ti_sysbios_family_c64p_Hwi_Module_State
+
+;
+; This dispatcher always aligns stack
+;
+        .sect ".text:_ti_sysbios_family_c64p_Hwi_dispatchAlways"
+    .clink
+_ti_sysbios_family_c64p_Hwi_dispatchAlways:
+        .asmfunc
+
+;
+; For Tesla, since there's only a B-side data bus, we can do at most one
+; STW|STDW|LDW|LDDW per cycle.  In parallel with the store or load we can
+; also do:
+;       - one MVC, or
+;       - one MVKL, or
+;       - one MVKH, or
+;       - one B, or
+;       - one ADDKPC
+;
+        stw     b10, *SP--[2]
+        ldw     *SP[1], b3_intNum               ; get intr #
+||      mv      SP, b10                         ; save pre-aligned SP
+||      and     SP, ~0x7, SP                    ; align SP
+        addk    -(Hwi_STACKFRAMESIZE*8), SP     ; alloc stack frame
+
+        stdw    b1:b0, *SP[Hwi_SFB1B0]
+||      mvc     AMR, b1
+        stdw    b3:b2, *SP[Hwi_SFB3B2]          ; orig B3 (before intNum ldw)
+||      mvc     CSR, b0
+        stdw    b1:b0, *SP[Hwi_SFAMRCSR]
+||      mvc     IRP, b1
+||      mv      b14, b0
+        stdw    a9:a8, *SP[Hwi_SFA9A8]
+||      mvkl    _ti_sysbios_family_c64p_Hwi_Module__state__V.bss, a9
+        stdw    b9:b8, *SP[Hwi_SFB9B8]
+||      mvkh    _ti_sysbios_family_c64p_Hwi_Module__state__V.bss, a9
+        stdw    b7:b6, *SP[Hwi_SFB7B6]
+||      mvc     RILC, b8
+        stdw    a5:a4, *SP[Hwi_SFA5A4]
+||      mvc     ILC, b9
+        stdw    b1:b0, *SP[Hwi_SFIRPB14]
+||      mvc     GPLYA, b7
+        ldw     *a9, b14                        ; init $bss b14
+||      mvkl    _ti_sysbios_family_c64p_Hwi_dispatchC__I, a8
+        stdw    b5:b4, *SP[Hwi_SFB5B4]
+||      mvkh    _ti_sysbios_family_c64p_Hwi_dispatchC__I, a8
+        mvc     ITSR, b0
+        mvc     TSR, b2
+||      and     b0, TSR_XEN_BIT, a5
+
+        b       a8
+||      stdw    a7:a6, *SP[Hwi_SFA7A6]
+||      mv      b3_intNum, a4                   ; Hwi_dispatchC(intNum)
+        stdw    a3:a2, *SP[Hwi_SFA3A2]
+||      addkpc  dispatchCRet1, b3, 0
+||      or      b2, a5, b2
+        stdw    a1:a0, *SP[Hwi_SFA1A0]
+||      mvc     GPLYB, b6
+        stdw    b9:b8, *SP[Hwi_SFILCRILC]
+||      mvc     b2, TSR
+        stdw    b7:b6, *SP[Hwi_SFGPLYAB]
+||      mvc     SSR, b1
+||      mvk     0, b2
+        stdw    b1:b0, *SP[Hwi_SFSSRITSR]
+||      mvc     b2, AMR
+
+dispatchCRet1:
+        
+        ;
+        ; interrupts must be disabled upon return from above call
+        ;
+
+        ; start w/ control regs since we need their values first
+        lddw    *SP[Hwi_SFSSRITSR], b9:b8
+        lddw    *SP[Hwi_SFGPLYAB], b7:b6
+        lddw    *SP[Hwi_SFILCRILC], b5:b4
+        lddw    *SP[Hwi_SFAMRCSR], b3:b2
+        lddw    *SP[Hwi_SFIRPB14], b1:b0
+
+        lddw    *SP[Hwi_SFA1A0], a1:a0
+||      mvc     b9, SSR
+        lddw    *SP[Hwi_SFA3A2], a3:a2
+||      mvc     b8, ITSR
+        lddw    *SP[Hwi_SFA5A4], a5:a4
+||      mvc     b7, GPLYA
+        lddw    *SP[Hwi_SFA7A6], a7:a6
+||      mvc     b6, GPLYB
+        lddw    *SP[Hwi_SFA9A8], a9:a8
+||      mvc     b5, ILC
+        lddw    *SP[Hwi_SFB9B8], b9:b8
+||      mvc     b4, RILC
+        lddw    *SP[Hwi_SFB7B6], b7:b6
+||      mvc     b1, IRP
+||      mv      b0, b14
+        lddw    *SP[Hwi_SFB5B4], b5:b4
+||      mvk     0x4, b1
+||      and     b2, 0x4, b0
+        lddw    *SP[Hwi_SFB3B2], b3:b2
+||[ b0] sat     b1:b0, b0
+||      mvc     b2, CSR
+
+        b       IRP
+||      lddw    *SP[Hwi_SFB1B0], b1:b0
+||      mv      b10, SP
+        ldw     *++SP[2], b10
+||      mvc     b3, AMR                         ; B3 still has AMR
+        nop     4
+
+        .endasmfunc
+

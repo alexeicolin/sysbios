@@ -1,0 +1,228 @@
+;
+;
+    .cdecls C,NOLIST,"package/internal/Hwi.xdc.h"
+
+    .global _ti_sysbios_family_c28_Hwi_dispatchC__I
+    .global _ti_sysbios_family_c28_Hwi_dispatchTable
+    .global _ti_sysbios_family_c28_Hwi_dispatchPie
+    .global _ti_sysbios_family_c28_Hwi_zeroLatencyIERMask__C
+
+_ti_sysbios_family_c28_Hwi_Module__state__V .tag ti_sysbios_family_c28_Hwi_Module_State
+
+ti_sysbios_family_c28_Hwi_PIECTRL           .set    0x000ce0
+
+    .sect ".text:_ti_sysbios_family_c28_Hwi_dispatch"
+    .clink
+dispatchNonPie: ; Non-pie dispatcher (arrive here via dispatchTable)
+        .asmfunc
+
+        c28addr
+        pop     p               ; Load product reg with return addr
+                                ; NOTE: p is automatically saved
+        push    p               ; Put return addr back on stack
+
+        push    xar4            ; Save xar4 early so it can be used here
+                                ; This will be popped at end of dispatchMain
+        movl    xar4, #_ti_sysbios_family_c28_Hwi_Module__state__V.irp
+        movl    *xar4, p        ; Store return address in Hwi module state
+
+        lb      dispatchMain
+
+        .endasmfunc
+
+_ti_sysbios_family_c28_Hwi_dispatchPie:  ; PIE dispatcher (plugs PIE vectors)
+        .asmfunc
+
+        c28addr
+        pop     p               ; Load product reg with return addr
+                                ; NOTE: p is automatically saved
+        push    p               ; Put return addr back on stack
+
+        push    xar4            ; Save xar4 early so it can be used here
+                                ; This will be popped at end of dispatchMain
+        movl    xar4, #_ti_sysbios_family_c28_Hwi_Module__state__V.irp
+        movl    *xar4, p        ; Store return address in Hwi module state
+
+dispatchMain:   ; Dispatcher code common to dispatchPie and dispatchNonPie
+
+        ; At this point, the following registers have already been saved:
+        ; ** Automatic interrupt context save (see SPRU513C) **
+        ; ST0, T, AL, AH, PL, PH, AR0, AR1, DP, ST1, DBGSTAT, PC, and IER.
+        ; ** Pushed on stack so far **
+        ; XAR4
+
+        clrc    page0,ovm
+        spm     0
+
+        ; Save C context
+        push    ar1h:ar0h
+
+        push    xar5
+        push    xar6
+        push    xar7
+        push    xt
+
+    .if  (.TMS320C2800_FPU32 == 1)
+        ; Save 28FP registers
+        push    rb              ; Must be done with interrupts disabled
+        mov32   *sp++, stf      ; Save FPU status reg
+        mov32   *sp++, r0h      ; Save floating point regs
+        mov32   *sp++, r1h
+        mov32   *sp++, r2h
+        mov32   *sp++, r3h
+        setflg  rndf32=1
+    .endif
+
+        ; align sp since acc is two words
+        mov     ah,@sp
+        asp
+        push    acc
+
+        movl    xar4, #_ti_sysbios_family_c28_Hwi_zeroLatencyIERMask__C
+        mov     ah, *xar4       ; Don't use 'al' because it's used for intNum
+        sb      zeroLatency$, neq
+
+nonZeroLatency$:
+        
+        ; Place intNum in register 'al'
+        movl    xar4, #ti_sysbios_family_c28_Hwi_PIECTRL
+        mov     al, *xar4
+        and     al, #0x00fe     ; al has vect id * 2 (vec Id starts at bit 1)
+        lsr     al, #1          ; al has vect id
+        
+        movl    xar4, #_ti_sysbios_family_c28_Hwi_dispatchC__I
+        lcr     *xar4
+        sb      dispatchC_done$, unc
+
+zeroLatency$:
+
+        ; Re-enable intm interrupt but ensure that non-zero latency interrupts
+        ; stay disabled during dispatchC
+
+        movl    xar4, #_ti_sysbios_family_c28_Hwi_disable__E
+        lcr     *xar4           ; Unset non-zero latency IER bits
+
+        ; Place intNum in register 'al'
+        movl    xar4, #ti_sysbios_family_c28_Hwi_PIECTRL
+        mov     al, *xar4
+        and     al, #0x00fe     ; al has vect id * 2 (vec Id starts at bit 1)
+        lsr     al, #1          ; al has vect id
+        
+        clrc    intm, dbgm      ; Re-enable global interrupts
+        
+        movl    xar4, #_ti_sysbios_family_c28_Hwi_dispatchC__I
+        lcr     *xar4           ; Call dispatchC
+
+        setc    intm, dbgm      ; Disable global interrupts
+        movl    xar4, #_ti_sysbios_family_c28_Hwi_enable__E
+        lcr     *xar4           ; Setting non-zero latency IER bits
+
+dispatchC_done$:
+
+        ; After dispatchC is called, restore C context
+        pop     @sp
+
+    .if (.TMS320C2800_FPU32 == 1)
+        ; Restore 28FP registers
+        mov32   r3h, *--sp
+        mov32   r2h, *--sp
+        mov32   r1h, *--sp
+        mov32   r0h, *--sp
+        mov32   stf, *--sp
+        pop     rb
+    .endif
+
+        pop     xt
+        pop     xar7
+        pop     xar6
+        pop     xar5
+
+
+        movz    ar0,@sp
+
+        subb    xar0, #9            ; point to IER on stack
+
+        mov     *xar0, ier          ; IER value may have changed by
+                                ; the user till this time
+                                ; this need to be corrected in
+                                ; the stack where value of IER
+                                ; have been saved as hardware
+                                ; context and will be restored
+                                ; as a part of iret instruction
+
+        pop     ar1h:ar0h
+
+        pop     xar4            ; This was pushed first so pop last
+
+        iret                    ; return from interrupt
+                                ; restore hardware context
+        .endasmfunc
+
+_ti_sysbios_family_c28_Hwi_dispatchTable:
+        .asmfunc
+
+        mov    @al, #1
+        b      dispatchNonPie, UNC
+        mov    @al, #2              ; dispIsr2
+        b      dispatchNonPie, UNC
+        mov    @al, #3              ; dispIsr3
+        b      dispatchNonPie, UNC
+        mov    @al, #4              ; dispIsr4
+        b      dispatchNonPie, UNC
+        mov    @al, #5              ; dispIsr5
+        b      dispatchNonPie, UNC
+        mov    @al, #6              ; dispIsr6
+        b      dispatchNonPie, UNC
+        mov    @al, #7              ; dispIsr7
+        b      dispatchNonPie, UNC
+        mov    @al, #8              ; dispIsr8
+        b      dispatchNonPie, UNC
+        mov    @al, #9              ; dispIsr9
+        b      dispatchNonPie, UNC
+        mov    @al, #10             ; dispIsr10
+        b      dispatchNonPie, UNC
+        mov    @al, #11             ; dispIsr11
+        b      dispatchNonPie, UNC
+        mov    @al, #12             ; dispIsr12
+        b      dispatchNonPie, UNC
+        mov    @al, #13             ; dispIsr13
+        b      dispatchNonPie, UNC
+        mov    @al, #14             ; dispIsr14
+        b      dispatchNonPie, UNC
+        mov    @al, #15             ; dispIsr15
+        b      dispatchNonPie, UNC
+        mov    @al, #16             ; dispIsr16
+        b      dispatchNonPie, UNC
+        mov    @al, #17             ; dispIsr17
+        b      dispatchNonPie, UNC
+        mov    @al, #18             ; dispIsr18
+        b      dispatchNonPie, UNC
+        mov    @al, #19             ; dispIsr19
+        b      dispatchNonPie, UNC
+        mov    @al, #20             ; dispIsr20
+        b      dispatchNonPie, UNC
+        mov    @al, #21             ; dispIsr21
+        b      dispatchNonPie, UNC
+        mov    @al, #22             ; dispIsr22
+        b      dispatchNonPie, UNC
+        mov    @al, #23             ; dispIsr23
+        b      dispatchNonPie, UNC
+        mov    @al, #24             ; dispIsr24
+        b      dispatchNonPie, UNC
+        mov    @al, #25             ; dispIsr25
+        b      dispatchNonPie, UNC
+        mov    @al, #26             ; dispIsr26
+        b      dispatchNonPie, UNC
+        mov    @al, #27             ; dispIsr27
+        b      dispatchNonPie, UNC
+        mov    @al, #28             ; dispIsr28
+        b      dispatchNonPie, UNC
+        mov    @al, #29             ; dispIsr29
+        b      dispatchNonPie, UNC
+        mov    @al, #30             ; dispIsr30
+        b      dispatchNonPie, UNC
+        mov    @al, #31             ; dispIsr31
+        b      dispatchNonPie, UNC
+
+        .endasmfunc
+

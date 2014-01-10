@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  This file conforms to the DTD xdc/bld/release.dtd -->
+<release name="ti_sysbios_timers" label="default" date="1374702857497" buildCount="1" producerId="undefined">
+<package name="ti.sysbios.timers"
+    version="2, 0, 0, 0"/>
+<imports>
+</imports>
+<references>
+    <package name="xdc"
+        version="1, 1, 1, 1362511735121"
+        providerId="xdccore">
+        <file name="IPackage.xdc"/>
+        <file name="IPackage.xs"/>
+        <file name="om2.xs"/>
+        <file name="package.xs"/>
+        <file name="template.xs"/>
+        <file name="xdc.tci"/>
+        <file name="xmlgen.xs"/>
+        <file name="xmlgen2.xs"/>
+    </package>
+    <package name="xdc.services.global"
+        version="1, 0, 0, 1362511752734"
+        providerId="xdccore">
+        <file name="Clock.xs"/>
+        <file name="Trace.xs"/>
+        <file name="java/package.jar"/>
+    </package>
+    <package name="xdc.bld"
+        version="1, 0, 2, 1362511736987"
+        providerId="xdccore">
+        <file name="BuildEnvironment.xs"/>
+        <file name="Configuration.xs"/>
+        <file name="Executable.xs"/>
+        <file name="ITarget.xs"/>
+        <file name="ITarget2.xs"/>
+        <file name="ITargetFilter.xs"/>
+        <file name="Library.xs"/>
+        <file name="Manifest.xs"/>
+        <file name="PackageContents.xs"/>
+        <file name="Repository.xs"/>
+        <file name="Script.xs"/>
+        <file name="Utils.xs"/>
+        <file name="_gen.xs"/>
+        <file name="bld.js"/>
+        <file name="package.xs"/>
+    </package>
+    <package name="ti.targets"
+        version="1, 0, 3, 1364511904523"
+        providerId="xdccore">
+        <file name="C28_float.xs"/>
+        <file name="C28_large.xs"/>
+        <file name="ITarget.xs"/>
+        <file name="package.xs"/>
+    </package>
+    <package name="ti.targets.msp430.elf"
+        version="1, 0, 0, 1366349596315"
+        providerId="xdccore">
+        <file name="MSP430.xs"/>
+        <file name="MSP430X.xs"/>
+        <file name="MSP430X_small.xs"/>
+        <file name="package.xs"/>
+    </package>
+    <package name="ti.targets.arp32.elf"
+        version="1, 0, 0, 1364511913210"
+        providerId="xdccore">
+        <file name="ARP32.xs"/>
+        <file name="ARP32_far.xs"/>
+        <file name="package.xs"/>
+    </package>
+    <package name="ti.targets.elf"
+        version="1, 0, 0, 1364511915593"
+        providerId="xdccore">
+        <file name="ITarget.xs"/>
+        <file name="package.xs"/>
+    </package>
+    <package name="ti.targets.arm.elf"
+        version="1, 0, 0, 1364511908332"
+        providerId="xdccore">
+        <file name="IArm.xs"/>
+        <file name="package.xs"/>
+    </package>
+    <package name="gnu.targets"
+        version="1, 0, 1, 1364511882130"
+        providerId="xdccore">
+        <file name="ITarget.xs"/>
+        <file name="Linux86.xs"/>
+        <file name="MVArm9.xs"/>
+        <file name="Mingw.xs"/>
+        <file name="UCArm9.xs"/>
+        <file name="package.xs"/>
+    </package>
+    <package name="gnu.targets.arm"
+        version="1, 0, 0, 0, 1364511882265"
+        providerId="xdccore">
+        <file name="A15.xs"/>
+        <file name="A15F.xs"/>
+        <file name="A8F.xs"/>
+        <file name="A9F.xs"/>
+        <file name="GCArmv6.xs"/>
+        <file name="GCArmv7A.xs"/>
+        <file name="M3.xs"/>
+        <file name="M4.xs"/>
+        <file name="M4F.xs"/>
+        <file name="MVArm9.xs"/>
+        <file name="UCArm9.xs"/>
+        <file name="package.xs"/>
+    </package>
+    <package name="iar.targets.msp430"
+        version="1, 0, 0, 1366349254824"
+        providerId="xdccore">
+        <file name="ITarget.xs"/>
+        <file name="package.xs"/>
+    </package>
+    <package name="tisb.coverity.filters"
+        version="1, 0, 0, 1363998073175"
+        providerId="/db/toolsrc/library/toolsE35/packages">
+        <file name="TisbDefaults.xs"/>
+    </package>
+    <package name="tisb.misra.filters"
+        version="1, 0, 0, 1363998073172"
+        providerId="/db/toolsrc/library/toolsE35/packages">
+        <file name="Misra.xs"/>
+        <file name="TisbDefaults.xs"/>
+    </package>
+    <package name="ti.sysbios"
+        version="2, 0, 0, 0, 1374701274000"
+        providerId="/db/vtree/library/trees/avala/avala-s53/src">
+        <file name="reports/misra.xs"/>
+    </package>
+    <package name="xdc.shelf"
+        version="1, 0, 0, 1362511763662"
+        providerId="xdccore">
+        <file name="java/antlr.jar"/>
+        <file name="java/ecj.jar"/>
+        <file name="java/js.jar"/>
+        <file name="java/tar.jar"/>
+    </package>
+    <package name="xdc.services.intern.cmd"
+        version="1, 0, 0, 0, 1362511755365"
+        providerId="xdccore">
+        <file name="java/package.jar"/>
+    </package>
+    <package name="xdc.services.spec"
+        version="1, 0, 0, 0, 1362511757889"
+        providerId="xdccore">
+        <file name="java/package.jar"/>
+    </package>
+    <package name="xdc.services.intern.xsr"
+        version="1, 0, 0, 1362511756230"
+        providerId="xdccore">
+        <file name="java/package.jar"/>
+    </package>
+    <package name="xdc.services.intern.gen"
+        version="1, 0, 0, 0, 1362511755787"
+        providerId="xdccore">
+        <file name="java/package.jar"/>
+    </package>
+    <xdcRoot base="/db/rtree/library/trees/xdcprod/xdcprod-q74/product/Linux/xdctools_3_24_08_74_eng/">
+        <file name="/packages/xdc/package.xdc"/>
+        <file name="include/utils.tci"/>
+        <xdcCorePkg version="16, 0, 2, 0, 1362511740932" producerId="/db/ztree/library/trees/xdc/xdc-y51x/src/packages" buildCount="392" releaseName="xdc_corevers" label="default" date="1362511740932"/>
+    </xdcRoot>
+</references>
+<orphans>
+    <file name="/db/vtree/library/trees/avala/avala-s53/src/config.bld"/>
+</orphans>
+</release>

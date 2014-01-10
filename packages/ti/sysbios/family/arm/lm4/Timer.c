@@ -1,0 +1,988 @@
+/*
+ * Copyright (c) 2013, Texas Instruments Incorporated
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * *  Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * *  Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * *  Neither the name of Texas Instruments Incorporated nor the names of
+ *    its contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+/*
+ *  ======== Timer.c ========
+ */
+
+#include <xdc/std.h>
+
+#include <xdc/runtime/Error.h>
+#include <xdc/runtime/Assert.h>
+#include <xdc/runtime/Startup.h>
+#include <xdc/runtime/Types.h>
+
+#include <ti/sysbios/BIOS.h>
+
+#include <ti/sysbios/family/arm/m3/Hwi.h>
+
+#include <ti/catalog/arm/peripherals/timers/timer.h>
+
+#include "package/internal/Timer.xdc.h"
+
+/* definitions from StellarisWare */
+#define HWREG(x) (*((volatile unsigned long *)(x)))
+#define SYSCTL_DID0                 0x400FE000
+#define SYSCTL_DID0_CLASS_M         0x00FF0000
+#define SYSCTL_DID0_CLASS_FLURRY    0x00090000
+
+/* legacy reset, run, and sleep control registers */
+#define SRCR1 ((volatile UInt32 *)0x400FE044) /* Software reset control 1 */
+#define RCGC1 ((volatile UInt32 *)0x400FE104) /* Run mode Clock Gate 1 */
+#define SCGC1 ((volatile UInt32 *)0x400FE114) /* Sleep mode Clock Gate 1 */
+#define DCGC1 ((volatile UInt32 *)0x400FE124) /* Deep sleep mode Clock Gate 1 */
+
+/* newer reset, run, and sleep control registers */
+#define SRTIMER     ((volatile UInt32 *)0x400FE504)
+#define RCGCTIMERS  ((volatile UInt32 *)0x400FE604)
+#define SCGCTIMERS  ((volatile UInt32 *)0x400FE704)
+#define DCGCTIMERS  ((volatile UInt32 *)0x400FE804)
+
+/* CC31xx ARCM GPT Clock Gating registers */
+#define GPT_A0_CLK_GATING   (*(volatile UInt32 *)0x44025090)
+#define GPT_A1_CLK_GATING   (*(volatile UInt32 *)0x44025098)
+#define GPT_A2_CLK_GATING   (*(volatile UInt32 *)0x440250A0)
+#define GPT_A3_CLK_GATING   (*(volatile UInt32 *)0x440250A8)
+
+/*
+ *  ======== Timer_getNumTimers ========
+ */
+UInt Timer_getNumTimers()
+{
+    return (Timer_numTimerDevices);
+}
+
+/*
+ *  ======== Timer_getStatus ========
+ */
+Timer_Status Timer_getStatus(UInt timerId)
+{
+    Assert_isTrue(timerId < Timer_numTimerDevices, NULL);
+
+    if (Timer_module->availMask & (0x1 << timerId)) {
+        return (Timer_Status_FREE);
+    }
+    else {
+        return (Timer_Status_INUSE);
+    }
+}
+
+/*
+ *  ======== Timer_getMaxTicks ========
+ */
+UInt32 Timer_getMaxTicks(Timer_Object *obj, UInt32 periodCounts)
+{
+    return (0xffffffff/periodCounts);
+}
+
+/*
+ *  ======== Timer_setNextTick ========
+ */
+Void Timer_setNextTick(Timer_Object *obj, UInt32 newPeriodCounts,
+    UInt32 countsPerTick)
+{
+    ti_catalog_arm_peripherals_timers_TimerRegsM4 *timer;
+    UInt32 now, next, prev;
+
+    timer = (ti_catalog_arm_peripherals_timers_TimerRegsM4 *)
+        Timer_module->device[obj->id].baseAddr;
+
+    prev = obj->prevThreshold;
+
+    /*
+     * We could go negative here but we're unsigned so we'll roll over and end
+     * up "bigger" than where we were...
+     */
+    next = prev - newPeriodCounts;
+    Timer_write(obj->altclk, &timer->GPTMTAMATCHR, next);
+
+    now = timer->GPTMTAR;
+
+    /*
+     * If the next match is less than the previous match then we haven't
+     * wrapped through 0 yet
+     */
+    if (next <= prev) {
+
+        if (now <= next) {
+
+            /*
+             * The timer is counting down.  So if "now" is less than "next"
+             * (or what would have been next) then we missed a match.  If we're
+             * within one tick, fire the ISR
+             */
+            if ((next - now) < countsPerTick) {
+                /* fire the isr... */
+                *SRTIMER; Hwi_post(obj->intNum);
+            }
+        }
+        else {
+
+            /* If we're so far past the match that 'now' wrapped... */
+            if ((now > prev) && (now > (next - countsPerTick))) {
+                /* fire the isr... */
+                *SRTIMER; Hwi_post(obj->intNum);
+            }
+        }
+    }
+    /* Else, next > prev, and timer will wrap thru 0 */
+    else {
+
+        /*
+         * If next > prev then the match has wrapped through 0. If 'now' has
+         * already passed the 'next' match and we're within one tick, fire the
+         * isr...
+         */
+        if ((now < next) && (now < (next - countsPerTick))) {
+            /* fire the isr... */
+            *SRTIMER; Hwi_post(obj->intNum);
+        }
+    }
+
+    obj->period = newPeriodCounts;
+}
+
+/*
+ *  ======== Timer_Module_startup ========
+ *  Calls postInit for all statically-created & constructed
+ *  timers to initialize them.
+ */
+Int Timer_Module_startup(status)
+{
+    Int i;
+    Timer_Object *obj;
+
+    if (Timer_startupNeeded) {
+        for (i = 0; i < Timer_numTimerDevices; i++) {
+            obj = Timer_module->handles[i];
+            /* if timer was statically created/constructed */
+            if ((obj != NULL) && (obj->staticInst)) {
+                Timer_postInit(obj, NULL);
+            }
+        }
+    }
+    return (Startup_DONE);
+}
+
+/*
+ *  ======== Timer_startup ========
+ *  Here after main(). Called from BIOS_start()
+ */
+Void Timer_startup()
+{
+    Int i;
+    Timer_Object *obj;
+
+    if (Timer_startupNeeded) {
+        for (i = 0; i < Timer_numTimerDevices; i++) {
+            obj = Timer_module->handles[i];
+            /* if timer was statically created/constructed */
+            if ((obj != NULL) && (obj->staticInst)) {
+                if (obj->startMode == Timer_StartMode_AUTO) {
+                        Timer_start(obj);
+                }
+            }
+        }
+    }
+}
+
+/*
+ *  ======== Timer_getHandle ========
+ */
+Timer_Handle Timer_getHandle(UInt id)
+{
+    Assert_isTrue((id < Timer_numTimerDevices), NULL);
+    return (Timer_module->handles[id]);
+}
+
+/*
+ *  ======== Timer_Instance_init ========
+ * 1. Select timer based on id
+ * 2. Mark timer as in use
+ * 3. Save timer handle if necessary
+ * 4. Init obj using params
+ * 5. Create Hwi if tickFxn !=NULL
+ * 6. Timer_init()
+ * 7. Timer configuration (wrt emulation, external frequency etc)
+ * 8. Timer_setPeriod()
+ * 9. Timer_start()
+ */
+Int Timer_Instance_init(Timer_Object *obj, Int id, Timer_FuncPtr tickFxn, const Timer_Params *params, Error_Block *eb)
+{
+    UInt key;
+    Int i, status;
+    Hwi_Params hwiParams;
+    UInt tempId = 0xffff;
+
+    if (id >= Timer_numTimerDevices) {
+        if (id != Timer_ANY) {
+            Error_raise(eb, Timer_E_invalidTimer, id, 0);
+            return (1);
+        }
+    }
+
+    key = Hwi_disable();
+
+    if (id == Timer_ANY) {
+        for (i = 0; i < Timer_numTimerDevices; i++) {
+            if ((Timer_anyMask & (1 << i))
+                && (Timer_module->availMask & (1 << i))) {
+                Timer_module->availMask &= ~(1 << i);
+                tempId = i;
+                break;
+            }
+        }
+    }
+    else if (Timer_module->availMask & (1 << id)) {
+        Timer_module->availMask &= ~(1 << id);
+        tempId = id;
+    }
+
+    Hwi_restore(key);
+
+    obj->staticInst = FALSE;
+
+    if (tempId == 0xffff) {
+        Error_raise(eb, Timer_E_notAvailable, id, 0);
+        return (2);
+    }
+    else {
+        obj->id = tempId;
+    }
+
+    obj->runMode = params->runMode;
+    obj->startMode = params->startMode;
+    obj->altclk = params->altclk;
+
+    obj->period = params->period;
+    obj->periodType = params->periodType;
+
+    if (obj->altclk) {         /* if using altclk the freq is always 16MHz */
+        obj->extFreq.lo = 16000000;
+        obj->extFreq.hi = 0;
+    }
+    else {                     /* else use specified extFreq */
+        obj->extFreq.lo = params->extFreq.lo;
+        obj->extFreq.hi = params->extFreq.hi;
+    }
+
+    obj->arg = params->arg;
+    obj->intNum = Timer_module->device[obj->id].intNum;
+    obj->tickFxn = tickFxn;
+    obj->prevThreshold = params->prevThreshold;
+
+
+    if (obj->tickFxn) {
+        if (params->hwiParams) {
+            Hwi_Params_copy(&hwiParams, (params->hwiParams));
+        }
+        else {
+            Hwi_Params_init(&hwiParams);
+        }
+
+        hwiParams.arg = (UArg)obj;
+
+        obj->hwi = Hwi_create (obj->intNum, Timer_isrStub,
+                                &hwiParams, eb);
+
+        if (obj->hwi == NULL) {
+            return (3);
+        }
+    }
+    else {
+        obj->hwi = NULL;
+    }
+
+    Timer_module->handles[obj->id] = obj;
+
+    Timer_initDevice(obj);
+
+    if (obj->periodType == Timer_PeriodType_MICROSECS) {
+        if (!Timer_setPeriodMicroSecs(obj, obj->period)) {
+            Error_raise(eb, Timer_E_cannotSupport, obj->period, 0);
+            Hwi_restore(key);
+            return (4);
+        }
+    }
+
+    status = Timer_postInit(obj, eb);
+
+    if (status) {
+        return (status);
+    }
+
+    if (obj->startMode == Timer_StartMode_AUTO) {
+        Timer_start(obj);
+    }
+
+    return (0);
+}
+
+/*
+ *  ======== Timer_reconfig ========
+ *  1. Init obj using params
+ *  2. Reconfig Hwi
+ *  3. Timer_init()
+ *  4. Timer configuration (wrt emulation, external frequency etc)
+ *  5. Timer_setPeriod()
+ *  6. Timer_start()
+ */
+Void Timer_reconfig (Timer_Object *obj, Timer_FuncPtr tickFxn,
+const Timer_Params *params, Error_Block *eb)
+{
+    Hwi_Params hwiParams;
+
+    obj->runMode = params->runMode;
+    obj->startMode = params->startMode;
+    obj->altclk = params->altclk;
+    obj->period = params->period;
+    obj->periodType = params->periodType;
+    obj->prevThreshold = params->prevThreshold;
+
+    if (obj->altclk) {         /* if using altclk the freq is always 16MHz */
+        obj->extFreq.lo = 16000000;
+        obj->extFreq.hi = 0;
+    }
+    else {                     /* else use specified extFreq */
+        obj->extFreq.lo = params->extFreq.lo;
+        obj->extFreq.hi = params->extFreq.hi;
+    }
+
+    if (obj->periodType == Timer_PeriodType_MICROSECS) {
+        if (!Timer_setPeriodMicroSecs(obj, obj->period)) {
+            Error_raise(eb, Timer_E_cannotSupport, obj->period, 0);
+        }
+    }
+
+    obj->arg = params->arg;
+    obj->tickFxn = tickFxn;
+
+    if (obj->tickFxn) {
+        if (params->hwiParams) {
+            Hwi_Params_copy(&hwiParams, (params->hwiParams));
+        }
+        else {
+            Hwi_Params_init(&hwiParams);
+        }
+
+        hwiParams.arg = (UArg)obj;
+
+        Hwi_reconfig (obj->hwi, Timer_isrStub, &hwiParams);
+    }
+
+    Timer_postInit(obj, eb);
+
+    if (obj->startMode == Timer_StartMode_AUTO) {
+        Timer_start(obj);
+    }
+}
+
+/*
+ *  ======== Timer_postInit ========
+ */
+Int Timer_postInit(Timer_Object *obj, Error_Block *eb)
+{
+    UInt hwiKey;
+
+    hwiKey = Hwi_disable();
+
+    Timer_setPeriod(obj, obj->period);
+
+    Hwi_restore(hwiKey);
+
+    return (0);
+}
+
+/*
+ *  ======== Timer_Instance_finalize ========
+ */
+Void Timer_Instance_finalize(Timer_Object *obj, Int status)
+{
+    UInt key;
+
+    /* fall through in switch below is intentional */
+    switch (status) {
+        /* Timer_delete() */
+        case 0:
+
+        /* setPeriodMicroSecs failed */
+        case 4:
+            Timer_initDevice(obj);
+            if (obj->hwi) {
+                Hwi_delete(&obj->hwi);
+            }
+
+        /* Hwi create failed */
+        case 3:
+
+        /* timer not available */
+        case 2:
+
+        /* invalid timer id */
+        case 1:
+
+        default:
+            break;
+    }
+
+    key = Hwi_disable();
+    Timer_module->availMask |= (0x1 << obj->id);
+    Timer_module->handles[obj->id] = NULL;
+    Hwi_restore(key);
+}
+
+/* ======== Timer_initDevice ========
+ * 1. stop timer
+ * 2. disable timer interrupt. (IER and any timer specific interrupt enable)
+ * 3. clear pending interrupt. (IFR and any timer specific interrupt flags)
+ * 4. Set control registers back to reset value.
+ * 5. clear counters
+ * 6. clear period register.
+ */
+Void Timer_initDevice(Timer_Object *obj)
+{
+    UInt key;
+    ti_catalog_arm_peripherals_timers_TimerRegsM4 *timer;
+
+    timer = (ti_catalog_arm_peripherals_timers_TimerRegsM4 *)
+        Timer_module->device[obj->id].baseAddr;
+
+    key = Hwi_disable();
+
+    if (Timer_enableArcmGpTimerClock) {
+        switch (obj->id) {
+            case 0: GPT_A0_CLK_GATING = 0x1;
+                    break;
+            case 1: GPT_A1_CLK_GATING = 0x1;
+                    break;
+            case 2: GPT_A2_CLK_GATING = 0x1;
+                    break;
+            case 3: GPT_A3_CLK_GATING = 0x1;
+                    break;
+            default:
+                    break;
+        }
+    }
+    else {
+        /* if a pre-Flurry class device, and one of the first four timers ... */
+        if (((HWREG(SYSCTL_DID0) & SYSCTL_DID0_CLASS_M) <
+            SYSCTL_DID0_CLASS_FLURRY) && (obj->id < 4)) {
+
+            /* enable run mode clock */
+            *RCGC1 |= (UInt32)(1 << (obj->id+16));
+
+            /* ensure at least 5 clock cycle delay for clock enable */
+            *RCGC1;
+            *RCGC1;
+            *RCGC1;
+            *RCGC1;
+            *RCGC1;
+
+            /* do a sw reset on the timer */
+            *SRCR1 |= (UInt32)(1 << (obj->id+16));
+            *SRCR1 &= ~(UInt32)(1 << (obj->id+16));
+        }
+        /* else, Flurry or later device, or 5th timer or above ... */
+        else {
+            /* enable run mode clock */
+            *RCGCTIMERS |= (UInt32)(1 << (obj->id));
+            *SCGCTIMERS |= (UInt32)(1 << (obj->id));
+            *DCGCTIMERS |= (UInt32)(1 << (obj->id));
+
+            /* ensure at least 5 clock cycle delay for clock enable */
+            *RCGCTIMERS;
+            *RCGCTIMERS;
+            *RCGCTIMERS;
+            *RCGCTIMERS;
+            *RCGCTIMERS;
+
+            /* do a sw reset on the timer */
+            *SRTIMER |= (UInt32)(1 << (obj->id));
+            *SRTIMER &= ~(UInt32)(1 << (obj->id));
+        }
+    }
+
+    if (obj->hwi) {
+        Hwi_disableInterrupt(obj->intNum);
+        Hwi_clearInterrupt(obj->intNum);
+    }
+
+    /* mode setting purposely delayed a while after finishing reset */
+    Timer_write(obj->altclk, &timer->GPTMCFG, 0); /* force 32 bit timer mode */
+
+    Hwi_restore(key);
+}
+
+/*
+ *  ======== Timer_start ========
+ *  1. Hwi_disable();
+ *  2. Clear the counters
+ *  3. Clear IFR
+ *  4. Enable timer interrupt
+ *  5. Start timer
+ *  6. Hwi_restore()
+ */
+Void Timer_start(Timer_Object *obj)
+{
+    UInt key;
+    UInt32 amr;
+    ti_catalog_arm_peripherals_timers_TimerRegsM4 *timer;
+
+    timer = (ti_catalog_arm_peripherals_timers_TimerRegsM4 *)
+        Timer_module->device[obj->id].baseAddr;
+
+    key = Hwi_disable();
+
+    /* stop timer */
+    Timer_write(obj->altclk, &timer->GPTMCTL, timer->GPTMCTL & ~0x1);
+
+    /* clear all of timer's interrupt status bits */
+    Timer_write(obj->altclk, &timer->GPTMICR, (UInt32)0xFFFFFFFF);
+
+    /* setup timer's Hwi */
+    if (obj->hwi) {
+        Hwi_clearInterrupt(obj->intNum);
+        Hwi_enableInterrupt(obj->intNum);
+
+        /* clear match and timeout enable bits */
+        Timer_write(obj->altclk, &timer->GPTMIMR, timer->GPTMIMR & ~0x11);
+
+        /* set appropriate interrupt enable based on timer mode */
+        if (obj->runMode != Timer_RunMode_DYNAMIC) {
+            /* unmask the timeout interrupt */
+            Timer_write(obj->altclk, &timer->GPTMIMR, timer->GPTMIMR | 0x01);
+        }
+        else {
+            /* unmask the match interrupt */
+            Timer_write(obj->altclk, &timer->GPTMIMR, timer->GPTMIMR | 0x10);
+        }
+    }
+
+    /* clear timer mode bits and match interrupt enable */
+    amr = timer->GPTMTAMR & ~0x23;
+
+    /* Timer_RunMode_CONTINUOUS */
+    if (obj->runMode == Timer_RunMode_CONTINUOUS) {
+        Timer_write(obj->altclk, &timer->GPTMTAILR, obj->period);
+        Timer_write(obj->altclk, &timer->GPTMTAMR, amr | 0x2); /* periodic */
+    }
+
+    /* Timer_RunMode_DYNAMIC */
+    else if (obj->runMode == Timer_RunMode_DYNAMIC) {
+        obj->prevThreshold = Timer_MAX_PERIOD;
+        Timer_write(obj->altclk, &timer->GPTMTAV, Timer_MAX_PERIOD);
+        Timer_write(obj->altclk, &timer->GPTMTAMATCHR,
+            Timer_MAX_PERIOD - obj->period);
+        Timer_write(obj->altclk, &timer->GPTMTAMR, amr | 0x22);/* prd & match */
+    }
+
+    /* Timer_RunMode_ONESHOT */
+    else {
+        Timer_write(obj->altclk, &timer->GPTMTAILR, obj->period);
+        Timer_write(obj->altclk, &timer->GPTMTAMR, amr | 0x1);  /* one-shot */
+    }
+
+    if (obj->altclk) {
+        timer->GPTMCC = 1; /* note: this write not affected by erratum */
+    }
+
+    /* configure timer to halt with debugger, and start it */
+    Timer_write(obj->altclk, &timer->GPTMCTL, timer->GPTMCTL | 0x3);
+
+    Hwi_restore(key);
+}
+
+/*
+ *  ======== Timer_trigger ========
+ *  1. stop timer
+ *  2. write the period with insts
+ *  3. start the timer.
+ */
+Void Timer_trigger(Timer_Object *obj, UInt32 insts)
+{
+    UInt key;
+
+    /* follow proper procedure for dynamic period change */
+    key = Hwi_disable();
+    Timer_stop(obj);
+    Timer_setPeriod(obj, insts);
+    Timer_start(obj);
+    Hwi_restore(key);
+}
+
+/*
+ *  ======== Timer_stop ========
+ *  1. stop timer
+ *  2. disable timer interrupt
+ */
+Void Timer_stop(Timer_Object *obj)
+{
+    ti_catalog_arm_peripherals_timers_TimerRegsM4 *timer;
+    timer = (ti_catalog_arm_peripherals_timers_TimerRegsM4 *)Timer_module->device[obj->id].baseAddr;
+
+    /* stop timer by clearing bit0 (TAEN) */
+    Timer_write(obj->altclk, &timer->GPTMCTL, timer->GPTMCTL & ~0x1);
+
+    if (obj->hwi) {
+        Hwi_disableInterrupt(obj->intNum);
+    }
+}
+
+/*
+ *  ======== Timer_setPeriod ========
+ *  1. stop timer
+ *  2. set period
+ */
+Void Timer_setPeriod(Timer_Object *obj, UInt32 period)
+{
+    Timer_stop(obj);
+    obj->period = period;
+}
+
+/*
+ *  ======== Timer_setPeriodMicroSecs ========
+ *  1. stop timer
+ *  2. compute counts
+ *  3. set period
+ */
+Bool Timer_setPeriodMicroSecs(Timer_Object *obj, UInt32 period)
+{
+    Types_FreqHz freqHz;
+    UInt64 counts;
+    UInt32 freqKHz;
+
+    Timer_stop(obj);
+
+    Timer_getFreq(obj, &freqHz);
+    freqKHz = freqHz.lo / 1000;
+
+    counts = ((UInt64)freqKHz * (UInt64)period) / (UInt64)1000;
+
+    obj->period = counts;
+    obj->periodType = Timer_PeriodType_COUNTS;
+
+    return(TRUE);
+}
+
+/*
+ *  ======== Timer_getPeriod ========
+ */
+UInt32 Timer_getPeriod(Timer_Object *obj)
+{
+    return (obj->period);
+}
+
+/*
+ *  ======== Timer_getCount ========
+ */
+UInt32 Timer_getCount(Timer_Object *obj)
+{
+    ti_catalog_arm_peripherals_timers_TimerRegsM4 *timer;
+
+    timer = (ti_catalog_arm_peripherals_timers_TimerRegsM4 *)Timer_module->device[obj->id].baseAddr;
+
+    return (timer->GPTMTAR);
+}
+
+/*
+ *  ======== Timer_getExpiredCounts ========
+ *  This API is used by the TimestampProvider as part of retrieving a timestamp
+ *  using a timer and a tick counter. It returns the timer's count but also
+ *  accounts for timer rollover.
+ *
+ *  This API must be called with interrupts disabled (the TimestampProvider
+ *  should disable interrupts while retrieving the tick count and calling this
+ *  API).
+ *
+ *  The TimestampProvider uses a 32-bit timer and 32-bit tick count to track
+ *  the timestamp. The tick count either comes from the Clock module or is
+ *  stored in the TimestampProvider's module state and incremented by an ISR
+ *  when the timer expires.
+ *
+ *  This approach has a difficult edge case which this API addresses.
+ *  Timestamp_get64 may be called while interrupts are disabled, and while they
+ *  are disabled, the timer may expire and reset to its initial period. Because
+ *  interrupts are disabled, the tick count isr has not run yet to increment
+ *  the tick count. This can result in the occassional timestamp value going
+ *  backwards in time because the upper bits are out of date.
+ *
+ *  To work around this, we need to detect the timer "rollover" and account for
+ *  it by adding the timer period to the count returned.
+ *
+ *  To detect the rollover, we retrieve the count, check the IFR flag for the
+ *  timer interrupt, then check the count again, all with interrupts disabled
+ *  (the caller should disable interrupts).
+ *
+ *    Hwi_disable();
+ *
+ *    count1 = timer.TIM;
+ *    ifrFlag = getIFRFlag();
+ *    count2 = timer.TIM;
+ *
+ *    Hwi_restore();
+ *
+ *  For the most efficient implementation, we access the Timer register value
+ *  directly, which means the counter value is counting *down* on the lm4 timer.
+ *  This means that most of the time count1 > count2.
+ *
+ *  The following table lists the possible values of count1, count2, and
+ *  ifrFlag. The third column states whether we would need to add the timer
+ *  period to the result if we return count1. The fourth column states the
+ *  same for count2. Count1 and count2 will be very close together, so either
+ *  is acceptable to return.
+ *
+ *                                       Add prd to     Add prd to
+ *         compare           IFR flag      count1         count2
+ *  1. (count1 > count2)        0            NO             NO
+ *  2. (count1 > count2)        1            YES            YES
+ *  3. (count1 < count2)        0            NO             YES
+ *  4. (count1 < count2)        1            NO             YES
+ *
+ *  1. Case 1 is by far the typical case. We're "in the middle" of the count,
+ *     not close to a counter rollover, and we just return the count.
+ *  2. Case 2 means that the timer rolled over before we retrieved count1, but
+ *     that interrupts were disabled, so the tick isr hasn't run yet. When an
+ *     isr is serviced, the hardware clears the IFR bit immediately, so it is
+ *     not possible that we are in the middle of servicing the tick isr.
+ *  3. Case 3 is rare. This means that the timer rolled over after checking
+ *     the IFR flag but before retrieving count2.
+ *  4. Case 4 is rare. This means that the timer rolled over after retrieving
+ *     count1, but before we check the IFR flag.
+ *
+ *  Case 3 is the reason it's not sufficient to simply check the IFR flag, and
+ *  case 2 is the reason it's not sufficient to simply compare count1 and
+ *  count2.
+ *
+ *  Returning count1 appears to mean less additions, so why return count2?
+ *    - The intent of the logic is more apparent in the if statement.
+ *      "If an interrupt occurred OR count2 is out of sequence with count1,
+ *      a rollover occurred, so add the period".
+ *    - Case 2 is the most common rollover case, and the performance for case 2
+ *      is the same whether we return count1 or count2.
+ */
+/*
+ *  ======== Timer_getExpiredCounts ========
+ */
+UInt32 Timer_getExpiredCounts(Timer_Object *obj)
+{
+    ti_catalog_arm_peripherals_timers_TimerRegsM4 *timer;
+    UInt32 count1, count2;
+    UInt32 intr1, intr2;
+    UInt32 wrap;
+
+    timer = (ti_catalog_arm_peripherals_timers_TimerRegsM4 *)
+        Timer_module->device[obj->id].baseAddr;
+
+    if (obj->runMode != Timer_RunMode_DYNAMIC) {
+        count1 = timer->GPTMTAR;
+        wrap = timer->GPTMRIS & 0x1; /* roll-over occurred */
+        count2 = timer->GPTMTAR;
+
+        if ((count1 > count2) && wrap) {
+            return ((obj->period - count1) + obj->period);
+        }
+        else {
+            return (obj->period - count1);
+        }
+    }
+    else {
+        UInt32 thresh;
+        UInt32 result;
+
+        intr1 = timer->GPTMRIS & 0x10;
+        count1 = timer->GPTMTAR;
+        intr2 = timer->GPTMRIS & 0x10;
+
+        /* if the thresh interrupt was set before reading the timer ... */
+        if (intr1) {
+            thresh = timer->GPTMTAMATCHR;
+
+            /* passed the threshold but not wrapped yet */
+            if (count1 <= thresh) {
+                result = (thresh - count1) + obj->period;
+            }
+
+            /* wrapped */
+            else {
+                result = (Timer_MAX_PERIOD - count1) + thresh + obj->period;
+            }
+        }
+
+        /* else if the thresh interrupt popped after reading the timer ... */
+        else if (intr2) {
+            result = obj->period;
+        }
+
+        /* else if thresh not reached and and haven't wrapped thru 0 ... */
+        else if (count1 < obj->prevThreshold) {
+            result = obj->prevThreshold - count1;
+        }
+
+        /* else thresh not reached but DID wrap thru 0 */
+        else {
+            result = (Timer_MAX_PERIOD - count1) + obj->prevThreshold;
+        }
+        return(result);
+    }
+}
+
+/*
+ *  ======== Timer_getFreq ========
+ *  get timer prd frequency in Hz.
+ */
+Void Timer_getFreq(Timer_Object *obj, Types_FreqHz *freq)
+{
+    if (obj->extFreq.lo != NULL) {
+        *freq = obj->extFreq;
+    }
+    else {
+        BIOS_getCpuFreq(freq);
+    }
+}
+
+/*
+ *  ======== Timer_getFunc ========
+ */
+Timer_FuncPtr Timer_getFunc(Timer_Object *obj, UArg *arg)
+{
+    *arg = obj->arg;
+    return (obj->tickFxn);
+}
+
+/*
+ *  ======== Timer_setFunc ========
+ */
+Void Timer_setFunc(Timer_Object *obj, Timer_FuncPtr fxn, UArg arg)
+{
+    obj->tickFxn = fxn;
+    obj->arg = arg;
+
+    Hwi_setFunc(obj->hwi, fxn, arg);
+}
+
+/*
+ *  ======== Timer_isrStub ========
+ */
+Void Timer_isrStub(UArg arg)
+{
+    ti_catalog_arm_peripherals_timers_TimerRegsM4 *timer;
+    Timer_Object *obj = (Timer_Object *)arg;
+
+    timer = (ti_catalog_arm_peripherals_timers_TimerRegsM4 *)
+        Timer_module->device[obj->id].baseAddr;
+
+    /* clear all timer interrupt status bits */
+    Timer_write(obj->altclk, &timer->GPTMICR, 0xFFFFFFFF);
+
+    /* for DYNAMIC mode setup threshold for next interrupt */
+    if (obj->runMode == Timer_RunMode_DYNAMIC) {
+        obj->prevThreshold = timer->GPTMTAMATCHR;
+        Timer_write(obj->altclk, &timer->GPTMTAMATCHR,
+            timer->GPTMTAMATCHR - obj->period);;
+    }
+
+    obj->tickFxn(obj->arg);
+}
+
+/*
+ *  ======== Timer_enableTimers ========
+ */
+Void Timer_enableTimers()
+{
+    Int i;
+    Timer_Object *obj;
+
+    for (i = 0; i < Timer_numTimerDevices; i++) {
+        obj = Timer_module->handles[i];
+        /* enable and reset the timer */
+        if (obj != NULL) {
+            Timer_initDevice(obj);
+        }
+    }
+}
+
+/*
+ *  ======== Timer_write ========
+ *  This function exists to work around an erratum regarding the writing of
+ *  timer registers when the timer module is being driven off altclk.  The value
+ *  to be written must be held on the dbus for sufficient time for the timer
+ *  register to latch the value.  The only way to guarantee this is to have
+ *  interrupts disabled while we hold the value on the bus.  Since the Hwi
+ *  module masks interrupts by elevating BASEPRI, we must use the CPSID/CPSIE
+ *  instructions to toggle PRIMASK instead.
+ */
+Void Timer_write(Bool altclk, volatile UInt32 *pReg, UInt32 val)
+{
+    Bool intsDisabled;
+
+    /* if running on altclk do workaround for erratum */
+    if (altclk) {
+        intsDisabled = Timer_masterDisable();
+        *pReg = val;
+        *pReg = val;
+        *pReg = val;
+        *pReg = val;
+        *pReg = val;
+        if (!intsDisabled) {
+            Timer_masterEnable();
+        }
+    }
+
+    /* else just write the timer register */
+    else {
+        *pReg = val;
+    }
+}
+
+/*
+ *  ======== Timer_masterDisable ========
+ */
+Bool Timer_masterDisable(Void)
+{
+    /* read PRIMASK bit to R0 and call CPSID to disable interrupts */
+    asm("    mrs     r0, PRIMASK\n"
+        "    cpsid   i\n"
+        "    bx      lr\n");
+    /*
+     * The following return statement keeps the compiler from complaining
+     * about a missing return value.  The "bx lr" above does the actual return
+     * and the below statement is not executed.
+     */
+    return (0);
+}
+
+/*
+ *  ======== Timer_masterEnable ========
+ */
+Void Timer_masterEnable(Void)
+{
+    asm("    cpsie i");
+}

@@ -1,0 +1,13 @@
+/*
+ *  ======== bios_6428.tci ========
+ *  This file contains BIOS settings for 6428.
+ *
+ */
+
+utils.importFile("ti/bios/config/bios_6452.tci");
+
+/*
+ *  ======== bios.init6428 ========
+ *  BIOS initialization for the 6428 is same as for 6452
+ */
+bios.init6428 = bios.init6452;

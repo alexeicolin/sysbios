@@ -1,0 +1,60 @@
+;
+;  ======== trc.h62 ========
+;
+;! Revision History
+;! ================
+;! 19-Jan-2009 nitya	copied from cuda-u06
+;
+
+	.if ($isdefed("TRC_") = 0)    ; prevent multiple includes of this file
+TRC_	.set	1
+
+;
+;  ======== Trace Event Classes ========
+;
+TRC_LOGSWI      .set    0001H
+TRC_LOGPRD      .set    0002H
+TRC_LOGCLK      .set    0004H
+TRC_RESV0       .set    0008H	; reserved for SPOX
+TRC_RESV1       .set    0010H	; reserved for SPOX
+TRC_STSSWI      .set    0020H
+TRC_STSPRD      .set    0040H
+TRC_STSPIP      .set    0080H
+TRC_STSHWI      .set    0100H
+TRC_RESV2       .set    0200H	; reserved for SPOX
+TRC_RESV3       .set    0400H	; reserved for SPOX
+TRC_USER0       .set    0800H
+TRC_USER1       .set    1000H
+TRC_USER2       .set    2000H
+TRC_GBLTARG     .set    4000H
+TRC_GBLHOST     .set    8000H
+
+;
+; The following two definitions were added as they would be required
+; by SEM_post written in assembly.
+;
+
+TRC_LOGTSK	.set	0x0008		
+TRC_STSTSK	.set	0x0200	
+
+	.global _TRC_query
+
+;
+;# ======== TRC_query ========
+;  Test if all trace types are enabled
+;
+;#  Preconditions:
+;#    none
+;#
+;#    Parameters:
+;#  	constant - trace event mask
+;#
+;#  Postconditions:
+;#	a4 == 0 if all queried trace types are enabled
+;#	a4 != 0 if any of the queried trace types are disabled
+;#
+;
+TRC_query	.macro	constant
+	ldw a4, 0xffff
+	.endm
+
