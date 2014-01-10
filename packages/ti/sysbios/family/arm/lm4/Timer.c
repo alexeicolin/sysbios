@@ -53,6 +53,7 @@
 #define SYSCTL_DID0                 0x400FE000
 #define SYSCTL_DID0_CLASS_M         0x00FF0000
 #define SYSCTL_DID0_CLASS_FLURRY    0x00090000
+#define SYSCTL_DID0_CLASS_TIVAC     0x00050000
 
 /* legacy reset, run, and sleep control registers */
 #define SRCR1 ((volatile UInt32 *)0x400FE044) /* Software reset control 1 */
@@ -470,6 +471,7 @@ Void Timer_Instance_finalize(Timer_Object *obj, Int status)
 Void Timer_initDevice(Timer_Object *obj)
 {
     UInt key;
+    UInt devClass;
     ti_catalog_arm_peripherals_timers_TimerRegsM4 *timer;
 
     timer = (ti_catalog_arm_peripherals_timers_TimerRegsM4 *)
@@ -493,8 +495,9 @@ Void Timer_initDevice(Timer_Object *obj)
     }
     else {
         /* if a pre-Flurry class device, and one of the first four timers ... */
-        if (((HWREG(SYSCTL_DID0) & SYSCTL_DID0_CLASS_M) <
-            SYSCTL_DID0_CLASS_FLURRY) && (obj->id < 4)) {
+        devClass = HWREG(SYSCTL_DID0) & SYSCTL_DID0_CLASS_M;
+        if (devClass != SYSCTL_DID0_CLASS_TIVAC &&
+             devClass < SYSCTL_DID0_CLASS_FLURRY && (obj->id < 4)) {
 
             /* enable run mode clock */
             *RCGC1 |= (UInt32)(1 << (obj->id+16));
