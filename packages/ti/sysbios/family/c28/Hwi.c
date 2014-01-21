@@ -56,14 +56,20 @@
 #define VECTOR_PIE_BASE         0x000D00
 
 extern Void ti_sysbios_family_c28_Hwi_dispatchTable(Void);
+extern Void ti_sysbios_family_c28_Hwi_dispatchZeroTable(Void);
 extern Void ti_sysbios_family_c28_Hwi_dispatchPie(Void);
+extern Void ti_sysbios_family_c28_Hwi_dispatchZero(Void);
 extern Char *ti_sysbios_family_xxx_Hwi_switchToIsrStack();
 extern Void ti_sysbios_family_xxx_Hwi_switchToTaskStack(Char *oldTaskSP);
+extern Void ti_sysbios_family_xxx_Hwi_switchAndRunFunc(Void (*func)());
 
 #define Hwi_switchToIsrStack ti_sysbios_family_xxx_Hwi_switchToIsrStack
 #define Hwi_switchToTaskStack ti_sysbios_family_xxx_Hwi_switchToTaskStack
+#define Hwi_switchAndRunFunc ti_sysbios_family_xxx_Hwi_switchAndRunFunc
 #define Hwi_dispatchTable ti_sysbios_family_c28_Hwi_dispatchTable
+#define Hwi_dispatchZeroTable ti_sysbios_family_c28_Hwi_dispatchZeroTable
 #define Hwi_dispatchPie ti_sysbios_family_c28_Hwi_dispatchPie
+#define Hwi_dispatchZero ti_sysbios_family_c28_Hwi_dispatchZero
 
 extern cregister volatile unsigned int IER;
 extern cregister volatile unsigned int IFR;
@@ -111,7 +117,7 @@ Int Hwi_Module_startup (Int phase)
     /*
      * Intialize the interrupt vectors.  These are initially placed in .econst
      * section (typically in FLASH) and later copied to their home in RAM.
-     */  
+     */
     asm(" EALLOW");
     memcpy((Void *)0xd00, ti_sysbios_family_c28_Hwi_vectors,
         128 * sizeof(UInt32));
@@ -146,7 +152,7 @@ Int Hwi_Module_startup (Int phase)
     for (i = 0; i < Hwi_Object_count(); i++) {
         hwi = Hwi_Object_get(NULL, i);
         if (hwi->enableInt) {
-            /* 
+            /*
              * Only set PIEIER. IER will be enabled using Hwi_module->ierMask
              */
             Hwi_enableInterrupt(hwi->intNum);
@@ -154,7 +160,7 @@ Int Hwi_Module_startup (Int phase)
     }
 
     /* Enable IER that has been set statically */
-    Hwi_enableIER(Hwi_module->ierMask); 
+    Hwi_enableIER(Hwi_module->ierMask);
 
     /* For every Hwi in the dispatchTable, postInit */
     for (i = 0; i < Hwi_NUM_INTERRUPTS_ALL; i++) {
@@ -170,25 +176,25 @@ Int Hwi_Module_startup (Int phase)
 /*
  *  ======== Hwi_Instance_init ========
  */
-Int Hwi_Instance_init(Hwi_Object *hwi, Int intNum, Hwi_FuncPtr fxn, 
+Int Hwi_Instance_init(Hwi_Object *hwi, Int intNum, Hwi_FuncPtr fxn,
                       const Hwi_Params *params, Error_Block *eb)
 {
     Int status;
     Hwi_PlugFuncPtr pfxn;
-    
-    Assert_isTrue((intNum >= 1 && intNum <= 15) || 
-                  (intNum >= Hwi_NUM_INTERRUPTS && 
+
+    Assert_isTrue((intNum >= 1 && intNum <= 15) ||
+                  (intNum >= Hwi_NUM_INTERRUPTS &&
                    intNum < Hwi_NUM_INTERRUPTS_ALL),
                    Hwi_A_badIntNum);
-    
-    /* 
-     * Ensure that there is no conflict between non-zero/zero latency 
-     * IER bits 
+
+    /*
+     * Ensure that there is no conflict between non-zero/zero latency
+     * IER bits
      */
     Assert_isTrue((Hwi_zeroLatencyIERMask & Hwi_getIERBit(intNum)) == 0,
                   Hwi_A_zeroLatencyConflict);
 
-    /* 
+    /*
      * If the dispatchTable entry is non-NULL, then it has already been defined
      */
     if (Hwi_module->dispatchTable[intNum] != NULL) {
@@ -203,17 +209,30 @@ Int Hwi_Instance_init(Hwi_Object *hwi, Int intNum, Hwi_FuncPtr fxn,
     /* If the interrupt is one of the standard 32 interrupts... */
     if ((intNum > 0) && (intNum < Hwi_NUM_INTERRUPTS)) {
         /* Each entry in the dispatch table is 3 words. */
-        pfxn =
-            (Hwi_PlugFuncPtr)((UInt32) &Hwi_dispatchTable +
+        if (Hwi_zeroLatencyIERMask != 0) {
+            pfxn =
+                (Hwi_PlugFuncPtr)((UInt32) &Hwi_dispatchZeroTable +
                               ((intNum - 1) * 3));
+        }
+        else {
+            pfxn =
+                (Hwi_PlugFuncPtr)((UInt32) &Hwi_dispatchTable +
+                              ((intNum - 1) * 3));
+        }
 
         /* intNum from 1-16, IER from 0-15 */
         hwi->ierBitMask = 1 << (intNum - 1);
     }
     /* Otherwise, if the interrupt is a PIE interrupt... */
     else if (intNum >= Hwi_NUM_INTERRUPTS) {
-        /* This is PIE interrupt */
-        pfxn = Hwi_dispatchPie;
+        if (Hwi_zeroLatencyIERMask != 0) {
+            /* This is Zero Latency PIE interrupt */
+            pfxn = Hwi_dispatchZero;
+        }
+        else {
+            /* This is PIE interrupt */
+            pfxn = Hwi_dispatchPie;
+        }
 
         /* intNum from 32-128, IER from 0-11 */
         /* interrupt group 1 to 12 = (PIE int - 32) / 8; */
@@ -333,20 +352,20 @@ Bits16 Hwi_enablePIEIER(UInt groupNum, Bits16 pieMask)
     Bits16 ierBitMask;
     Bits16 oldPIEIER;
     UInt key;
-    
+
     /* There are 12 PIE groups. Assert that groupNum is correct */
     Assert_isTrue(groupNum >= 1 && groupNum <= 12, Hwi_A_invalidArg);
     /* Assert that pieMask is 8 bits wide */
     Assert_isTrue((UInt)pieMask < 0x100, Hwi_A_invalidArg);
-    
+
     /* Step a. */
     key = __disable_interrupts();
-    
+
     /* Step b. */
     oldPIEIER = *((UInt16 *)PIECTRL_ADDR + (groupNum * 2));
     *((UInt16 *)PIECTRL_ADDR + (groupNum * 2)) |= pieMask;
 
-    /* 
+    /*
      * Step c.
      * Delay required to be sure that any interrupt that was incoming to
      * the CPU has been flagged within the CPU IFR register
@@ -360,9 +379,9 @@ Bits16 Hwi_enablePIEIER(UInt groupNum, Bits16 pieMask)
     /* Step d. */
     Hwi_clearInterrupt(groupNum);
 
-    /* 
+    /*
      * Step e.
-     * groupNum is 1-12; ierBitMask is 0x0001 << to 0x0800 
+     * groupNum is 1-12; ierBitMask is 0x0001 << to 0x0800
      */
     ierBitMask = 1 << (groupNum - 1);
     *(UInt16 *)PIEACK_ADDR |= ierBitMask;
@@ -388,20 +407,20 @@ Bits16 Hwi_disablePIEIER(UInt groupNum, Bits16 pieMask)
     Bits16 ierBitMask;
     Bits16 oldPIEIER;
     UInt key;
-    
+
     /* There are 12 PIE groups. Assert that groupNum is correct */
     Assert_isTrue(groupNum >= 1 && groupNum <= 12, Hwi_A_invalidArg);
     /* Assert that pieMask is 8 bits wide */
     Assert_isTrue((UInt)pieMask < 0x100, Hwi_A_invalidArg);
-    
+
     /* Step a. */
     key = __disable_interrupts();
-    
+
     /* Step b. */
     oldPIEIER = *((UInt16 *)PIECTRL_ADDR + (groupNum * 2));
     *((UInt16 *)PIECTRL_ADDR + (groupNum * 2)) &= (~pieMask & 0xff);
 
-    /* 
+    /*
      * Step c.
      * Delay required to be sure that any interrupt that was incoming to
      * the CPU has been flagged within the CPU IFR register
@@ -415,13 +434,13 @@ Bits16 Hwi_disablePIEIER(UInt groupNum, Bits16 pieMask)
     /* Step d. */
     Hwi_clearInterrupt(groupNum);
 
-    /* 
+    /*
      * Step e.
-     * groupNum is 1-12; ierBitMask is 0x0001 << to 0x0800 
+     * groupNum is 1-12; ierBitMask is 0x0001 << to 0x0800
      */
     ierBitMask = 1 << (groupNum - 1);
     *(UInt16 *)PIEACK_ADDR &= ierBitMask;
-    
+
     /* Step f. */
     __restore_interrupts(key);
 
@@ -443,20 +462,20 @@ Bits16 Hwi_restorePIEIER(UInt groupNum, Bits16 pieMask)
     Bits16 ierBitMask;
     Bits16 oldPIEIER;
     UInt key;
-    
+
     /* There are 12 PIE groups. Assert that groupNum is correct */
     Assert_isTrue(groupNum >= 1 && groupNum <= 12, Hwi_A_invalidArg);
     /* Assert that pieMask is 8 bits wide */
     Assert_isTrue((UInt)pieMask < 0x100, Hwi_A_invalidArg);
-    
+
     /* Step a. */
     key = __disable_interrupts();
-    
+
     /* Step b. */
     oldPIEIER = *((UInt16 *)PIECTRL_ADDR + (groupNum * 2));
     *((UInt16 *)PIECTRL_ADDR + (groupNum * 2)) = pieMask;
 
-    /* 
+    /*
      * Step c.
      * Delay required to be sure that any interrupt that was incoming to
      * the CPU has been flagged within the CPU IFR register
@@ -470,16 +489,16 @@ Bits16 Hwi_restorePIEIER(UInt groupNum, Bits16 pieMask)
     /* Step d. */
     Hwi_clearInterrupt(groupNum);
 
-    /* 
+    /*
      * Step e.
-     * groupNum is 1-12; ierBitMask is 0x0001 << to 0x0800 
+     * groupNum is 1-12; ierBitMask is 0x0001 << to 0x0800
      */
     ierBitMask = 1 << (groupNum - 1);
     *(UInt16 *)PIEACK_ADDR |= ierBitMask;
-    
+
     /* Step f. */
     __restore_interrupts(key);
-    
+
     return (oldPIEIER);
 }
 
@@ -491,23 +510,23 @@ UInt Hwi_disableInterrupt(UInt intNum)
     UInt groupNum;
     Bits16 disableMask;
     UInt key;
-    
+
     Assert_isTrue((intNum >= 1 && intNum <= 14) ||
                   (intNum >= Hwi_NUM_INTERRUPTS &&
                    intNum < Hwi_NUM_INTERRUPTS_ALL), Hwi_A_badIntNum);
-                   
+
     if (intNum >= Hwi_NUM_INTERRUPTS) {
         /* Disable single PIE interrupt */
         groupNum = ((intNum - Hwi_NUM_INTERRUPTS) >> 3) + 1;
         /* disableMask = 1 << (intNum % 8) */
         disableMask = 1 << (intNum & 0x7);
-        
+
         /* key is a bitmask for the old PIEIER bit corresponding to intNum */
         key = Hwi_disablePIEIER(groupNum, disableMask) & disableMask;
     }
     else {
-        /* 
-         *  Disable entire PIE group. 
+        /*
+         *  Disable entire PIE group.
          *  groupNum is 1-15; IER mask is 0x0001 << to 0x0800
          */
         disableMask = 1 << (intNum - 1);
@@ -525,11 +544,11 @@ UInt Hwi_enableInterrupt(UInt intNum)
     UInt groupNum;
     Bits16 enableMask;
     UInt key;
-    
+
     Assert_isTrue((intNum >= 1 && intNum <= 14) ||
                   (intNum >= Hwi_NUM_INTERRUPTS &&
                    intNum < Hwi_NUM_INTERRUPTS_ALL), Hwi_A_badIntNum);
-                   
+
     if (intNum < Hwi_NUM_INTERRUPTS) {
         /* Simply enable the IER bits */
         enableMask = 1 << (intNum - 1);
@@ -581,13 +600,13 @@ Void Hwi_clearInterrupt(UInt intNum)
     UInt32 origVector;
     Bits16 ierKey, pieIERMask;
     UInt globalKey;
-    
-    
+
+
     Assert_isTrue((intNum >= 1 && intNum <= 14) ||
                   (intNum >= Hwi_NUM_INTERRUPTS &&
                    intNum < Hwi_NUM_INTERRUPTS_ALL), Hwi_A_badIntNum);
-    
-    /* 
+
+    /*
      * The numbering convention for c28 interrupts is that Int 1-31 are the
      * normal interrupts and 32-128 are the PIE interrupts. (96 PIE interrupts
      * in groups of 8 map to 12 normal interrupts).
@@ -596,7 +615,7 @@ Void Hwi_clearInterrupt(UInt intNum)
         /*
          * Have to use a switch statement because can only write constant values
          * to IFR cregister. In other words, can't use "IFR &= ~(1 << ifrNum)".
-         */ 
+         */
         switch (intNum) {
             case 1:
                 asm("       AND IFR, #0xfffe");
@@ -645,34 +664,34 @@ Void Hwi_clearInterrupt(UInt intNum)
         } /* switch */
     }
     else { /* intNum >= 32; need to clear PIEIFR */
-        /* 
+        /*
          * Clear PIEIFR bit.
          * The 32-bit vectors take 2 words of space each, so add intNum * 2
          */
         vectAdd = (UInt32 *)(VECTOR_PIE_BASE + intNum * 2);
-        
+
         /* Save original PIE vector */
         origVector = (UInt32)*vectAdd;
-        
+
         groupNum = ((intNum - Hwi_NUM_INTERRUPTS) >> 3) + 1;
         globalKey = __enable_interrupts();
         ierKey = Hwi_enableIER(1 << ((intNum - Hwi_NUM_INTERRUPTS) >> 3));
-        
+
         /* Step 1 Enable access to protected space */
         asm("   EALLOW");
-        
+
         /* Step 2. Set vector to Hwi_interruptReturn */
         *vectAdd = (UInt32)Hwi_interruptReturn;
-        
+
         /* Steps 3-4. Should jump to Hwi_interruptReturn and back here again */
         pieIERMask = 1 << (intNum & 0x7);
         Hwi_enablePIEIER(groupNum, pieIERMask);
-        
-        
+
+
         /* Step 5. Restore original vector and PIEIER settings. */
         Hwi_disablePIEIER(groupNum, pieIERMask);
         *vectAdd = (UInt32)origVector;
-        
+
         /* Step 6. Disable access to protected space */
         asm("   EDIS");
         Hwi_restoreIER(ierKey);
@@ -687,12 +706,12 @@ Bits16 Hwi_getInterruptFlag(UInt intNum) {
     Bits16 intFlag;
     Bits16 PIEIFR;
     UInt groupNum;
-    
-        /* 
-         *  No need to assert that intNum is OK because 
+
+        /*
+         *  No need to assert that intNum is OK because
          *  only Timer should call this
          */
-         
+
     if (intNum < Hwi_NUM_INTERRUPTS) { /* Need to return IFR value */
         intFlag = Hwi_getIFR() & (1 << (intNum - 1));
     }
@@ -701,7 +720,7 @@ Bits16 Hwi_getInterruptFlag(UInt intNum) {
         PIEIFR = *((UInt16 *)PIECTRL_ADDR + ((groupNum * 2) + 1));
         intFlag = PIEIFR & (1 << (intNum & 0x7));
     }
-    
+
     return (intFlag);
 }
 
@@ -751,11 +770,11 @@ Hwi_Irp Hwi_getIrp(Hwi_Object *hwi)
 Void Hwi_post(UInt intNum)
 {
     UInt16 *PIEIFRPtr;
-    
+
     Assert_isTrue((intNum >= 1 && intNum <= 14) ||
                   (intNum >= Hwi_NUM_INTERRUPTS &&
                    intNum < Hwi_NUM_INTERRUPTS_ALL), Hwi_A_badIntNum);
-    
+
     if (intNum < Hwi_NUM_INTERRUPTS) {
         /* Flag IFR */
         switch (intNum) {
@@ -909,7 +928,7 @@ Bool Hwi_getStackInfo(Hwi_StackInfo *stkInfo, Bool computeStackDepth)
 Void Hwi_plug(UInt intNum, Hwi_PlugFuncPtr fxn)
 {
     UInt32 *vectAdd;
-    
+
     Assert_isTrue(intNum >= 1 && intNum < Hwi_NUM_INTERRUPTS_ALL, Hwi_A_badIntNum);
 
     /* The 32-bit vectors take 2 words of space each, so intNum * 2 */
@@ -941,9 +960,9 @@ interrupt Void Hwi_unPluggedInterrupt()
 {
     volatile UInt16 *pieCtrlAddr = (UInt16 *)PIECTRL_ADDR;
     UInt intNum;
-    
+
     intNum = (*pieCtrlAddr & 0xfe) >> 1;
-    
+
     Error_raise(NULL, Hwi_E_unpluggedInterrupt, intNum, NULL);
 }
 
@@ -966,11 +985,11 @@ Void Hwi_setHookContext(Hwi_Object *hwi, Int id, Ptr hookContext)
 /*
  *  ======== Hwi_getIERBit ========
  */
-Bits16 Hwi_getIERBit(UInt intNum) 
+Bits16 Hwi_getIERBit(UInt intNum)
 {
     Bits16 mask;
     UInt groupNum;
-    
+
     if (intNum >= Hwi_NUM_INTERRUPTS) {
         /* Disable single PIE interrupt */
         groupNum = ((intNum - Hwi_NUM_INTERRUPTS) >> 3);
@@ -980,7 +999,7 @@ Bits16 Hwi_getIERBit(UInt intNum)
     else {
         mask = 1 << (intNum - 1);
     }
-    
+
     return (mask);
 }
 
@@ -991,7 +1010,7 @@ Bits16 Hwi_getIERBit(UInt intNum)
 Void Hwi_dispatchC(Int intNum)
 {
     Int tskKey;
-    
+
     if (Hwi_dispatcherTaskSupport) {
         tskKey = TASK_DISABLE();
     }
@@ -1015,7 +1034,7 @@ Void Hwi_dispatchCore(Int intNum)
     Int             swiKey;
     Int             i;
 
-    /* 
+    /*
      * All references to local variables beyond this point
      * will be on the isr stack
      */
@@ -1044,22 +1063,22 @@ Void Hwi_dispatchCore(Int intNum)
     }
 #endif
 
-    Log_write5(Hwi_LM_begin, (IArg)hwi, (IArg)hwi->fxn, 
+    Log_write5(Hwi_LM_begin, (IArg)hwi, (IArg)hwi->fxn,
                (IArg)prevThreadType, (IArg)intNum, (IArg)hwi->irp);
 
     /* call the user's isr */
     if (Hwi_dispatcherAutoNestingSupport) {
         if (Hwi_zeroLatencyIERMask == 0) {
             /* Propagate self bit which is auto cleared by hardware */
-            IER |= hwi->ierBitMask; 
+            IER |= hwi->ierBitMask;
 
             oldIER = IER;
             IER &= ~hwi->disableMask;
-            
+
             __enable_interrupts();
             (hwi->fxn)(hwi->arg);
             __disable_interrupts();
-            
+
             IER |= (hwi->restoreMask & oldIER);
         }
         else {
@@ -1086,6 +1105,9 @@ Void Hwi_dispatchCore(Int intNum)
     else {
         /* Execute the Hwi function */
         (hwi->fxn)(hwi->arg);
+
+        /* Propagate self bit which is auto cleared by hardware */
+        IER |= hwi->ierBitMask;
     }
 
     Log_write1(Hwi_LD_end, (IArg)hwi);

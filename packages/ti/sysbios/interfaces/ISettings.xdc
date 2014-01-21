@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2012-2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -66,6 +66,9 @@ metaonly interface ISettings
 
     /*! returns the family-specific CacheSupport module delegate */
     String getDefaultCacheDelegate();
+
+    /*! returns the family-specific Power module delegate */
+    String getDefaultPowerDelegate();
 
     /*! returns the family-specific Boot module. */
     String getDefaultBootModule();

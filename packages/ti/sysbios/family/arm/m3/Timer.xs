@@ -66,8 +66,8 @@ function module$use()
     Hwi = xdc.useModule("ti.sysbios.family.arm.m3.Hwi");
     BIOS = xdc.useModule('ti.sysbios.BIOS');
 
-    if (BIOS.smpEnabled == true) {
-//        Timer.$logError("This Timer module is not supported in SMP mode", this);
+    if ((BIOS.smpEnabled == true) && (BIOS.buildingAppLib == true)) {
+        Timer.$logError("This Timer module is not supported in SMP mode", this);
     }
 
     /*

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -61,7 +61,7 @@ import ti.sysbios.BIOS;
  *  No attempt is made to return from an exception as these are
  *  generally fatal in nature.
  *
- *  When used, the Exception module will override the default 
+ *  When used, the Exception module will override the default
  *  exception handlers provided by the current Hwi module.
  */
 
@@ -113,22 +113,28 @@ module Exception
         Ptr     lr;
         Ptr     pc;
         Ptr     psr;
+
+        /* Fault registers */
+        Ptr     dfsr;
+        Ptr     ifsr;
+        Ptr     dfar;
+        Ptr     ifar;
     }
 
     @Facet
-    metaonly config ViewInfo.Instance rovViewInfo = 
+    metaonly config ViewInfo.Instance rovViewInfo =
         ViewInfo.create({
             viewMap: [
-                ['Basic',    
+                ['Basic',
                     {
-                        type: ViewInfo.TREE,     
+                        type: ViewInfo.TREE,
                         viewInitFxn: 'viewInitBasic',
                         structName: 'ExcContext'
                     }
                 ]
             ]
         });
-    
+
     /*! Error raised when a SWI exception occurs */
     config Error.Id E_swi = {
         msg: "E_swi: pc = 0x%08x, lr = 0x%08x."
@@ -163,20 +169,20 @@ module Exception
      */
     config Bool enableDecode = true;
 
-    /*! @_nodoc 
+    /*! @_nodoc
      *  Exception stack pointer. Default = null.
      *  (Indicates that stack is to be created using
      *  staticPlace()
      */
     config Ptr excStack = null;
 
-    /*! 
+    /*!
      * Exception stack size in MAUs.
      * Default is 128 bytes.
      */
     metaonly config SizeT excStackSize = 128;
 
-    /*! 
+    /*!
      *  Memory section used for Exception stack.
      *  Default is null, which results in the stack
      *  being placed in .bss.
@@ -187,33 +193,33 @@ module Exception
      *  User Exception Context Buffer Address
      *
      *  By default, when an exception occurs, an {@link #ExcContext}
-     *  structure is allocated on the exception stack and filled in 
+     *  structure is allocated on the exception stack and filled in
      *  by the exception handler.
      *
-     *  If {@link #excContextBuffer} is initialized by the user, the 
+     *  If {@link #excContextBuffer} is initialized by the user, the
      *  {@link #ExcContext} structure will be placed at that address instead.
      *
      *  The buffer must be large enough to contain an {@link #ExcContext}
      *  structure.
      */
     metaonly config Ptr excContextBuffer;
-    
+
     /*!
      *  User Exception Stack Buffer Address
-     *  
+     *
      *  When an exception occurs, a pointer to the base address
      *  of the stack being used by the thread causing the exception is stored
      *  in the ExcContext buffer.
-     *  
-     *  If {@link #excStackBuffer} is initialized by the user, the 
-     *  entire contents of that stack will also be 
+     *
+     *  If {@link #excStackBuffer} is initialized by the user, the
+     *  entire contents of that stack will also be
      *  copied to the address specified.
      *
      *  The buffer must be large enough to contain the largest task stack or ISR
      *  stack defined in the application.
      */
     metaonly config Ptr excStackBuffer;
-    
+
     /*!
      *  User Exception hook function.
      *

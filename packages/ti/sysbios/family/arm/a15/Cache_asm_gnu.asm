@@ -1,5 +1,5 @@
 @
-@  Copyright (c) 2012, Texas Instruments Incorporated
+@  Copyright (c) 2013, Texas Instruments Incorporated
 @  All rights reserved.
 @ 
 @  Redistribution and use in source and binary forms, with or without
@@ -54,11 +54,6 @@
         .global ti_sysbios_family_arm_a15_Cache_preFetch__I
         .global ti_sysbios_family_arm_a15_Cache_getEnabled__E
         .global ti_sysbios_family_arm_a15_Cache_getCacheLevelInfo__I
-        .global ti_sysbios_family_arm_a15_Cache_enablePmc__E
-        .global ti_sysbios_family_arm_a15_Cache_resetPmc__E
-        .global ti_sysbios_family_arm_a15_Cache_getPmcMiss__E
-        .global ti_sysbios_family_arm_a15_Cache_getPmcAxs__E
-        .global ti_sysbios_family_arm_a15_Cache_getPmcCycle__E
 
         .arm
         .align  4
@@ -568,152 +563,6 @@ ti_sysbios_family_arm_a15_Cache_enableBP__E:
         nop
         mrc     p15, #0, r0, c1, c0, #0 @ return SCTLR
         bx      lr 
-        .endfunc
-
-@
-@ ======== Cache_enablePmc ========
-@
-        .text
-        .func ti_sysbios_family_arm_a15_Cache_enablePmc__E
-
-ti_sysbios_family_arm_a15_Cache_enablePmc__E:
-        
-        @Enable the PMCCNTR cycle counter and enable event counters 0,1 & 2
-        mov     r0, #0
-        orr     r0, r0, #0x80000007
-        mcr     p15, #0, r0, c9, c12, #1
-
-        @ Select Performance monitor counter. Counter 0
-        mov     r0, #0
-        mcr     p15, #0, r0, c9, c12, #5
-        @ Select Event Type - 0x16 for L2 data cache access
-        mov     r0, #0x16
-        mcr     p15, #0, r0, c9, c13, #1
-        
-        @ Select Performance monitor counter. Counter 1
-        mov     r0, #1
-        mcr     p15, #0, r0, c9, c12, #5
-        @ Select Event Type - 0x11 for CPU cycles
-        mov     r0, #0x11
-        mcr     p15, #0, r0, c9, c13, #1
-        
-        @ Select Performance monitor counter. Counter 2
-        mov     r0, #2
-        Mcr     p15, #0, r0, c9, c12, #5
-        @ Select Event Type - 0x17 for L2 data cache misses
-        mov     r0,#0x17
-        mcr     p15, #0, r0, c9, c13, #1
-
- 
-        @reset all counters and start counting
-        mrc     p15, #0, r0, c9, c12, #0
-        bic     r0, r0, #0x3F
-        orr     r0, r0, #0x7
-        mcr     p15, #0, r0, c9, c12, #0
-        bx      lr
-        .endfunc
-
-
-@
-@ ======== Cache_resetPmc ========
-@
-        .text 
-        .func ti_sysbios_family_arm_a15_Cache_resetPmc__E
-
-ti_sysbios_family_arm_a15_Cache_resetPmc__E:
-        
-        @Stop counting
-        mrc     p15, #0, r0, c9, c12, #0
-        bic     r0, r0, #0x3F
-        mcr     p15, #0, r0, c9, c12, #0
-
-        @reset all counters and start counting
-        mrc     p15, #0, r0, c9, c12, #0
-        bic     r0, r0, #0x3F
-        orr     r0, r0, #0x7
-        mcr     p15, #0, r0, c9, c12, #0
-        bx      lr
-        .endfunc
-        
-@
-@ ======== Cache_getPmcMiss ========
-@
-        .text 
-        .func ti_sysbios_family_arm_a15_Cache_getPmcMiss__E
-
-ti_sysbios_family_arm_a15_Cache_getPmcMiss__E:
-        
-        @Stop counting
-        mrc     p15, #0, r0, c9, c12, #0
-        bic     r0, r0, #0x3F
-        mcr     p15, #0, r0, c9, c12, #0
-        
-        @Select Counter - Counter 2
-        mov     r0, #2
-        mcr     p15, #0, r0, c9, c12, #5
-        mrc     P15, #0, r0, c9, c13, #2 @ Read event count
-        
-        @start counting
-        mrc     p15, #0, r1, c9, c12, #0
-        bic     r1, r1, #0x3F
-        orr     r1, r1, #0x1
-        mcr     p15, #0, r1, c9, c12, #0
-        bx      lr
-        .endfunc
-        
-        
-        
-@
-@ ======== Cache_getPmcAxs ========
-@
-        .text 
-        .func ti_sysbios_family_arm_a15_Cache_getPmcAxs__E
-
-ti_sysbios_family_arm_a15_Cache_getPmcAxs__E:
-
-        @Stop counting
-        mrc     p15, #0, r0, c9, c12, #0
-        bic     r0, r0, #0x3F
-        mcr     p15, #0, r0, c9, c12, #0
-        
-        
-        @Select Counter - Counter 0
-        mov     r0, #0
-        mcr     p15, #0, r0, c9, c12, #5
-        mrc     P15, #0, r0, c9, c13, #2 @ Read event count
-        
-        @start counting
-        mrc     p15, #0, r1, c9, c12, #0
-        bic     r1, r1, #0x3F
-        orr     r1, r1, #0x1
-        mcr     p15, #0, r1, c9, c12, #0
-        bx      lr
-        .endfunc
-        
-@
-@ ======== Cache_getPmcCycle ========
-@
-        .text 
-        .func ti_sysbios_family_arm_a15_Cache_getPmcCycle__E
-
-ti_sysbios_family_arm_a15_Cache_getPmcCycle__E:
-        
-        @Stop counting
-        mrc     p15, #0, r0, c9, c12, #0
-        bic     r0, r0, #0x3F
-        mcr     p15, #0, r0, c9, c12, #0
-        
-        @Select Counter - Counter 1
-        mov     r0, #1
-        mcr     p15, #0, r0, c9, c12, #5
-        mrc     p15, #0, r0, c9, c13, #2 @ Read event count
-        
-        @start counting
-        mrc     p15, #0, r1, c9, c12, #0
-        bic     r1, r1, #0x3F
-        orr     r1, r1, #0x1
-        mcr     p15, #0, r1, c9, c12, #0
-        bx      lr
         .endfunc
 
         .end

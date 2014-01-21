@@ -45,12 +45,6 @@
 
 #include "package/internal/SysMin.xdc.h"
 
-#ifndef xdc__CSTRING__
-
-#define CString String    /* CString type is new with XDCTOOLS 3.25 */
-
-#endif
-
 extern Void ti_sysbios_family_arm_ducati_Core_atexit__I(Int);
 #define Core_atexit(a)  ti_sysbios_family_arm_ducati_Core_atexit__I(a)
 

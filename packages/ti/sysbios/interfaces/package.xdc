@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2012-2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,4 +68,5 @@ package ti.sysbios.interfaces [2,0,0,0] {
     interface IIntrinsicsSupport;
     interface ICache;
     interface ISettings;
+    interface IPower;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -184,6 +184,12 @@ module Timer inherits ti.sysbios.interfaces.ITimer
             ]
         });
 
+    /*! Timer enable function type definition. */
+    typedef Void (*TimerEnableFuncPtr)(Int);
+
+    /*! Timer disable function type definition. */
+    typedef Void (*TimerDisableFuncPtr)(Int);
+
     /*!
      *  Error raised when timer id specified is not supported.
      */
@@ -206,6 +212,16 @@ module Timer inherits ti.sysbios.interfaces.ITimer
      *  Available mask to be used when select = Timer_ANY
      */
     config UInt anyMask = 0x3;
+
+    /*!
+     *  ======== enableFunc ========
+     */
+    config TimerEnableFuncPtr enableFunc = null;
+
+    /*!
+     *  ======== disableFunc ========
+     */
+    config TimerDisableFuncPtr disableFunc = null;
 
     /*!
      *  ======== getHandle ========
@@ -269,6 +285,16 @@ internal:   /* not for client use */
      *  Write protection register for critical registers;
      */
     config Ptr WRALLOW = null;
+
+    /*!
+     *  ======== disableStellaris ========
+     */
+    Void disableStellaris(Int id);
+
+    /*!
+     *  ======== enableStellaris ========
+     */
+    Void enableStellaris(Int id);
 
     /*
      *  ======== initDevice ========

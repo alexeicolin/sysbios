@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,14 +47,16 @@
  */
 Int TimestampProvider_Module_startup( Int phase )
 {
-   /*
-    * Part of runtime. Called during first pass.
-    * All APIs need to be ready after first pass.
-    */
+    /*
+     * Part of runtime. Called during first pass.
+     * All APIs need to be ready after first pass.
+     */
+    TimestampProvider_initCCNT();
 
-   TimestampProvider_initCCNT();
+    /* Clear overflow flag */
+    TimestampProvider_getOverflowCCNT();
 
-   return Startup_DONE;
+    return Startup_DONE;
 }
 
 /*
@@ -86,4 +88,18 @@ Void TimestampProvider_getFreq(Types_FreqHz *freq)
     BIOS_getCpuFreq(freq);
 }
 
+/*
+ *  ======== TimestampProvider_autoRefreshFxn ========
+ */
+Void TimestampProvider_autoRefreshFxn(UArg arg)
+{
+    UInt hwiKey;
 
+    hwiKey = Hwi_disable();
+
+    if (TimestampProvider_getOverflowCCNT() != 0) {
+        ++TimestampProvider_module->upper32Bits;
+    }
+
+    Hwi_restore(hwiKey);
+}

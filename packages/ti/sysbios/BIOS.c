@@ -205,7 +205,9 @@ Void BIOS_errorRaiseHook(Error_Block *eb)
     }
 
     /* Call the default/user's Error.raiseHook */
-    BIOS_installedErrorHook(eb);
+    if (BIOS_installedErrorHook != NULL) {
+        BIOS_installedErrorHook(eb);
+    }
 }
 
 

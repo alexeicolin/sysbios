@@ -113,7 +113,8 @@ function createTable(deviceTable, fileBase)
               "\"<table border=1 cellpadding=3>\",\n" +
               " \"<colgroup span=1></colgroup> <colgroup span=5 align=center></colgroup>\",\n" +
               "   \"<tr><th> Timer ID </th><th> Timer Name </th><th> Timer Base Address </th>" +
-              "<th> Timer Interrupt Number </th><th> Timer Event Id </th></tr>\",\n";
+              "<th> Timer Interrupt Number </th><th> Timer Event Id </th>" +
+              "<th> Timer Frequency (in Hz) </th></tr>\",\n";
             fos.write(tableStart);
 
             // get the current device's timer array
@@ -134,6 +135,18 @@ function createTable(deviceTable, fileBase)
 
                 var eventIdString = (timerArray[currTimer].eventId == -1) ?
                         "Not used" : timerArray[currTimer].eventId.toString(10);
+
+                var timerFrequency = timerArray[currTimer].intFreq.lo.toString(10);
+
+                /*
+                 * In Timer64 module, the timer frequency is computed using
+                 * CPU frequency for certain devices. For such devices, the
+                 * timer frequency is read as 0. To avoid confusion, print
+                 * "Not Available" instead of printing 0.
+                 */
+                if (timerFrequency == 0) {
+                    timerFrequency = "Not Available";
+                }
                 
                 // write out a row for each timer in the device, substituting
                 // values from the timer array into the html table
@@ -147,6 +160,8 @@ function createTable(deviceTable, fileBase)
                     intNumString +
                     "         </td><td> " +
                     eventIdString +
+                    "         </td><td> " +
+                    timerFrequency +
                     "         </td></tr>\",\n";
             }
 

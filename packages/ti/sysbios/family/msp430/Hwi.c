@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,6 +46,7 @@
 
 #define Hwi_switchToIsrStack ti_sysbios_family_xxx_Hwi_switchToIsrStack
 #define Hwi_switchToTaskStack ti_sysbios_family_xxx_Hwi_switchToTaskStack
+#define Hwi_switchAndRunFunc ti_sysbios_family_xxx_Hwi_switchAndRunFunc
 
 #define GIE_BIT  0x8    /* GIE bit position in Status Register (SR) */ 
 

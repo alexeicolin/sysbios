@@ -2,7 +2,7 @@
  *  Do not modify this file; it is automatically 
  *  generated and any modifications will be overwritten.
  *
- * @(#) xdc-y51
+ * @(#) xdc-z57
  */
 
 #define __nested__
@@ -50,7 +50,7 @@
  *  Define absolute path prefix for this executable's
  *  configuration generated files.
  */
-xdc__META(__ASM__, "@(#)__ASM__ = /db/vtree/library/trees/avala/avala-s53/src/ti/sysbios/fatfs/utils/package/cfg/bin/catimagefile_p86GW");
+xdc__META(__ASM__, "@(#)__ASM__ = /db/vtree/library/trees/avala/avala-u22/src/ti/sysbios/fatfs/utils/package/cfg/bin/catimagefile_p86GW");
 
 /*
  *  ======== __ISA__ ========

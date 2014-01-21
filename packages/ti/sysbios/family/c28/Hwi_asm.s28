@@ -198,6 +198,29 @@ _ti_sysbios_family_xxx_Hwi_switchToTaskStack:
     movl *xar0, acc      ; taskSP = 0
         
 notZero$:
-    lretr;
+    lretr
     .endasmfunc
 
+;
+;  ======== ti_sysbios_family_xxx_Hwi_switchAndRunFunc ========
+;  ti_sysbios_family_c28_Hwi_switchAndRunFunc(Void (*func)());
+;
+;  Switch to ISR stack, run func() and switch back to Task stack.
+;
+;
+        .global _ti_sysbios_family_xxx_Hwi_switchAndRunFunc
+    .sect ".text:_ti_sysbios_family_xxx_Hwi_switchAndRunFunc"
+    .clink
+_ti_sysbios_family_xxx_Hwi_switchAndRunFunc:
+    .asmfunc
+    push xar1           ; save xar1 on stack
+    movl xar1, xar4     ; move func pointer to xar1 so it is preserved
+                        ; across function calls
+    lcr #_ti_sysbios_family_xxx_Hwi_switchToIsrStack
+    push xar4           ; save oldTaskSP
+    lcr *xar1            ; call func()
+    pop xar4            ; restore oldTaskSP
+    lcr #_ti_sysbios_family_xxx_Hwi_switchToTaskStack
+    pop xar1            ; restore xar1 from stack
+    lretr
+    .endasmfunc

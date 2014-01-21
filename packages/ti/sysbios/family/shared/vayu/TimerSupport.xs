@@ -112,7 +112,7 @@ function getAvailMask()
 
 
 /*
- *  ======== viewInitModule ========
+ *  ======== _setTimerAvailMask ========
  *  The "real-time" setter setTimerAvailMask function
  *
  *  This function is called whenever a15TimerAvailMask,

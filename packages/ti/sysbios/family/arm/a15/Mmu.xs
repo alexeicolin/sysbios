@@ -160,7 +160,8 @@ function module$meta$init()
                                         // Normal Memory
 
     /* Set MAIRn Attr1 */
-    Mmu.mairRegAttr[1] = 0x04;          // Mark memory region as Device Memory
+    Mmu.mairRegAttr[1] = 0x0;           // Mark memory region as
+                                        // Strongly-ordered Memory
 
     /* Set MAIRn Attr1 */
     Mmu.mairRegAttr[2] = 0xFF;          // Mark memory regions as Read-Write

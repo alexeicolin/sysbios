@@ -203,7 +203,7 @@ function module$static$init(mod, params)
                 eventMapMeta(thisInt.intNum, thisInt.eventId);
             }
             else {
-                Hwi.$logError ("eventId (" + thisInt.eventId + ") must be less than 32", Hwi, thisInt);
+                Hwi.$logError ("eventId (" + thisInt.eventId + ") must be less than 128", Hwi, thisInt);
             }
         }
     }
@@ -482,7 +482,7 @@ function viewGetStackInfo()
 function viewInitModule(view, mod)
 {
     var Program = xdc.useModule('xdc.rov.Program');
-
+    var halHwiModCfg = Program.getModuleConfig('ti.sysbios.hal.Hwi');
     var hwiModCfg = Program.getModuleConfig('ti.sysbios.family.c64p.Hwi');
 
     view.options[0] = "Hwi.autoNestingSupport = ";
@@ -503,15 +503,21 @@ function viewInitModule(view, mod)
         view.$status["hwiStackBase"] = "Error fetching Hwi stack info!"; 
     }
     else {
-        view.hwiStackPeak = stackInfo.hwiStackPeak;
-        view.hwiStackSize = stackInfo.hwiStackSize;
-        view.hwiStackBase = "0x"+ stackInfo.hwiStackBase.toString(16);
+        if (halHwiModCfg.initStackFlag) {
+            view.hwiStackPeak = String(stackInfo.hwiStackPeak);
+            view.hwiStackSize = stackInfo.hwiStackSize;
+            view.hwiStackBase = "0x"+ stackInfo.hwiStackBase.toString(16);
 
-        if (view.hwiStackPeak == view.hwiStackSize) {
-            view.$status["hwiStackPeak"] = "Overrun!  "; 
-            /*                                  ^^  */
-            /* (extra spaces to overcome right justify) */
+            if (stackInfo.hwiStackPeak == stackInfo.hwiStackSize) {
+                view.$status["hwiStackPeak"] = "Overrun!  ";
+                /*                                  ^^  */
+                /* (extra spaces to overcome right justify) */
+            }
+        }
+        else {
+            view.hwiStackPeak = "n/a - set Hwi.initStackFlag";
+            view.hwiStackSize = stackInfo.hwiStackSize;
+            view.hwiStackBase = "0x"+ stackInfo.hwiStackBase.toString(16);
         }
     }
 }
-

@@ -262,7 +262,7 @@ module Timer inherits ti.sysbios.interfaces.ITimer
      */
     metaonly struct ModuleView {
         String          availMask;      /* avaliable 32-bit timer halves */
-        String          intFrequency;   /* internal frequency in Hz */
+        String          intFrequency[]; /* internal frequency in Hz */
     }
 
     /*!
@@ -386,8 +386,36 @@ module Timer inherits ti.sysbios.interfaces.ITimer
     /*!
      *  ======== intFreq ========
      *  Default internal timer input clock frequency.
+     *
+     *  If intFreq is set, its value will be copied into all
+     *  {@link #intFreqs}[] array entries except any entry which was
+     *  explicitly written to in the application's config script.
+     *
+     *  For example, if intFreq is set to {hi:0, lo:32768} on a device
+     *  with 3 timers, it will be copied into intFreqs[0], intFreqs[1] &
+     *  intFreqs[2]. If the application explicitly sets one of the
+     *  {@link #intFreqs}[] entries, say intFreqs[1], then intFreq is not
+     *  copied into intFreqs[1] and intFreqs[1] retains the value it was
+     *  set to in the config script.
      */
     metaonly config Types.FreqHz intFreq = {lo: 0, hi: 0};
+
+    /*!
+     *  ======== intFreqs ========
+     *  Default internal timer input clock frequency array.
+     *
+     *  This array can be used to change the input clock frequency
+     *  for a particular timer.
+     *
+     *  For example, if it is required to change the input clock frequency
+     *  for timer id 2 to 32768Hz on a device that has 4 timers, the
+     *  intFreqs[2] config param can be set to {hi:0, lo:32768} in the
+     *  config script.
+     *
+     *  For a list of default timer frequencies for different devices,
+     *  please refer {@link ./doc-files/TimerTables.html Timer Mapping Tables}.
+     */
+    metaonly config Types.FreqHz intFreqs[];
     
     /*!
      *  ======== stub  ========
@@ -661,7 +689,7 @@ internal:   /* not for client use */
     /*! Module state structure */
     struct Module_State {
         Bits32          availMask;      /* avaliable 32-bit timer halves */
-        Types.FreqHz    intFreq;        /* internal frequency in Hz */
+        Types.FreqHz    intFreqs[];     /* internal frequency in Hz */
         TimerDevice     device[];       /* timer device information */
         Handle          handles[];      /* handles based on logical id */
         Bool            firstInit;

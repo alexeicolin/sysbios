@@ -7,7 +7,7 @@
   </head>
   <body>
     <h2>Arm926 Timing Benchmarks</h2>
-    <h3>ti.platforms.evmOMAPL138 (compiler version: 5.0.1)</h3>
+    <h3>ti.platforms.evmOMAPL138 (compiler version: 5.1.1)</h3>
   </body>
   <body xmlns="">
     <table>
@@ -32,27 +32,27 @@
       </tr>
       <tr>
         <td>Hwi dispatcher prolog</td>
-        <td>412</td>
+        <td>437</td>
       </tr>
       <tr>
         <td>Hwi dispatcher epilog</td>
-        <td>200</td>
+        <td>212</td>
       </tr>
       <tr>
         <td>Hwi dispatcher()</td>
-        <td>600</td>
-      </tr>
-      <tr>
-        <td>Hardware Interrupt to Blocked Task</td>
-        <td>800</td>
-      </tr>
-      <tr>
-        <td>Hardware Interrupt to Software Interrupt</td>
         <td>625</td>
       </tr>
       <tr>
+        <td>Hardware Interrupt to Blocked Task</td>
+        <td>850</td>
+      </tr>
+      <tr>
+        <td>Hardware Interrupt to Software Interrupt</td>
+        <td>637</td>
+      </tr>
+      <tr>
         <td>Swi_enable()</td>
-        <td>112</td>
+        <td>100</td>
       </tr>
       <tr>
         <td>Swi_disable()</td>
@@ -64,15 +64,15 @@
       </tr>
       <tr>
         <td>Post Software Interrupt without Context Switch</td>
-        <td>125</td>
+        <td>112</td>
       </tr>
       <tr>
         <td>Post Software Interrupt with Context Switch</td>
-        <td>200</td>
+        <td>212</td>
       </tr>
       <tr>
         <td>Create a New Task without Context Switch</td>
-        <td>1862</td>
+        <td>1875</td>
       </tr>
       <tr>
         <td>Set a Task Priority without a Context Switch</td>
@@ -80,7 +80,7 @@
       </tr>
       <tr>
         <td>Task_yield</td>
-        <td>225</td>
+        <td>237</td>
       </tr>
       <tr>
         <td>Post Semaphore, No Waiting Task</td>
@@ -88,11 +88,11 @@
       </tr>
       <tr>
         <td>Post Semaphore No Task Switch</td>
-        <td>212</td>
+        <td>225</td>
       </tr>
       <tr>
         <td>Post Semaphore with Task Switch</td>
-        <td>275</td>
+        <td>287</td>
       </tr>
       <tr>
         <td>Pend on Semaphore, No Context Switch</td>

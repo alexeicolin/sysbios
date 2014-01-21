@@ -86,11 +86,11 @@ function module$use()
     if (Hwi.dispatcherSwiSupport == undefined) {
         Hwi.dispatcherSwiSupport = BIOS.swiEnabled;
     }
-    
+
     if (Hwi.dispatcherTaskSupport == undefined) {
         Hwi.dispatcherTaskSupport = BIOS.taskEnabled;
     }
-    
+
     if (Hwi.dispatcherSwiSupport) {
         if (BIOS.swiEnabled) {
             xdc.useModule("ti.sysbios.knl.Swi");
@@ -98,7 +98,7 @@ function module$use()
             Hwi.swiRestoreHwi = '&ti_sysbios_knl_Swi_restoreHwi__E';
         }
         else {
-            Hwi.$logError("Dispatcher Swi support can't be enabled " + 
+            Hwi.$logError("Dispatcher Swi support can't be enabled " +
                           "if ti.sysbios.BIOS.swiEnabled is false.", Hwi);
         }
     }
@@ -135,7 +135,7 @@ function module$static$init(mod, params)
     mod.irp = null;      /* Set only when in an interrupt */
 
     mod.dispatchTable.length = Hwi.NUM_INTERRUPTS_ALL;
-    
+
     mod.globalEnable = false;
     mod.shadowIER = 0;
 
@@ -143,8 +143,8 @@ function module$static$init(mod, params)
         mod.dispatchTable[intNum] = null;
     }
 
-    /* 
-     * parse the nonDispatchedInterrupts array and populate 
+    /*
+     * parse the nonDispatchedInterrupts array and populate
      * the Hwi.interrupt array accordingly
      */
     for (var i in Hwi.nonDispatchedInterrupts) {
@@ -156,7 +156,7 @@ function module$static$init(mod, params)
                 Hwi.interrupt[intNum].pfxn + ").", i);
         }
         Hwi.interrupt[intNum].used = true;
-        
+
         Hwi.interrupt[intNum].useDispatcher = false;
         Hwi.interrupt[intNum].pfxn = thisInt.fxn;
         Hwi.interrupt[intNum].name = i;
@@ -171,14 +171,14 @@ function module$static$init(mod, params)
             }
         }
     }
-    
+
     /* Prepare masks to be used in zero latency .xdt */
     Hwi.zeroLatencyIERMaskStr = "0x" + Hwi.zeroLatencyIERMask.toString(16);
-    Hwi.nonZeroLatencyIERMaskStr = "0x" + 
+    Hwi.nonZeroLatencyIERMaskStr = "0x" +
             (0xffff - Hwi.zeroLatencyIERMask).toString(16);
-    
-    /* 
-     * ROM 
+
+    /*
+     * ROM
      * These members of the module state are added for ROM. They are tied to
      * their respective symbol name because the symbols will not be defined
      * at the time the ROM assembly is made.
@@ -204,7 +204,7 @@ function module$static$init(mod, params)
  *  common function to test instance configuration
  */
 function instance_validate(instance)
-{    
+{
     if (instance.$object.fxn == null) {
         Hwi.$logError("function cannot be null", instance);
     }
@@ -216,13 +216,13 @@ function instance_validate(instance)
 function instance$static$init(obj, intNum, fxn, params)
 {
     var mod = this.$module.$object;
-    
+
     /* Check for conflict with zero latency IER mask */
     if (Hwi.zeroLatencyIERMask & Hwi.getIERMask([intNum])) {
-        Hwi.$logError("Hwi " + intNum + " conflicts with IER Mask 0x" + 
+        Hwi.$logError("Hwi " + intNum + " conflicts with IER Mask 0x" +
                        Hwi.zeroLatencyIERMask.toString(16), this);
     }
-    
+
     if (Hwi.interrupt[intNum].used == true) {
         Hwi.$logError("Hwi " + intNum + " already in use (by " +
                 Hwi.interrupt[intNum].fxn + ").", this);
@@ -233,17 +233,30 @@ function instance$static$init(obj, intNum, fxn, params)
     if ((intNum == 0) || (intNum >= 16 && intNum <= 31)) {
         Hwi.$logError("intNum = " + intNum + " can't be assigned to the dispatcher", this);
     }
-    
+
     if ((intNum > 0) && (intNum < Hwi.NUM_INTERRUPTS)) {
-        Hwi.interrupt[intNum].pfxn = 
+        if (Hwi.zeroLatencyIERMask != 0) {
+            Hwi.interrupt[intNum].pfxn =
+                '&ti_sysbios_family_c28_Hwi_dispatchZeroTable';
+        }
+        else {
+            Hwi.interrupt[intNum].pfxn =
                 '&ti_sysbios_family_c28_Hwi_dispatchTable';
+        }
 
         /* intNum from 1-16, IER from 0-15 */
         obj.ierBitMask = 1 << (intNum - 1);
     }
     else if (intNum >= Hwi.NUM_INTERRUPTS && intNum < Hwi.NUM_INTERRUPTS_ALL) {
         /* This is PIE interrupt */
-        Hwi.interrupt[intNum].pfxn = '&ti_sysbios_family_c28_Hwi_dispatchPie';
+        if (Hwi.zeroLatencyIERMask != 0) {
+            Hwi.interrupt[intNum].pfxn =
+                '&ti_sysbios_family_c28_Hwi_dispatchZero';
+        }
+        else {
+            Hwi.interrupt[intNum].pfxn =
+                '&ti_sysbios_family_c28_Hwi_dispatchPie';
+        }
 
         /* intNum from 32-128, IER from 0-11 */
         obj.ierBitMask = 1 << ((intNum - Hwi.NUM_INTERRUPTS) >> 3);
@@ -265,7 +278,7 @@ function instance$static$init(obj, intNum, fxn, params)
     obj.fxn = fxn;
     obj.irp = null;
 
-    if ((Hwi.dispatcherAutoNestingSupport == false) && 
+    if ((Hwi.dispatcherAutoNestingSupport == false) &&
         (params.maskSetting != Hwi.MaskingOption_SELF)) {
         Hwi.$logWarning("Non default mask setting but " +
                         "dispatcherAutoNestingSupport is disabled.",
@@ -282,18 +295,18 @@ function instance$static$init(obj, intNum, fxn, params)
             obj.restoreMask = 0xffff;
             break;
         case Hwi.MaskingOption_LOWER:
-            Hwi.$logWarning("Hwi.MaskingOption_LOWER not supported," + 
+            Hwi.$logWarning("Hwi.MaskingOption_LOWER not supported," +
                                 " converting to Hwi.MaskingOption_SELF.",
                             this);
             params.maskSetting = Hwi.MaskingOption_SELF;
         case Hwi.MaskingOption_SELF:
-            obj.disableMask = obj.ierBitMask; 
-            obj.restoreMask = obj.ierBitMask; 
+            obj.disableMask = obj.ierBitMask;
+            obj.restoreMask = obj.ierBitMask;
             break;
         case Hwi.MaskingOption_BITMASK:
-            obj.disableMask = 
+            obj.disableMask =
                 params.disableMask;
-            obj.restoreMask = 
+            obj.restoreMask =
                 params.restoreMask;
             break;
     }
@@ -308,10 +321,10 @@ function instance$static$init(obj, intNum, fxn, params)
 /*
  *  ======== getIERMask ========
  */
-function getIERMask(vecIds) 
+function getIERMask(vecIds)
 {
     var ierMask = 0x0;
-    
+
     for (var i in vecIds) {
         var vecId = vecIds[i];
         if ((vecId <= 0) || (vecId >= 16 && vecId <= 31) || vecId >= 128) {
@@ -324,7 +337,7 @@ function getIERMask(vecIds)
             ierMask |= 1 << ((vecId - 32) >> 3);
         }
     }
-    
+
     return ierMask;
 }
 
@@ -368,7 +381,7 @@ function getEnumString(enumProperty)
     /*
      *  Split the string into tokens in order to get rid of the huge package
      *  path that precedes the enum string name. Return the last 2 tokens
-     *  concatenated with "_" 
+     *  concatenated with "_"
      */
     var enumStrArray = String(enumProperty).split(".");
     var len = enumStrArray.length;
@@ -427,23 +440,23 @@ function module$validate()
     }
 
     /*
-     * Make sure .stack is < 0x10000. 
+     * Make sure .stack is < 0x10000.
      */
 
-    /* 
+    /*
      * On same platforms, the memory layout is not available to config, so
      * we cannot do the check.
      */
     if (segName == null) {
         return;
-    }   
-    
+    }
+
     var segment = Program.cpu.memoryMap[segName];
 
     if (segment != null) {
         /* 28x Stack Pointer is only 16 bits, so isr stack must be < 0x10000. */
         if ((segment.base + segment.len) > 0x10000) {
-            Hwi.$logError("stackMemory cannot be placed in segment " + 
+            Hwi.$logError("stackMemory cannot be placed in segment " +
                           segName + ". Stacks must be within page 0.", Hwi);
         }
     }
@@ -478,7 +491,7 @@ function addHookSet(hookSet)
  *  ======== viewInitBasic ========
  */
 function viewInitBasic(view, obj)
-{    
+{
     var Hwi = xdc.useModule('ti.sysbios.family.c28.Hwi');
     var Program = xdc.useModule('xdc.rov.Program');
     var halHwi = xdc.useModule('ti.sysbios.hal.Hwi');
@@ -486,7 +499,7 @@ function viewInitBasic(view, obj)
     view.halHwiHandle =  halHwi.viewGetHandle(obj.$addr);
     view.label = Program.getShortName(obj.$label);
     view.intNum = obj.intNum;
-    
+
     var fxn = Program.lookupFuncName(Number(obj.fxn));
     view.fxn = fxn[0];
     view.arg = obj.arg;
@@ -522,7 +535,7 @@ function viewGetStackInfo()
 
     var index = stackData.length - 1;
 
-    /* 
+    /*
      * The stack is filled with 0xbebe.
      */
     while (stackData[index] == 0xbebe) {
@@ -543,7 +556,7 @@ function viewInitModule(view, mod)
 {
 
     var Program = xdc.useModule('xdc.rov.Program');
-
+    var halHwiModCfg = Program.getModuleConfig('ti.sysbios.hal.Hwi');
     var hwiModCfg = Program.getModuleConfig('ti.sysbios.family.c28.Hwi');
 
     if (hwiModCfg.zeroLatencyIERMask == 0x0) {
@@ -566,21 +579,28 @@ function viewInitModule(view, mod)
     view.options[3] += hwiModCfg.dispatcherIrpTrackingSupport ? "true" : "false";
 
     var stackInfo = viewGetStackInfo();
-    
+
     if (stackInfo.hwiStackSize == 0) {
         view.$status["hwiStackPeak"] =
         view.$status["hwiStackSize"] =
-        view.$status["hwiStackBase"] = "Error fetching Hwi stack info!"; 
+        view.$status["hwiStackBase"] = "Error fetching Hwi stack info!";
     }
     else {
-        view.hwiStackPeak = stackInfo.hwiStackPeak;
-        view.hwiStackSize = stackInfo.hwiStackSize;
-        view.hwiStackBase = "0x"+ stackInfo.hwiStackBase.toString(16);
+        if (halHwiModCfg.initStackFlag) {
+            view.hwiStackPeak = String(stackInfo.hwiStackPeak);
+            view.hwiStackSize = stackInfo.hwiStackSize;
+            view.hwiStackBase = "0x"+ stackInfo.hwiStackBase.toString(16);
 
-        if (view.hwiStackPeak == view.hwiStackSize) {
-            view.$status["hwiStackPeak"] = "Overrun!  "; 
-            /*                                  ^^  */
-            /* (extra spaces to overcome right justify) */
+            if (stackInfo.hwiStackPeak == stackInfo.hwiStackSize) {
+                view.$status["hwiStackPeak"] = "Overrun!  ";
+                /*                                  ^^  */
+                /* (extra spaces to overcome right justify) */
+            }
         }
+    else {
+            view.hwiStackPeak = "n/a - set Hwi.initStackFlag";
+            view.hwiStackSize = stackInfo.hwiStackSize;
+            view.hwiStackBase = "0x"+ stackInfo.hwiStackBase.toString(16);
+    }
     }
 }

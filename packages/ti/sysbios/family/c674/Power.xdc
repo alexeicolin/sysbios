@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2012-2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -125,7 +125,7 @@ import ti.sysbios.knl.Queue;
 @ModuleStartup            /* Initialize Power */
 @Template("./Power.xdt")  /* Template for contitional initiatialization calls */
 
-module Power
+module Power inherits ti.sysbios.interfaces.IPower
 {
     /*! Power attributes structure. */
     struct Attrs {
@@ -317,6 +317,17 @@ module Power
      */
     metaonly config String onChipRegion = "IRAM";
 
+    /*!
+     *  ======== idle ========
+     *  Idle the CPU during idle time?
+     */
+    override config Bool idle = false;
+
+    /*!
+     *  ======== idleCpu ========
+     *  This configuration parameter has been deprecated. Use {@link #idle}
+     *  instead.
+     */
     /*! Idle the CPU during idle time?  Default is false. */
     metaonly config Bool idleCpu = false;
 

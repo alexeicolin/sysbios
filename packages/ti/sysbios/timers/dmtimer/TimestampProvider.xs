@@ -150,16 +150,32 @@ function module$validate()
  */
 function getFreqMeta()
 {
-    /*
-     *  We don't know which timer instance is used, since Timer_ANY could
-     *  have been passed to Timer.create().  If we could get the
-     *  timer id that Timer.create() assigned, and save it, we could
-     *  pass it to a Timer.getFreqMeta() function that would return the
-     *  frequency based on the timer id.
-     *  This is not possible (yet), if using the Clock timer.
-     */
-    TimestampProvider.$logWarning("TimestampProvider cannot determine " +
-            "the frequency of the timer.", TimestampProvider, "getFreqMeta");
+    var freq = {lo: 0, hi: 0};
+    var modObj = TimestampProvider.$object;
+    var timer = null;
 
-    return ({lo : 0, hi : 0});
+    if (TimestampProvider.useClockTimer == false) {
+        timer = modObj.timer;
+    }
+    else {
+        var Clock = xdc.module('ti.sysbios.knl.Clock');
+        timer = Clock.$object.timer.$object.pi.delegate$;
+    }
+
+    if (timer) {
+        if (timer.$object.extFreq.lo) {
+            freq.lo = timer.$object.extFreq.lo;
+        }
+        else {
+            for (var realInst in Timer.$instances) {
+                var inst = Timer.$instances[realInst];
+                if (timer.$object == inst.$object) {
+                    freq = Timer.intFreqs[inst.$object.id].lo;
+                    break;
+                }
+            }
+        }
+    }
+
+    return (freq);
 }

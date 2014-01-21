@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2012-2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,12 +44,7 @@ var Queue = null;
 var Diags = null;
 var Core = null;
 
-/* 
- *  QSHIFT and QFACTOR are used to compute the cpu load.  This is duplicated
- *  from Load.c
- */
-var QSHIFT = 4;
-var QFACTOR = 1 * Math.pow(2, QSHIFT); // translation of C code "1 << QSHIFT"
+var powerName = "";
 
 /*
  *  ======== module$use ========
@@ -57,13 +52,18 @@ var QFACTOR = 1 * Math.pow(2, QSHIFT); // translation of C code "1 << QSHIFT"
 function module$use()
 {
     Load = this;
-    
     BIOS = xdc.useModule("ti.sysbios.BIOS");
     Idle = xdc.useModule("ti.sysbios.knl.Idle");
     Timestamp = xdc.useModule("xdc.runtime.Timestamp");
     Queue = xdc.useModule("ti.sysbios.knl.Queue");
     Hwi = xdc.useModule("ti.sysbios.hal.Hwi");
     Diags = xdc.useModule('xdc.runtime.Diags');
+
+    var Settings = xdc.module('ti.sysbios.family.Settings');
+    var Power = xdc.module('ti.sysbios.hal.Power');
+    var PowerProxy = null;
+
+    Load.powerEnabled = isPowerEnabled();  /* Save this for Load.xdt */
 
     if ((BIOS.smpEnabled == true) || (BIOS.libType == BIOS.LibType_Debug)) {
         Core = xdc.useModule('ti.sysbios.hal.Core');
@@ -77,6 +77,28 @@ function module$use()
         Task = xdc.useModule("ti.sysbios.knl.Task");
     }
 
+    /*
+     *  TODO: Remove 'false' if we want to support Task, Swi, and Hwi
+     *  load logging with power enabled.
+     */
+    if (Load.powerEnabled && Load.swiEnabled && false) {
+        Load.$logWarning("Swi load monitoring is not supported when using " +
+                powerName + " to idle the CPU. Setting swiEnabled to false",
+                Load, "swiEnabled");
+        Load.swiEnabled = false;
+    }
+    if (Load.powerEnabled && Load.hwiEnabled && false) {
+        Load.$logWarning("Hwi load monitoring is not supported when using " +
+                powerName + " to idle the CPU. Setting hwiEnabled to false",
+                Load, "hwiEnabled");
+        Load.hwiEnabled = false;
+    }
+    if (Load.powerEnabled && Load.taskEnabled && false) {
+        Load.$logWarning("Task load monitoring is not supported when using " +
+                powerName + " to idle the CPU. Setting taskEnabled to false",
+                Load, "taskEnabled");
+        Load.taskEnabled = false;
+    }
 }
 
 /*
@@ -90,14 +112,26 @@ function module$static$init(mod, params)
         numCores = Core.numCores;
     }
 
-    if (Load.hwiEnabled == true) {
+    /*
+     *  Load_hwiBeginHook is in Load.xdt and will pull in appropriate
+     *  code depending on hwiEnabled and powerEnabled.  This way, we
+     *  have one Hwi hook function if both are enabled.
+     */
+    if (Load.hwiEnabled) {
         Hwi.addHookSet({
             createFxn: null,
             beginFxn: Load.hwiBeginHook,
             endFxn: Load.hwiEndHook,
         });
     }
-    
+    else if (Load.powerEnabled) {
+        Hwi.addHookSet({
+            createFxn: null,
+            beginFxn: Load.hwiBeginHook,
+            endFxn: null,
+        });
+    }
+
     if ((BIOS.taskEnabled == true) && (Load.taskEnabled == true)) {
         Task.addHookSet({
             registerFxn: '&ti_sysbios_utils_Load_taskRegHook__E',
@@ -111,8 +145,43 @@ function module$static$init(mod, params)
             Load.common$.diags_USER4 == Diags.RUNTIME_ON ) {
             Task.common$.namedInstance = true; /* auto turn on task names*/
         }
+
+        /*
+         *  Set the taskEnv array size to the number of statically configured
+         *  tasks (Task.$instances.length) + the number of constructed tasks
+         *  (Task.$objects.length).
+         */
+        mod.taskEnv.length = Task.$instances.length + Task.$objects.length;
     }
-    
+    else {
+        mod.taskEnv.length = 0;
+    }
+
+    /*
+     *  Only add the Load idle function when Power idling is disabled.
+     */
+    if (Load.powerEnabled) {
+        /*
+         *  PowerProxy.idle == true
+         *  Add Load hwi hook function.
+         */
+    }
+    else {
+        Idle.addFunc(Load.idleFxn);
+    }
+
+    mod.taskEnvLen = mod.taskEnv.length;
+    mod.taskNum = 0;
+
+    for (var i = 0; i < mod.taskEnv.length; i++) {
+        mod.taskEnv[i].totalTimeElapsed = 0;
+        mod.taskEnv[i].totalTime = 0;
+        mod.taskEnv[i].nextTotalTime = 0;
+        mod.taskEnv[i].timeOfLastUpdate = 0;
+        mod.taskEnv[i].threadHandle = null;
+        Queue.elemClearMeta(mod.taskEnv[i].qElem);
+    }
+
     if ((BIOS.swiEnabled == true) && (Load.swiEnabled == true)) {
         Swi.addHookSet({
             registerFxn: null,
@@ -123,12 +192,10 @@ function module$static$init(mod, params)
             deleteFxn: null,
         });
     }
-    
-    Idle.addFunc(Load.idleFxn);
 
     /* Construct the taskList */
     Queue.construct(mod.taskList);
-    
+
     mod.taskStartTime.length = numCores;
     mod.runningTask.length = numCores;
 
@@ -141,26 +208,32 @@ function module$static$init(mod, params)
     mod.timeElapsed = 0;
     mod.firstSwitchDone = false;
     mod.swiStartTime = 0;
-    mod.swiCnt = 0; 
+    mod.swiCnt = 0;
     mod.swiEnv.totalTimeElapsed = 0;
-    mod.swiEnv.totalTime = 0;         
-    mod.swiEnv.nextTotalTime = 0;    
+    mod.swiEnv.totalTime = 0;
+    mod.swiEnv.nextTotalTime = 0;
     mod.swiEnv.timeOfLastUpdate = 0;
     mod.swiEnv.threadHandle = null;
     Queue.elemClearMeta(mod.swiEnv.qElem);
     mod.hwiStartTime = 0;
-    mod.hwiCnt = 0; 
+    mod.hwiCnt = 0;
     mod.hwiEnv.totalTimeElapsed = 0;
-    mod.hwiEnv.totalTime = 0;         
-    mod.hwiEnv.nextTotalTime = 0;    
+    mod.hwiEnv.totalTime = 0;
+    mod.hwiEnv.nextTotalTime = 0;
     mod.hwiEnv.timeOfLastUpdate = 0;
     mod.hwiEnv.threadHandle = null;
     mod.timeSlotCnt = 0;
-    mod.minLoop = 0xFFFFFFFF;       
-    mod.minIdle = Load.minIdle;       
+    mod.minLoop = 0xFFFFFFFF;
+    mod.minIdle = Load.minIdle;
     mod.t0 = 0;
-    mod.idleCnt = 0;        
-    mod.cpuLoad = 0; 
+    mod.idleCnt = 0;
+    mod.cpuLoad = 0;
+
+    mod.powerEnabled = Load.powerEnabled;
+    mod.idleStartTime = 0;
+    mod.busyStartTime = 0;
+    mod.busyTime = 0;
+
     Queue.elemClearMeta(mod.hwiEnv.qElem);
 }
 
@@ -174,17 +247,17 @@ function module$validate()
     if ((Load.swiEnabled == true) && (BIOS.swiEnabled == false)) {
         Load.$logWarning("Load has swi monitoring enabled, but BIOS has swi"
             + " disabled.", Load, "swiEnabled");
-    } 
-    
+    }
+
     if ((Load.taskEnabled == true) && (BIOS.taskEnabled == false)) {
         Load.$logWarning("Load has task monitoring enabled, but BIOS has task"
             + " disabled.", Load, "taskEnabled");
-    } 
-    
+    }
+
     if ((Load.taskEnabled == false) && (Load.autoAddTasks == true)) {
         Load.autoAddTasks = false;
     }
-    
+
     if ((Load.updateInIdle == true) && (Load.windowInMs == 0)) {
         Load.$logWarning("windowInMs must be set to a non-zero value.", Load, "windowInMs");
     }
@@ -197,13 +270,13 @@ function module$validate()
 function viewInitModule(view, obj)
 {
     var Task = xdc.useModule('ti.sysbios.knl.Task');
-    
+
     var LoadCfg = Program.getModuleConfig('ti.sysbios.utils.Load');
-    
+
     /* compute cpu load in the same manner as Load_getCPULoad() C API: */
-    var cpuLoadValue = ((obj.cpuLoad + QFACTOR / 2) / QFACTOR);
+    var cpuLoadValue = obj.cpuLoad;
     if ((cpuLoadValue > 100) || (cpuLoadValue < 0)) {
-        view.$status["cpuLoad"] = 
+        view.$status["cpuLoad"] =
             "Error: CPU load computation resulted in out of range number: "
             + cpuLoadValue;
     }
@@ -219,7 +292,7 @@ function viewInitModule(view, obj)
         var swiLoadValue = obj.swiEnv.totalTime / obj.swiEnv.totalTimeElapsed * 100;
 
         if ((swiLoadValue > 100) || (swiLoadValue < 0)) {
-            view.$status["swiLoad"] = 
+            view.$status["swiLoad"] =
                 "Error: Swi load computation resulted in out of range number: "
                 + swiLoadValue;
         }
@@ -227,7 +300,7 @@ function viewInitModule(view, obj)
         /* call toFixed() to specify only 1 digit after the decimal */
         view.swiLoad = swiLoadValue.toFixed(1);
     }
-    else if (!(LoadCfg.swiEnabled)) { 
+    else if (!(LoadCfg.swiEnabled)) {
         view.swiLoad = "disabled";
     }
     else if (obj.swiEnv.totalTimeElapsed == 0) {
@@ -238,7 +311,7 @@ function viewInitModule(view, obj)
         view.$status["swiLoad"] = "Error: Swi time elaspsed is negative: "
                 + obj.swiEnv.totalTimeElapsed;
     }
-        
+
     /*
      *  Only compute Hwi stats if user set Load module hwiEnabled flag. Also
      *  check for divide by zero:
@@ -248,7 +321,7 @@ function viewInitModule(view, obj)
         var hwiLoadValue = obj.hwiEnv.totalTime / obj.hwiEnv.totalTimeElapsed * 100;
 
         if ((hwiLoadValue > 100) || (hwiLoadValue < 0)) {
-            view.$status["hwiLoad"] = 
+            view.$status["hwiLoad"] =
                 "Error: Swi load computation resulted in out of range number: "
                 + hwiLoadValue;
         }
@@ -256,7 +329,7 @@ function viewInitModule(view, obj)
         /* call toFixed() to specify only 1 digit after the decimal */
         view.hwiLoad = hwiLoadValue.toFixed(1);
     }
-    else if (!(LoadCfg.hwiEnabled)) { 
+    else if (!(LoadCfg.hwiEnabled)) {
         view.hwiLoad = "disabled";
     }
     else if (obj.hwiEnv.totalTimeElapsed == 0) {
@@ -267,17 +340,20 @@ function viewInitModule(view, obj)
         view.$status["hwiLoad"] = "Error: Hwi time elaspsed is negative: "
                 + obj.hwiEnv.totalTimeElapsed;
     }
-    
-    /* compute an accuracy metric */
+
+    /*
+     *  compute an accuracy metric.  This only applies if power
+     *  management is not enabled.
+     */
     var minIdle = obj.minLoop > obj.minIdle ? obj.minLoop : obj.minIdle;
     if (minIdle > 0) {
         var err = 1 - ((minIdle - 1) / minIdle);
         view.idleError = (err * 100).toFixed(1) + "%";
 
         /* if total error is more than 15% warn user */
-        err = err * (1 - obj.cpuLoad / (100 * QFACTOR));
-        if (err >= 0.15) {
-            view.$status["idleError"] = 
+        err = err * (1 - obj.cpuLoad / 100);
+        if ((err >= 0.15) && !LoadCfg.powerEnabled) {
+            view.$status["idleError"] =
                 "Warning: estimated error in total CPU load may be off by as much as "
                 + (err * 100).toFixed(1);
         }
@@ -285,4 +361,72 @@ function viewInitModule(view, obj)
     else {
         view.idleError = "unknown";
     }
+}
+
+/*
+ *  ======== isPowerEnabled ========
+ */
+function isPowerEnabled()
+{
+    var Settings = xdc.module('ti.sysbios.family.Settings');
+    var Power = xdc.module('ti.sysbios.hal.Power');
+    var PowerProxy = null;
+    var powerEnabled = false;
+    var powerProxyIdle = false;
+
+    /*
+     * See if the Power delegate was used and initialize
+     * powerEnabled to the delegate's setting.  This is
+     * in a try/catch until all family Settings.xs implement
+     * getDefaultPowerDelegate().
+     */
+    try {
+        PowerProxy = xdc.module(Settings.getDefaultPowerDelegate());
+        powerName = Settings.getDefaultPowerDelegate();
+
+	/*
+         * If hal Power is in the config, but not the delegate,
+	 * hal.Power.module$use() may not have been called yet to set
+         * hal.Power.idle, so save the value of the delegate's idle,
+	 * in case this is the situation.
+	 */
+        powerProxyIdle = PowerProxy.idle;
+        if (PowerProxy.$used) {
+	    /*
+             * The user config'd the delegate or hal.Power.module$use() has
+             * been called.
+	     */
+            powerEnabled = PowerProxy.idle;
+        }
+    }
+    catch (e) {
+        var Program = xdc.module('xdc.cfg.Program');
+        print("Load.xs: No getDefaultPowerDelegate() for " +
+                Program.cpu.deviceName);
+        PowerProxy = null;
+    }
+
+    if (Power.$used) {
+        /*
+         *  Power module$use may not have been called yet to push the
+         *  delegate's idle value to hal Power.idle.
+         */
+        if (Power.idle != undefined) {
+	    /*
+             * If hal Power is used, and hal.Power.idle is not undefined,
+	     * the user has set it, so that setting rules.
+	     */
+            powerEnabled = Power.idle;
+            powerName = "ti.sysbios.hal.Power";
+        }
+        else {
+            /*
+	     * hal.Power.idle has not been initialized yet,
+	     * use the delagate's idle.
+	     */
+            powerEnabled = powerProxyIdle;
+        }
+    }
+
+    return (powerEnabled);
 }

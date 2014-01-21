@@ -587,6 +587,623 @@ if (xdc.om.$name == "cfg" || typeof(genCdoc) != "undefined") {
                     },
                 ]
             },
+            "TMS320TCI6630K2L": {
+                freqDivisor: 6,
+                numLocalTimers: 4,
+                timer: [
+                    {
+                        name: "Timer0",
+                        baseAddr: 0x02200000,       /* core0 local Timer0 */
+                        intNum:  [ 14, 4],
+                        eventId: [ 64, 65],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer1",
+                        baseAddr: 0x02210000,       /* core1 local Timer1 */
+                        intNum:  [ 14, 4],
+                        eventId: [ 64, 65],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer2",
+                        baseAddr: 0x02220000,       /* core2 local Timer2 */
+                        intNum:  [ 14, 4],
+                        eventId: [ 64, 65],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer3",
+                        baseAddr: 0x02230000,       /* core3 local Timer3 */
+                        intNum:  [ 14, 4],
+                        eventId: [ 64, 65],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer4",
+                        baseAddr: 0x02240000,       /* not available:   */
+                        intNum:  [ -1, -1],         /* set intNum to -1 */
+                        eventId: [ -1, -1],         /* to signify not   */
+                        intFreq: {                  /* available        */
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer5",
+                        baseAddr: 0x02250000,       /* not available */
+                        intNum:  [ -1, -1],
+                        eventId: [ -1, -1],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer6",
+                        baseAddr: 0x02260000,       /* not available */
+                        intNum:  [ -1, -1],
+                        eventId: [ -1, -1],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer7",
+                        baseAddr: 0x02270000,       /* not available */
+                        intNum:  [ -1, -1],
+                        eventId: [ -1, -1],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer8",
+                        baseAddr: 0x02280000,       /* shared Timer8 */
+                        intNum:  [ 15, 5],
+                        eventId: [ 66, 67],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer9",
+                        baseAddr: 0x02290000,       /* shared Timer9 */
+                        intNum:  [ 15, 5],
+                        eventId: [ 68, 69],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer10",
+                        baseAddr: 0x022A0000,       /* shared Timer10 */
+                        intNum:  [ 15, 5],
+                        eventId: [ 70, 71],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer11",
+                        baseAddr: 0x022B0000,       /* shared Timer11 */
+                        intNum:  [ 15, 5],
+                        eventId: [ 72, 73],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer12",
+                        baseAddr: 0x022C0000,       /* Timer12 via intc  */
+                        intNum:  [ -1, -1],         /* interrupt vect id */
+                        eventId: [ 27, 28],         /* event id          */
+                        sysInt:  [ 433, 434],       /* system interrupt  */
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer13",
+                        baseAddr: 0x022D0000,       /* Timer13 via intc  */
+                        intNum:  [ -1, -1],         /* interrupt vect id */
+                        eventId: [ 27, 28],         /* event id          */
+                        sysInt:  [ 435, 436],       /* system interrupt  */
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer14",
+                        baseAddr: 0x022E0000,       /* shared Timer14 */
+                        intNum:  [ 15, 5],
+                        eventId: [ 78, 79],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer15",
+                        baseAddr: 0x022F0000,       /* shared Timer15 */
+                        intNum:  [ 15, 5],
+                        eventId: [ 80, 81],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+		    //  currently we do not support > than 16 timers
+                    //{
+                    //    name: "Timer16",
+                    //    baseAddr: 0x022F0080,       /* Timer16 via intc  */
+                    //    intNum:  [ -1, -1],         /* interrupt vect id */
+                    //    eventId: [ 27, 28],         /* event id          */
+                    //    sysInt:  [ 441, 440],       /* system interrupt  */
+                    //    intFreq: {
+                    //        lo: (Program.cpu.clockRate * 1000000) / 6,
+                    //        hi: 0,
+                    //    },
+                    //},
+                    //{
+                    //    name: "Timer17",
+                    //    baseAddr: 0x022F0100,       /* Timer17 via intc  */
+                    //    intNum:  [ -1, -1],         /* interrupt vect id */
+                    //    eventId: [ 27, 28],         /* event id          */
+                    //    sysInt:  [ 442, 439],       /* system interrupt  */
+                    //    intFreq: {
+                    //        lo: (Program.cpu.clockRate * 1000000) / 6,
+                    //        hi: 0,
+                    //    },
+                    //},
+                ]
+            },
+            "TMS320C66AK2E02": {
+                freqDivisor: 6,
+                numLocalTimers: 1,
+                timer: [
+                    {
+                        name: "Timer0",
+                        baseAddr: 0x02200000,       /* core0 local Timer0 */
+                        intNum:  [ 14, 4],
+                        eventId: [ 64, 65],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer1",
+                        baseAddr: 0x02210000,       /* not available */
+                        intNum:  [ -1, -1],
+                        eventId: [ -1, -1],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer2",
+                        baseAddr: 0x02220000,       /* not available */
+                        intNum:  [ -1, -1],
+                        eventId: [ -1, -1],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer3",
+                        baseAddr: 0x02230000,       /* not available */
+                        intNum:  [ -1, -1],
+                        eventId: [ -1, -1],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer4",
+                        baseAddr: 0x02240000,       /* not available:   */
+                        intNum:  [ -1, -1],         /* set intNum to -1 */
+                        eventId: [ -1, -1],         /* to signify not   */
+                        intFreq: {                  /* available        */
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer5",
+                        baseAddr: 0x02250000,       /* not available */
+                        intNum:  [ -1, -1],
+                        eventId: [ -1, -1],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer6",
+                        baseAddr: 0x02260000,       /* not available */
+                        intNum:  [ -1, -1],
+                        eventId: [ -1, -1],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer7",
+                        baseAddr: 0x02270000,       /* not available */
+                        intNum:  [ -1, -1],
+                        eventId: [ -1, -1],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer8",
+                        baseAddr: 0x02280000,       /* shared Timer8 */
+                        intNum:  [ 15, 5],
+                        eventId: [ 66, 67],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer9",
+                        baseAddr: 0x02290000,       /* shared Timer9 */
+                        intNum:  [ 15, 5],
+                        eventId: [ 68, 69],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer10",
+                        baseAddr: 0x022A0000,       /* shared Timer10 */
+                        intNum:  [ 15, 5],
+                        eventId: [ 70, 71],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer11",
+                        baseAddr: 0x022B0000,       /* shared Timer11 */
+                        intNum:  [ 15, 5],
+                        eventId: [ 72, 73],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer12",
+                        baseAddr: 0x022C0000,       /* Timer12 via intc  */
+                        intNum:  [ -1, -1],         /* interrupt vect id */
+                        eventId: [ 27, 28],         /* event id          */
+                        sysInt:  [ 433, 434],       /* system interrupt  */
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer13",
+                        baseAddr: 0x022D0000,       /* Timer13 via intc  */
+                        intNum:  [ -1, -1],         /* interrupt vect id */
+                        eventId: [ 27, 28],         /* event id          */
+                        sysInt:  [ 435, 436],       /* system interrupt  */
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer14",
+                        baseAddr: 0x022E0000,       /* shared Timer14 */
+                        intNum:  [ 15, 5],
+                        eventId: [ 78, 79],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer15",
+                        baseAddr: 0x022F0000,       /* shared Timer15 */
+                        intNum:  [ 15, 5],
+                        eventId: [ 80, 81],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+		    //  currently we do not support > than 16 timers
+                    //{
+                    //    name: "Timer16",
+                    //    baseAddr: 0x022F0080,       /* Timer16 via intc  */
+                    //    intNum:  [ -1, -1],         /* interrupt vect id */
+                    //    eventId: [ 27, 28],         /* event id          */
+                    //    sysInt:  [ , 199],       /* system interrupt  */
+                    //    intFreq: {
+                    //        lo: (Program.cpu.clockRate * 1000000) / 6,
+                    //        hi: 0,
+                    //    },
+                    //},
+                    //{
+                    //    name: "Timer17",
+                    //    baseAddr: 0x022F0100,       /* Timer17 via intc  */
+                    //    intNum:  [ -1, -1],         /* interrupt vect id */
+                    //    eventId: [ 27, 28],         /* event id          */
+                    //    sysInt:  [ , 200],       /* system interrupt  */
+                    //    intFreq: {
+                    //        lo: (Program.cpu.clockRate * 1000000) / 6,
+                    //        hi: 0,
+                    //    },
+                    //},
+                    //{
+                    //    name: "Timer18",
+                    //    baseAddr: 0x022F0180,       /* Timer18 via intc  */
+                    //    intNum:  [ -1, -1],         /* interrupt vect id */
+                    //    eventId: [ 27, 28],         /* event id          */
+                    //    sysInt:  [ , 201],       /* system interrupt  */
+                    //    intFreq: {
+                    //        lo: (Program.cpu.clockRate * 1000000) / 6,
+                    //        hi: 0,
+                    //    },
+                    //},
+                    //{
+                    //    name: "Timer19",
+                    //    baseAddr: 0x022F0200,       /* Timer19 via intc  */
+                    //    intNum:  [ -1, -1],         /* interrupt vect id */
+                    //    eventId: [ 27, 28],         /* event id          */
+                    //    sysInt:  [ , 202],       /* system interrupt  */
+                    //    intFreq: {
+                    //        lo: (Program.cpu.clockRate * 1000000) / 6,
+                    //        hi: 0,
+                    //    },
+                    //},
+                ]
+            },
+            "TMS320C66AK2H06": {
+                freqDivisor: 6,
+                numLocalTimers: 8,
+                timer: [
+                    {
+                        name: "Timer0",
+                        baseAddr: 0x02200000,       /* core0 local Timer0 */
+                        intNum:  [ 14, 4],
+                        eventId: [ 64, 65],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer1",
+                        baseAddr: 0x02210000,       /* core1 local Timer1 */
+                        intNum:  [ 14, 4],
+                        eventId: [ 64, 65],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer2",
+                        baseAddr: 0x02220000,       /* core2 local Timer2 */
+                        intNum:  [ 14, 4],
+                        eventId: [ 64, 65],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer3",
+                        baseAddr: 0x02230000,       /* core3 local Timer3 */
+                        intNum:  [ 14, 4],
+                        eventId: [ 64, 65],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer4",
+                        baseAddr: 0x02240000,       /* core4 local Timer4 */
+                        intNum:  [ 14, 4],
+                        eventId: [ 64, 65],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer5",
+                        baseAddr: 0x02250000,       /* core5 local Timer5 */
+                        intNum:  [ 14, 4],
+                        eventId: [ 64, 65],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer6",
+                        baseAddr: 0x02260000,       /* core6 local Timer6 */
+                        intNum:  [ 14, 4],
+                        eventId: [ 64, 65],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer7",
+                        baseAddr: 0x02270000,       /* core7 local Timer7 */
+                        intNum:  [ 14, 4],
+                        eventId: [ 64, 65],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer8",
+                        baseAddr: 0x02280000,       /* shared Timer8 */
+                        intNum:  [ 15, 5],
+                        eventId: [ 66, 67],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer9",
+                        baseAddr: 0x02290000,       /* shared Timer9 */
+                        intNum:  [ 15, 5],
+                        eventId: [ 68, 69],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer10",
+                        baseAddr: 0x022A0000,       /* shared Timer10 */
+                        intNum:  [ 15, 5],
+                        eventId: [ 70, 71],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer11",
+                        baseAddr: 0x022B0000,       /* shared Timer11 */
+                        intNum:  [ 15, 5],
+                        eventId: [ 72, 73],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer12",
+                        baseAddr: 0x022C0000,       /* Timer12 via intc  */
+                        intNum:  [ -1, -1],         /* interrupt vect id */
+                        eventId: [ 27, 28],         /* event id          */
+                        sysInt:  [ 433, 434],       /* system interrupt  */
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer13",
+                        baseAddr: 0x022D0000,       /* Timer13 via intc  */
+                        intNum:  [ -1, -1],         /* interrupt vect id */
+                        eventId: [ 27, 28],         /* event id          */
+                        sysInt:  [ 435, 436],       /* system interrupt  */
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer14",
+                        baseAddr: 0x022E0000,       /* shared Timer14 */
+                        intNum:  [ 15, 5],
+                        eventId: [ 78, 79],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "Timer15",
+                        baseAddr: 0x022F0000,       /* shared Timer15 */
+                        intNum:  [ 15, 5],
+                        eventId: [ 80, 81],
+                        intFreq: {
+                            lo: (Program.cpu.clockRate * 1000000) / 6,
+                            hi: 0,
+                        },
+                    },
+		    //  currently we do not support > than 16 timers
+                    //{
+                    //    name: "Timer16",
+                    //    baseAddr: 0x022F0080,       /* Timer16 via intc  */
+                    //    intNum:  [ -1, -1],         /* interrupt vect id */
+                    //    eventId: [ 27, 28],         /* event id          */
+                    //    sysInt:  [ 441, ],       /* system interrupt  */
+                    //    intFreq: {
+                    //        lo: (Program.cpu.clockRate * 1000000) / 6,
+                    //        hi: 0,
+                    //    },
+                    //},
+                    //{
+                    //    name: "Timer17",
+                    //    baseAddr: 0x022F0100,       /* Timer17 via intc  */
+                    //    intNum:  [ -1, -1],         /* interrupt vect id */
+                    //    eventId: [ 27, 28],         /* event id          */
+                    //    sysInt:  [ 442, ],       /* system interrupt  */
+                    //    intFreq: {
+                    //        lo: (Program.cpu.clockRate * 1000000) / 6,
+                    //        hi: 0,
+                    //    },
+                    //},
+                    //{
+                    //    name: "Timer18",
+                    //    baseAddr: 0x022F0180,       /* Timer18 via intc  */
+                    //    intNum:  [ -1, -1],         /* interrupt vect id */
+                    //    eventId: [ 27, 28],         /* event id          */
+                    //    sysInt:  [ 443, ],       /* system interrupt  */
+                    //    intFreq: {
+                    //        lo: (Program.cpu.clockRate * 1000000) / 6,
+                    //        hi: 0,
+                    //    },
+                    //},
+                    //{
+                    //    name: "Timer19",
+                    //    baseAddr: 0x022F0200,       /* Timer19 via intc  */
+                    //    intNum:  [ -1, -1],         /* interrupt vect id */
+                    //    eventId: [ 27, 28],         /* event id          */
+                    //    sysInt:  [ 444, ],       /* system interrupt  */
+                    //    intFreq: {
+                    //        lo: (Program.cpu.clockRate * 1000000) / 6,
+                    //        hi: 0,
+                    //    },
+                    //},
+                ]
+            },
             "TMS320C6655": {
                 freqDivisor: 6,
                 timer: [
@@ -1472,6 +2089,12 @@ if (xdc.om.$name == "cfg" || typeof(genCdoc) != "undefined") {
     deviceTable["ti.catalog.c6000"]["TMS320TCI6638"] =
         deviceTable["ti.catalog.c6000"]["TMS320TCI6634"];
 
+    deviceTable["ti.catalog.c6000"]["TMS320C66AK2H12"] =
+        deviceTable["ti.catalog.c6000"]["TMS320C66AK2H06"];
+
+    deviceTable["ti.catalog.c6000"]["TMS320C66AK2E05"] =
+        deviceTable["ti.catalog.c6000"]["TMS320C66AK2E02"];
+
     deviceTable["ti.catalog.c6000"]["TMS320TCI6616"] =
         deviceTable["ti.catalog.c6000"]["TMS320C6670"];
     deviceTable["ti.catalog.c6000"]["TMS320TCI6618"] =
@@ -1588,7 +2211,7 @@ function module$meta$init()
                 Timer.anyMask = 0xffffffff;
             }
             else {
-                Timer.$logError("This module cannot support a device" +
+                Timer.$logError("This module cannot support a device " +
                     "with this many timers: " + device.length, Timer);
             }
 

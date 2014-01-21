@@ -59,7 +59,10 @@ function module$meta$init()
     Task = this;
     Program = xdc.module('xdc.cfg.Program');
 
-    if (Program.build.target.name.match(/C6.*/)) {
+    if (Program.build.target.$name.match(/gnu/)) {
+        Task.defaultStackSection = ".bss";
+    }
+    else if (Program.build.target.name.match(/C6.*/)) {
         Task.defaultStackSection = ".far:taskStackSection";
     }
     else if (Program.build.target.name.match(/C28.*/)) {
@@ -671,12 +674,18 @@ function viewInitBasic(view, obj)
      */
     view.fxn = Program.lookupFuncName(Number(obj.fxn));
 
-    /*
-     * Special trap for legacy TSKs prior to first time running
-     * arg1 contains fxn
-     */
-    if (view.fxn[0] == "_TSK_staticGlue" || view.fxn[0] == "dynamicGlue") {
-        view.fxn = Program.lookupFuncName(Number(obj.arg1));
+    try {
+        /*
+         * Special trap for legacy TSKs prior to first time running
+         * arg1 contains fxn
+         */
+        if (view.fxn[0] == "_TSK_staticGlue" || view.fxn[0] == "dynamicGlue") {
+            view.fxn = Program.lookupFuncName(Number(obj.arg1));
+        }
+    } catch (e) {
+        view.fxn.length = 1;
+        /* Since we cant get label, get function address instead */
+        view.fxn[0] = "0x" + Number(obj.fxn).toString(16);
     }
 
     view.arg0 = obj.arg0;
@@ -747,15 +756,15 @@ function viewInitDetailed(view, obj)
                  (obj.context > obj.stack + obj.stackSize)) {
             Program.displayError(view, "stackPeak", "SP outside stack!");
         }
+
+        var hwiStackInfo = Hwi.viewGetStackInfo();
+
+        if (hwiStackInfo.hwiStackPeak == hwiStackInfo.hwiStackSize) {
+            Program.displayError(view, "stackPeak", "Hwi Stack Overrun!");
+        }
     }
     else {
-        view.stackPeak = "n/a";
-    }
-
-    var hwiStackInfo = Hwi.viewGetStackInfo();
-
-    if (hwiStackInfo.hwiStackPeak == hwiStackInfo.hwiStackSize) {
-        Program.displayError(view, "stackPeak", "Hwi Stack Overrun!");
+        view.stackPeak = "n/a - set Task.initStackFlag";
     }
 
     /* fill in blockedOn field if blocked */
@@ -1160,7 +1169,7 @@ function viewInitModule(view, mod)
             }
         }
         else {
-            view.hwiStackPeak = "n/a";
+            view.hwiStackPeak = "n/a - set Hwi.initStackFlag";
         }
         view.hwiStackSize = stackInfo.hwiStackSize;
         view.hwiStackBase = "0x"+ stackInfo.hwiStackBase.toString(16);

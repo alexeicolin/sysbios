@@ -157,7 +157,7 @@ import xdc.rov.ViewInfo;
  *                                                      // each BLOCK MMU entry
  *
  *    // write memory region attribute in mairRegAttr[1] i.e. MAIR0 Reg Byte1
- *    Mmu.setMAIRMeta(1, 0x04);           // Mark mem regions as device memory
+ *    Mmu.setMAIRMeta(1, 0x0);    // Mark mem regions as strongly ordered memory
  *
  *    // Define the base address of the 2 MB page
  *    // the peripheral resides in.
@@ -544,8 +544,7 @@ module Mmu
      *  SYS/BIOS assigns the following defaults to MAIR0 ATTR0, ATTR1 and ATTR2:
      *  @p(code)
      *  ATTR0 -> 0x44 (mark memory region as non-cacheable normal memory)
-     *  ATTR1 -> 0x04 (mark memory region as device memory, i.e. strongly
-     *  ordered and non-cacheable)
+     *  ATTR1 -> 0x00 (mark memory region as strongly ordered and non-cacheable)
      *  ATTR2 -> 0xFF (mark memory region as normal memory, RW cacheable and
      *  RW allocate)
      *  @p

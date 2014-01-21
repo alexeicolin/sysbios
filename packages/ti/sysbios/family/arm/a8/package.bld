@@ -79,9 +79,26 @@ BiosBuild.buildLibs(objList, undefined, trgFilter, arguments);
 /* generate smp makefiles */
 BiosBuild.buildLibs(objList, undefined, trgFilter, ["profile=smp"]);
 
+var objList = [
+    "Mmu",
+    "Mmu_asm_gnu",
+];
+
+var trgFilter = {
+    field: "$name",
+    list: [ "gnu.targets.arm.A9F",
+          ]
+};
+
+/* generate makefiles */
+BiosBuild.buildLibs(objList, undefined, trgFilter, arguments);
+
+/* generate smp makefiles */
+BiosBuild.buildLibs(objList, undefined, trgFilter, ["profile=smp"]);
+
 Pkg.otherFiles = [ "package.bld",
                    "Mmu.xdt",
-                       "disableCaches.gel",
+                   "disableCaches.gel",
                    "Cache.xml",
                    "Mmu.xml",
                    "TimestampProvider.xml"

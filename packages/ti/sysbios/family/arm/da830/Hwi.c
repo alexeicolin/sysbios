@@ -54,9 +54,11 @@ extern Void ti_sysbios_family_arm_da830_Hwi_dispatchIRQ(Void);
 extern Void ti_sysbios_family_arm_da830_Hwi_init(Void);
 extern Char *ti_sysbios_family_xxx_Hwi_switchToIsrStack();
 extern Void ti_sysbios_family_xxx_Hwi_switchToTaskStack(Char *oldTaskSP);
+extern Void ti_sysbios_family_xxx_Hwi_switchAndRunFunc(Void (*func)());
 
 #define Hwi_switchToIsrStack ti_sysbios_family_xxx_Hwi_switchToIsrStack
 #define Hwi_switchToTaskStack ti_sysbios_family_xxx_Hwi_switchToTaskStack
+#define Hwi_switchAndRunFunc ti_sysbios_family_xxx_Hwi_switchAndRunFunc
 
 #ifdef ti_sysbios_family_arm_da830_Hwi_dispatcherTaskSupport__D
 /* disable unused local variable warning during optimized compile */
@@ -466,7 +468,7 @@ Void Hwi_plug(UInt intNum, Hwi_PlugFuncPtr fxn)
 Void Hwi_post(UInt intNum)
 {
     Hwi_cpIntc.SISR = intNum;
-asm(" nop");
+    asm("   mcr   p15, #0, r0, c7, c0, #4;  WFI");
 }
 
 /*

@@ -73,9 +73,9 @@
 
 ti_sysbios_family_arm_a8_intcps_Hwi_dispatchIRQ__I:
         sub     lr, lr, #4
-        srsdb   #0x1f           @ push sys CPSR and LR onto SYS stack
+        srsdb   sp!, #0x1f      @ push sys CPSR and LR onto SYS stack
+                                @ and back up below CPSR and LR
         cps     #0x1f           @ switch back to System mode
-        sub     sp, sp, #8      @ back up below CPSR and LR
         push    {r0-r5, r12, lr}@ save required C registers
         ldr     r5, [sp, #32]   @ retrieve IRP
 
@@ -89,14 +89,16 @@ ti_sysbios_family_arm_a8_intcps_Hwi_dispatchIRQ__I:
 
         mov     r4, sp          @ save sp
         bic     sp, sp, #0x7    @ align task stack to 8 bytes
-        ldr     r1, hwiTaskDisable
+        movw    r1, #:lower16:ti_sysbios_family_arm_a8_intcps_Hwi_taskDisable__C
+        movt    r1, #:upper16:ti_sysbios_family_arm_a8_intcps_Hwi_taskDisable__C
         ldr     r1, [r1]
         cmp     r1, #0
         blxne   r1              @ call Task_disable()
         push    {r0}            @ save tskKey
 
         @ switch to isr stack
-        ldr     r1, switchToIsrStack
+        movw    r1, #:lower16:ti_sysbios_family_xxx_Hwi_switchToIsrStack
+        movt    r1, #:upper16:ti_sysbios_family_xxx_Hwi_switchToIsrStack
         blx     r1
         push    {r0}            @ save oldTaskSP
 
@@ -104,19 +106,22 @@ ti_sysbios_family_arm_a8_intcps_Hwi_dispatchIRQ__I:
         mov     r5, sp          @ save sp
         bic     sp, sp, #0x7    @ align isr stack to 8 bytes
 
-        ldr     r1, dispatchIRQC
+        movw    r1, #:lower16:ti_sysbios_family_arm_a8_intcps_Hwi_dispatchIRQC__I
+        movt    r1, #:upper16:ti_sysbios_family_arm_a8_intcps_Hwi_dispatchIRQC__I
         blx     r1
 
         mov     sp, r5          @ restore sp
 
         @ switch back to task stack if at the bottom of Hwi stack
         pop     {r0}            @ restore oldTaskSP
-        ldr     r1, switchToTaskStack
+        movw    r1, #:lower16:ti_sysbios_family_xxx_Hwi_switchToTaskStack
+        movt    r1, #:upper16:ti_sysbios_family_xxx_Hwi_switchToTaskStack
         blx     r1
         pop     {r0}            @ restore tskKey
 
         @ run task scheduler
-        ldr     r1, hwiTaskRestore
+        movw    r1, #:lower16:ti_sysbios_family_arm_a8_intcps_Hwi_taskRestoreHwi__C
+        movt    r1, #:upper16:ti_sysbios_family_arm_a8_intcps_Hwi_taskRestoreHwi__C
         ldr     r1, [r1]
         cmp     r1, #0
         blxne   r1              @ call Task_restoreHwi()
@@ -134,22 +139,6 @@ ti_sysbios_family_arm_a8_intcps_Hwi_dispatchIRQ__I:
         pop     {r0-r5, r12, lr}
         rfeia   sp!
         .endfunc
-
-        .align 2
-hwiTaskDisable:
-        .word   ti_sysbios_family_arm_a8_intcps_Hwi_taskDisable__C
-
-hwiTaskRestore:
-        .word   ti_sysbios_family_arm_a8_intcps_Hwi_taskRestoreHwi__C
-
-dispatchIRQC:
-        .word   ti_sysbios_family_arm_a8_intcps_Hwi_dispatchIRQC__I
-
-switchToIsrStack:
-        .word   ti_sysbios_family_xxx_Hwi_switchToIsrStack
-
-switchToTaskStack:
-        .word   ti_sysbios_family_xxx_Hwi_switchToTaskStack
 
 @
 @  ======== Hwi_init ========
@@ -188,14 +177,11 @@ ti_sysbios_family_arm_a8_intcps_Hwi_init__I:
 ti_sysbios_family_arm_a8_intcps_Hwi_initVbar__I:
 
 @ Set vector table base address
-        ldr     r0, vbar
+        movw    r0, #:lower16:ti_sysbios_family_arm_a8_intcps_Hwi_vectors
+        movt    r0, #:upper16:ti_sysbios_family_arm_a8_intcps_Hwi_vectors
         mcr     p15, #0, r0, c12, c0, #0
 
         bx      lr
         .endfunc
-
-        .align 2
-vbar:
-        .word   ti_sysbios_family_arm_a8_intcps_Hwi_vectors
 
         .end

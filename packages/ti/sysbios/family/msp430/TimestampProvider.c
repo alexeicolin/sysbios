@@ -103,8 +103,8 @@ Bits32 TimestampProvider_get32()
                    + Timer_getExpiredCounts(MOD->timer);
     }
     else {
-        timestamp = (MOD->rollovers * Timer_MAX_PERIOD)
-                   + Timer_getExpiredCounts(MOD->timer);
+        timestamp = (MOD->rollovers << 16) + Timer_getExpiredCounts(MOD->timer);
+        timestamp -= MOD->rollovers; /* adjust for Timer_MAX_PERIOD = 0xFFFF */
     }
 
     Hwi_restore(key);

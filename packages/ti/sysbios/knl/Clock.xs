@@ -86,16 +86,16 @@ function module$use()
     else {
         Clock.swiPriority = 0;
     }
-    
+
     if (!BIOS.clockEnabled) {
-        if (Clock.$written("tickSource") && 
+        if (Clock.$written("tickSource") &&
            (Clock.tickSource != Clock.TickSource_NULL)) {
             Clock.$logWarning("The Clock.tickSource setting is internally "
             + "forced to Clock.TickSource_NULL if the Clock Manager has "
             + "been disabled (BIOS.clockEnabled == false).",
             Clock, "tickSource");
         }
-        /* 
+        /*
          * Set Clock.tickSource to NULL to avoid instantiating timer
          */
         Clock.tickSource = Clock.TickSource_NULL;
@@ -129,9 +129,9 @@ function module$static$init(mod, params)
     mod.inWorkFunc = false;
     mod.skipsWorkFunc = 0;
 
-    /* 
+    /*
      * Minimize footprint by only creating Clock Swi if Clock and Swi
-     * are enabled. 
+     * are enabled.
      */
     if ((BIOS.clockEnabled == true) && (BIOS.swiEnabled == true)) {
         /* Create Clock Swi */
@@ -150,7 +150,7 @@ function module$static$init(mod, params)
     else {
         mod.swi = null;
     }
-    
+
     if (Clock.tickSource == Clock.TickSource_TIMER) {
         var BIOS = xdc.om['ti.sysbios.BIOS'];
         var timerParams = new Timer.Params();
@@ -168,6 +168,44 @@ function module$static$init(mod, params)
     }
     else {
         mod.timer = null;
+    }
+}
+
+/*
+ *  ======== instance$static$init ========
+ */
+function instance$static$init(obj, func, timeout, params)
+{
+    var modObj = this.$module.$object;
+
+    if (BIOS.clockEnabled == false) {
+        Clock.$logFatal("Can't create a Clock with BIOS.clockEnabled == " +
+                        " false", this);
+    }
+
+    /* Integer-ize the timeout param before checking it */
+    timeout = Math.floor(timeout);
+
+    if ((timeout == 0) && (params.startFlag == true)) {
+        Clock.$logError("The timeout parameter must not be zero.", this,
+                        "timeout");
+    }
+
+    obj.timeout = timeout;
+    obj.currTimeout = timeout;
+    obj.period = params.period;
+    obj.fxn = func;
+    obj.arg = params.arg;
+    obj.active = false;
+
+    /*
+     * Clock object is always placed on Clock work Q
+     */
+    modObj.clockQ.putMeta(obj.elem);
+
+    /* if enabled, set active flag to true */
+    if (params.startFlag && (timeout != 0)) {
+        obj.active = true;
     }
 }
 
@@ -206,47 +244,9 @@ function module$validate()
  *  common function to test instance configuration
  */
 function instance_validate(instance)
-{    
+{
     if (instance.$object.fxn == null) {
         Clock.$logError("function cannot be null", instance);
-    }
-}
-
-/*
- *  ======== instance$static$init ========
- */
-function instance$static$init(obj, func, timeout, params)
-{
-    var modObj = this.$module.$object;
-
-    if ((BIOS.clockEnabled == false) || (BIOS.swiEnabled == false)) {
-        Clock.$logFatal("Can't create a Clock with BIOS.clockEnabled == " + 
-                        " false or BIOS.swiEnabled == false", this);
-    }
-
-    /* Integer-ize the timeout param before checking it */
-    timeout = Math.floor(timeout);
-
-    if ((timeout == 0) && (params.startFlag == true)) {
-        Clock.$logError("The timeout parameter must not be zero.", this,
-                        "timeout");
-    }
-
-    obj.timeout = timeout;
-    obj.currTimeout = timeout;
-    obj.period = params.period;
-    obj.fxn = func;
-    obj.arg = params.arg;
-    obj.active = false;
-
-    /*
-     * Clock object is always placed on Clock work Q
-     */
-    modObj.clockQ.putMeta(obj.elem);
-  
-    /* if enabled, set active flag to true */
-    if (params.startFlag && (timeout != 0)) {
-        obj.active = true;
     }
 }
 
@@ -261,11 +261,11 @@ function viewInitBasic(view, obj)
     view.label = obj.$label;
     view.timeout = obj.timeout;
     view.period = obj.period;
-    
+
     view.fxn = Program.lookupFuncName(Number(obj.fxn));
-    
+
     view.arg = obj.arg;
-    
+
     /* The inst is started if active is TRUE */
     if (obj.active == false) {
         view.started = false;
@@ -276,14 +276,14 @@ function viewInitBasic(view, obj)
         var modRaw = Program.scanRawView("ti.sysbios.knl.Clock");
 
         var remain = obj.currTimeout - modRaw.modState.ticks;
-        
-        /* 
+
+        /*
          * Check if 'currTimeout' has wrapped.
          *
          * 'currTimeout' is initially calculated as the timeout value plus the
-         * current tick count. This value may be greater than 2^32 and wrap. 
+         * current tick count. This value may be greater than 2^32 and wrap.
          * We need to account for this here.
-         */ 
+         */
         if (remain < 0) {
             remain += Math.pow(2, 32);
         }
@@ -317,7 +317,7 @@ function viewInitModule(view, mod)
     else {
         view.ticks = String(mod.ticks);
     }
-    
+
     view.tickSource = Program.$modules['ti.sysbios.knl.Clock'].tickSource;
     view.tickMode = Program.$modules['ti.sysbios.knl.Clock'].tickMode;
 
@@ -336,7 +336,7 @@ function viewInitModule(view, mod)
             view.timerId = Number(i);
         }
     }
- 
+
     view.swiPriority = Program.$modules['ti.sysbios.knl.Clock'].swiPriority;
     view.tickPeriod = Program.$modules['ti.sysbios.knl.Clock'].tickPeriod;
     view.nSkip = mod.numTickSkip;

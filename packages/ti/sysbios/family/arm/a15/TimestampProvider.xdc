@@ -50,18 +50,19 @@ package ti.sysbios.family.arm.a15;
  *  accordingly.
  *
  *  As it is possible for the 32 bit counter to roll over more
- *  than once between successive get64() calls, it is up to the user
- *  to call the get64() API often enough to guarantee coherency in
- *  successive timestamps. A simple mechanism to do this would be
- *  to add a Clock function that simply invokes get64():
+ *  than once between successive get64() calls, this module offers
+ *  an auto refresh feature. If auto refresh is enabled
+ *  (see {@link #autoRefreshEnable}), this module will register a
+ *  clock function with a period less than the amount of time it
+ *  takes for the 32 bit counter to roll over. The clock function
+ *  checks for an overflow and updates the upper 32 bits of the
+ *  counter to guarantee coherency in successive timestamps.
  *
- *  @p(code)
- *  var Clock = xdc.useModule('ti.sysbios.knl.Clock');
- *  var TimestampProvider = xdc.useModule('ti.sysbios.family.arm.a15.TimestampProvider');
- *  var clockParams = new Clock.Params();
- *  clockParams.period = 1;     // call every Clock tick
- *  Clock.create($externModFxn(TimestampProvider.get64), 1, clockParams);
- *  @p
+ *  @a(Note)
+ *  Auto refresh feature requires that the SYS/BIOS clock is enabled.
+ *  If the SYS/BIOS clock is disabled
+ *  (see {@link ti.sysbios.BIOS#clockEnabled BIOS.clockEnabled})
+ *  then this feature cannot be enabled.
  *
  *  @p(html)
  *  <h3> Calling Context </h3>
@@ -104,7 +105,7 @@ package ti.sysbios.family.arm.a15;
  *  @p
  */
 
-@ModuleStartup          /* To get Clock Timer Handle */
+@ModuleStartup
 
 module TimestampProvider inherits ti.sysbios.interfaces.ITimestamp
 {
@@ -112,6 +113,17 @@ module TimestampProvider inherits ti.sysbios.interfaces.ITimestamp
     @XmlDtd
     metaonly struct Module_View {
     };
+
+    /*!
+     *  ======== autoRefreshEnable ========
+     *  If this config param is set to true, this module will create a
+     *  clock instance with a timeout that is less than the amount of
+     *  time it takes for the PMU cycle counter to overflow. The clock
+     *  handler function will check if the PMU cycle counter has overflowed
+     *  and update the upper 32 bits of the timestamp so coherency of
+     *  successive 64bit timestamps is guaranteed.
+     */
+    metaonly config Bool autoRefreshEnable = true;
 
 internal:   /* not for client use */
 
@@ -124,6 +136,11 @@ internal:   /* not for client use */
      * get and reset the CCNT overflow status
      */
     UInt32 getOverflowCCNT();
+
+    /*
+     * Refresh upper32 bits of timestamp
+     */
+    Void autoRefreshFxn(UArg arg);
 
     struct Module_State {
         UInt32          upper32Bits;    /* upper 32 bits of counter */

@@ -785,6 +785,132 @@ used by linux */
                     },
                 ]
             },
+            "AM437X": {
+                timer: [
+                    {
+                        name: "DMTimer0",
+                        baseAddr: 0x44E05000,  /* L4 address */
+                        intNum:  66 + 32,
+                        eventId: -1,
+                        intFreq: {
+                            lo: 32768,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "DMTimer1",      /* This is a GP Timer. It is not
+                                                  available for use by this
+                                                  module */
+                        baseAddr: 0x44E31000,  /* L4 address */
+                        intNum:  67 + 32,
+                        eventId: -1,
+                        intFreq: {
+                            lo: 24000000,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "DMTimer2",
+                        baseAddr: 0x48040000,  /* L4 address */
+                        intNum:  68 + 32,
+                        eventId: -1,
+                        intFreq: {
+                            lo: 32768,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "DMTimer3",
+                        baseAddr: 0x48042000,  /* L4 address */
+                        intNum:  69 + 32,
+                        eventId: -1,
+                        intFreq: {
+                            lo: 24000000,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "DMTimer4",
+                        baseAddr: 0x48044000,  /* L4 address */
+                        intNum:  92 + 32,
+                        eventId: -1,
+                        intFreq: {
+                            lo: 24000000,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "DMTimer5",
+                        baseAddr: 0x48046000,  /* L4 address */
+                        intNum:  93 + 32,
+                        eventId: -1,
+                        intFreq: {
+                            lo: 24000000,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "DMTimer6",
+                        baseAddr: 0x48048000,  /* L4 address */
+                        intNum:  94 + 32,
+                        eventId: -1,
+                        intFreq: {
+                            lo: 24000000,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "DMTimer7",
+                        baseAddr: 0x4804A000,  /* L4 address */
+                        intNum:  95 + 32,
+                        eventId: -1,
+                        intFreq: {
+                            lo: 24000000,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "DMTimer8",
+                        baseAddr: 0x481C1000,  /* L4 address */
+                        intNum:  131 + 32,
+                        eventId: -1,
+                        intFreq: {
+                            lo: 24000000,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "DMTimer9",
+                        baseAddr: 0x4833D000,  /* L4 address */
+                        intNum:  132 + 32,
+                        eventId: -1,
+                        intFreq: {
+                            lo: 24000000,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "DMTimer10",
+                        baseAddr: 0x4833F000,  /* L4 address */
+                        intNum:  133 + 32,
+                        eventId: -1,
+                        intFreq: {
+                            lo: 24000000,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "DMTimer11",
+                        baseAddr: 0x48341000,  /* L4 address */
+                        intNum:  134 + 32,
+                        eventId: -1,
+                        intFreq: {
+                            lo: 24000000,
+                            hi: 0,
+                        },
+                    },
+                ]
+            },
         },
         "ti.catalog.arm.cortexa15": {
             "DRA7XX": {
@@ -1517,9 +1643,7 @@ function module$meta$init()
             Timer.anyMask = (1 << device.length) - 1;
             Timer.timerSettings.length = device.length;
             Timer.numTimerDevices = device.length;
-
-            Timer.intFreq.hi = device[0].intFreq.hi;
-            Timer.intFreq.lo = device[0].intFreq.lo;
+            Timer.intFreqs.length = device.length;
 
             /* default mode set to 32-bit unchained, master is TRUE */
             for (var i=0; i < device.length; i++) {
@@ -1630,14 +1754,21 @@ function module$static$init(mod, params)
     var device = deviceTable[catalogName][Program.cpu.deviceName].timer;
 
     mod.device.length = device.length;
+    mod.intFreqs.length = device.length;
     mod.firstInit = true;
-                
-    /* 
-     * Note: I think the proxy.TimerSupport should initialized the
-     *       frequency of timer once info is in the catalog files
-     */
-    mod.intFreq.lo = Timer.intFreq.lo;
-    mod.intFreq.hi = Timer.intFreq.hi;
+
+    for (var i=0; i < device.length; i++) {
+        if (Timer.intFreqs[i].lo == undefined) {
+            if (Timer.intFreq.$written("lo") == true) {
+                Timer.intFreqs[i].hi = Timer.intFreq.hi;
+                Timer.intFreqs[i].lo = Timer.intFreq.lo;
+            }
+            else {
+                Timer.intFreqs[i].hi = device[i].intFreq.hi;
+                Timer.intFreqs[i].lo = device[i].intFreq.lo;
+            }
+        }
+    }
 
     if (mod.availMask == undefined) {
         if ("getAvailMask" in TimerSupport) {
@@ -1676,6 +1807,10 @@ function module$static$init(mod, params)
         else {
             mod.device[i].baseAddr = $addr(device[i].baseAddr);
         }
+
+        /* set the frequency for each Timer */
+        mod.intFreqs[i].lo = Timer.intFreqs[i].lo;
+        mod.intFreqs[i].hi = Timer.intFreqs[i].hi;
 
         mod.device[i].intNum = Timer.timerSettings[i].intNum;
 
@@ -1989,9 +2124,19 @@ function viewInitDevice(view, obj)
  */
 function viewInitModule(view, obj)
 {
-    // combine high and low frequency values into a single value
-    view.intFrequency = "" +
-            (Number(obj.intFreq.hi << 32) + Number(obj.intFreq.lo));
+    var Program = xdc.useModule('xdc.rov.Program');
+    var Timer = Program.getModuleConfig('ti.sysbios.timers.dmtimer.Timer');
+    var numTimers = Timer.numTimerDevices;
+
+    // construct "intFrequency" ROV field
+    var intFreqs =
+        Program.fetchArray(obj.intFreqs$fetchDesc, obj.intFreqs, numTimers);
+
+    for (var i = 0; i < numTimers; i++) {
+        // combine high and low frequency values into a single value
+        view.intFrequency.$add("Timer " + i + ":" +
+                (Number(intFreqs[i].hi << 32) + Number(intFreqs[i].lo)));
+    }
 
     /*
      *  Construct 'availMask' ROV field

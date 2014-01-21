@@ -71,6 +71,9 @@ var family = {
     "ti.targets.arm.elf.R4t_big_endian" :       "arm",
     "ti.targets.arm.elf.R4Ft" :                 "arm",
     "ti.targets.arm.elf.R4Ft_big_endian" :      "arm",
+    "iar.targets.arm.M3" :                      "arm",
+    "iar.targets.arm.M4" :                      "arm",
+    "iar.targets.arm.M4F" :                     "arm",
     "ti.targets.arp32.elf.ARP32" :              "arp32",
     "ti.targets.arp32.elf.ARP32_far" :          "arp32",
 };
@@ -199,6 +202,14 @@ function getDefaultIntrinsicsSupportDelegate()
 function getDefaultCacheDelegate()
 {
     return (familySettings.getDefaultCacheDelegate());
+}
+
+/*
+ *  ======== getDefaultPowerDelegate ========
+ */
+function getDefaultPowerDelegate()
+{
+    return (familySettings.getDefaultPowerDelegate());
 }
 
 /*

@@ -430,7 +430,7 @@ module Hwi inherits ti.sysbios.interfaces.IHwi
         String      activeInterrupt;
         String      pendingInterrupt;
         String      exception;
-        SizeT       hwiStackPeak;
+        String      hwiStackPeak;
         SizeT       hwiStackSize;
         Ptr         hwiStackBase;
     };
@@ -974,6 +974,12 @@ internal:   /* not for client use */
 
     /* const array of statically created Hwi priorities */
     config UInt8 priorities[];
+
+    /*
+     *  Boolean to indicate whether the current target is being
+     *  built using tiva platform.
+     */
+    metaonly config Bool isTiva = false;
 
     /*
      *  The omap4430 ES1 devices have a nasty bug in the unicache

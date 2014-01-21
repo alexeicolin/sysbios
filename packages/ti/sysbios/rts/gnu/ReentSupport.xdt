@@ -44,6 +44,7 @@
 %    (ReentSupport.enableReentSupport == true) &&
 %    (BIOS.taskEnabled == true)) {
 #include <reent.h>
+#include <sys/lock.h>
 
 /*
  *  ======== __getreent ========
@@ -57,5 +58,280 @@ struct _reent* __getreent()
     else {
         return (struct _reent *)ti_sysbios_rts_gnu_ReentSupport_getReent__I();
     }
+}
+
+/*
+ *  ======== __libc_lock_init ========
+ */
+void __libc_lock_init(_LOCK_T *lock)
+{
+    ti_sysbios_knl_Semaphore_Params params;
+
+    /* Construct a binary semaphore */
+    ti_sysbios_knl_Semaphore_Params_init(&params);
+    params.mode = ti_sysbios_knl_Semaphore_Mode_BINARY;
+    ti_sysbios_knl_Semaphore_construct(
+    (ti_sysbios_knl_Semaphore_Struct *)(&(lock->sem)), 1, &params);
+    lock->init_done = 1;
+}
+
+/*
+ *  ======== __libc_lock_init_recursive ========
+ */
+void __libc_lock_init_recursive(_LOCK_RECURSIVE_T *lock)
+{
+    ti_sysbios_knl_Semaphore_Params params;
+
+    /* Construct a binary semaphore */
+    ti_sysbios_knl_Semaphore_Params_init(&params);
+    params.mode = ti_sysbios_knl_Semaphore_Mode_BINARY;
+    ti_sysbios_knl_Semaphore_construct(
+    (ti_sysbios_knl_Semaphore_Struct *)(&(lock->sem)), 1, &params);
+
+    /* Initialize owner, count and init_done */
+    lock->owner = NULL;
+    lock->count = 0;
+    lock->init_done = 1;
+}
+
+/*
+ *  ======== __libc_lock_acquire ========
+ */
+void __libc_lock_acquire(_LOCK_T *lock)
+{
+    if (!(lock->init_done)) {
+        ti_sysbios_knl_Semaphore_pend(
+        ti_sysbios_rts_gnu_ReentSupport_Module__state__V.lock,
+        ti_sysbios_BIOS_WAIT_FOREVER);
+
+        if (!(lock->init_done)) {
+            /*
+             * Execution can only reach here if lock was created using
+             * __LOCK_INIT macro.
+             */
+            __libc_lock_init(lock);
+        }
+
+        ti_sysbios_knl_Semaphore_post(
+        ti_sysbios_rts_gnu_ReentSupport_Module__state__V.lock);
+    }
+
+    ti_sysbios_knl_Semaphore_pend(ti_sysbios_knl_Semaphore_handle(
+    (ti_sysbios_knl_Semaphore_Struct *)(&(lock->sem))),
+    ti_sysbios_BIOS_WAIT_FOREVER);
+}
+
+/*
+ *  ======== __libc_lock_acquire_recursive ========
+ */
+void __libc_lock_acquire_recursive(_LOCK_RECURSIVE_T *lock)
+{
+    ti_sysbios_knl_Task_Handle curTask;
+    ti_sysbios_BIOS_ThreadType curThreadType;
+
+    if (!(lock->init_done)) {
+        ti_sysbios_knl_Semaphore_pend(
+        ti_sysbios_rts_gnu_ReentSupport_Module__state__V.lock,
+        ti_sysbios_BIOS_WAIT_FOREVER);
+
+        if (!(lock->init_done)) {
+            /*
+             * Execution can only reach here if lock was created using
+             * __LOCK_INIT_RECURSIVE macro.
+             */
+            __libc_lock_init_recursive(lock);
+        }
+
+        ti_sysbios_knl_Semaphore_post(
+        ti_sysbios_rts_gnu_ReentSupport_Module__state__V.lock);
+    }
+
+    /* Determine current thread type */
+    curThreadType = ti_sysbios_BIOS_getThreadType();
+
+    /* Get Handle to current Task */
+    curTask = (Ptr)ti_sysbios_knl_Task_self();
+
+    if (curThreadType == ti_sysbios_BIOS_ThreadType_Main) {
+        /*
+         * If thread type is Main and owner is also Main thread then
+         * increment lock count and return
+         */
+        if (lock->owner == (Ptr)~(0)) {
+            (lock->count)++;
+            return;
+        }
+    }
+    else if (lock->owner == (Ptr)curTask) {
+        /*
+         * If thread type not Main and owner is current task then
+         * increment lock count and return
+         */
+        (lock->count)++;
+        return;
+    }
+
+    ti_sysbios_knl_Semaphore_pend(ti_sysbios_knl_Semaphore_handle(
+    (ti_sysbios_knl_Semaphore_Struct *)(&(lock->sem))),
+    ti_sysbios_BIOS_WAIT_FOREVER);
+
+    if (curThreadType == ti_sysbios_BIOS_ThreadType_Main) {
+        lock->owner = (Ptr)~(0);
+    }
+    else {
+        lock->owner = curTask;
+    }
+
+    (lock->count)++;
+}
+
+/*
+ *  ======== __libc_lock_release ========
+ */
+void __libc_lock_release(_LOCK_T *lock)
+{
+    ti_sysbios_knl_Semaphore_post(ti_sysbios_knl_Semaphore_handle(
+    (ti_sysbios_knl_Semaphore_Struct *)(&(lock->sem))));
+}
+
+/*
+ *  ======== __libc_lock_release_recursive ========
+ */
+void __libc_lock_release_recursive(_LOCK_RECURSIVE_T *lock)
+{
+    if (--(lock->count) == 0) {
+        lock->owner = NULL;
+        ti_sysbios_knl_Semaphore_post(ti_sysbios_knl_Semaphore_handle(
+        (ti_sysbios_knl_Semaphore_Struct *)(&(lock->sem))));
+    }
+}
+
+/*
+ *  ======== __libc_lock_try_acquire ========
+ */
+int __libc_lock_try_acquire(_LOCK_T *lock)
+{
+    Bool pendStatus;
+
+    if (!(lock->init_done)) {
+        ti_sysbios_knl_Semaphore_pend(
+        ti_sysbios_rts_gnu_ReentSupport_Module__state__V.lock,
+        ti_sysbios_BIOS_WAIT_FOREVER);
+
+        if (!(lock->init_done)) {
+            /*
+             * Execution can only reach here if lock was created using
+             * __LOCK_INIT macro.
+             */
+            __libc_lock_init(lock);
+        }
+
+        ti_sysbios_knl_Semaphore_post(
+        ti_sysbios_rts_gnu_ReentSupport_Module__state__V.lock);
+    }
+
+    pendStatus = ti_sysbios_knl_Semaphore_pend(ti_sysbios_knl_Semaphore_handle(
+    (ti_sysbios_knl_Semaphore_Struct *)(&(lock->sem))),
+    ti_sysbios_BIOS_NO_WAIT);
+
+    if (pendStatus) {
+        return (0);
+    }
+
+    return (-1);
+}
+
+/*
+ *  ======== __libc_lock_try_acquire_recursive ========
+ */
+int __libc_lock_try_acquire_recursive(_LOCK_RECURSIVE_T *lock)
+{
+    Bool pendStatus;
+    ti_sysbios_knl_Task_Handle curTask;
+    ti_sysbios_BIOS_ThreadType curThreadType;
+
+    if (!(lock->init_done)) {
+        ti_sysbios_knl_Semaphore_pend(
+        ti_sysbios_rts_gnu_ReentSupport_Module__state__V.lock,
+        ti_sysbios_BIOS_WAIT_FOREVER);
+
+        if (!(lock->init_done)) {
+            /*
+             * Execution can only reach here if lock was created using
+             * __LOCK_INIT_RECURSIVE macro.
+             */
+            __libc_lock_init_recursive(lock);
+        }
+
+        ti_sysbios_knl_Semaphore_post(
+        ti_sysbios_rts_gnu_ReentSupport_Module__state__V.lock);
+    }
+
+    /* Determine current thread type */
+    curThreadType = ti_sysbios_BIOS_getThreadType();
+
+    /* Get Handle to current Task */
+    curTask = (Ptr)ti_sysbios_knl_Task_self();
+
+    if (curThreadType == ti_sysbios_BIOS_ThreadType_Main) {
+        /*
+         * If thread type is Main and owner is also Main thread then
+         * increment lock count and return
+         */
+        if (lock->owner == (Ptr)~(0)) {
+            (lock->count)++;
+            return (0);
+        }
+    }
+    else if (lock->owner == (Ptr)curTask) {
+        /*
+         * If thread type not Main and owner is current task then
+         * increment lock count and return
+         */
+        (lock->count)++;
+        return (0);
+    }
+
+    pendStatus = ti_sysbios_knl_Semaphore_pend(ti_sysbios_knl_Semaphore_handle(
+    (ti_sysbios_knl_Semaphore_Struct *)(&(lock->sem))),
+    ti_sysbios_BIOS_NO_WAIT);
+
+    if (pendStatus) {
+        if (curThreadType == ti_sysbios_BIOS_ThreadType_Main) {
+            lock->owner = (Ptr)~(0);
+        }
+        else {
+            lock->owner = curTask;
+        }
+
+        (lock->count)++;
+        return (0);
+    }
+
+    return (-1);
+}
+
+/*
+ *  ======== __libc_lock_close ========
+ */
+void __libc_lock_close(_LOCK_T *lock)
+{
+    /* Destruct semaphore */
+    ti_sysbios_knl_Semaphore_destruct(
+    (ti_sysbios_knl_Semaphore_Struct *)(&(lock->sem)));
+    lock->init_done = 0;
+}
+
+/*
+ *  ======== __libc_lock_close_recursive ========
+ */
+void __libc_lock_close_recursive(_LOCK_RECURSIVE_T *lock)
+{
+    /* Destruct semaphore */
+    ti_sysbios_knl_Semaphore_destruct(
+    (ti_sysbios_knl_Semaphore_Struct *)(&(lock->sem)));
+    lock->init_done = 0;
+    lock->owner = NULL;
+    lock->count = 0;
 }
 % }

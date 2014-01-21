@@ -323,10 +323,11 @@ function module$use()
             /*
              *  The TI ELF runtime needs a small heap to support the
              *  atexit() stack which is malloc'd at runtime in atexit()
-             *  (SDOCM00094823).
+             *  (SDOCM00094823). IAR runtime also needs a runtime heap.
              */
-            if (Program.build.target.$name.match(/elf/) &&
-                    Program.build.target.$name.match(/ti/)) {
+            if ((Program.build.target.$name.match(/elf/) &&
+                    Program.build.target.$name.match(/ti/)) ||
+                    Program.build.target.$name.match(/iar/)) {
                 var HeapMin = xdc.useModule('xdc.runtime.HeapMin', true);
                 HeapMin.common$.fxntab = true;
                 var heapMinParams = new HeapMin.Params;
@@ -927,8 +928,8 @@ function getTimestampFreqMeta()
         BIOS.$logWarning("WARNING: Timestamp provider " +
                 Timestamp.SupportProxy.delegate$.$name +
                 " does not implement getFreqMeta(). " +
-                "BIOS.getTimestampFrequency() is returning 0!", BIOS,
-                "getTimestampFrequency");
+                "BIOS.getTimestampFreqMeta() is returning 0!", BIOS,
+                "getTimestampFreqMeta");
     }
 
     /* If we can't determine the timestamp frequency, return 0. */

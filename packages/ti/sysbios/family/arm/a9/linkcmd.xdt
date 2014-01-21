@@ -31,5 +31,16 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 %%}
-%var Temp = xdc.loadTemplate("Timer_link.xdt");
-%Temp.genStream($out, this, $args);
+%var timerMod = xdc.module('ti.sysbios.family.arm.a9.Timer');
+%
+%if (timerMod.$used) {
+%   var TempTimer = xdc.loadTemplate("Timer_link.xdt");
+%   TempTimer.genStream($out, this, $args);
+%}
+%
+%var cacheMod = xdc.module('ti.sysbios.family.arm.a9.Cache');
+%
+%if (cacheMod.$used) {
+%   var TempCache = xdc.loadTemplate("Cache_link.xdt");
+%   TempCache.genStream($out, this, $args);
+%}

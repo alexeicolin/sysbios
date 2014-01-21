@@ -33,5 +33,5 @@
 %%}
 %var Timer = xdc.module('ti.sysbios.family.arm.a9.Timer');
 %if (Program.build.target.$name.match(/gnu/)) {
-ti_sysbios_family_arm_a9_Timer_privateRegs = `Timer.privTimerRegBaseAddress`;
+ti_sysbios_family_arm_a9_Timer_deviceRegs = `Timer.privTimerRegBaseAddress`;
 %}

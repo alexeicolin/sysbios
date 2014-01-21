@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
  *  ======== Timer.xs ========
  */
 
+var halTimer = null;
 var Timer = null;
 var Hwi = null;
 var BIOS = null;
@@ -76,7 +77,7 @@ function module$use()
      *  BIOS_start(). hal/Timer_startup will call the proxy_Timer_startup.
      *  This is required for the Timer to startup.
      */
-    xdc.useModule("ti.sysbios.hal.Timer");
+    halTimer = xdc.useModule("ti.sysbios.hal.Timer");
 }
 
 /*
@@ -96,6 +97,15 @@ function module$static$init(mod, params)
 
     for (var i = 0; i < Timer.NUM_TIMER_DEVICES; i++) {
         mod.handles[i] = null;
+    }
+
+    /*
+     * if this timer module is not the hal.Timer delegate,
+     * plug Timer.startup into BIOS.startupFxns array
+     */
+    if (halTimer.TimerProxy.delegate$.$name !=
+        "ti.sysbios.family.arm.systimer.Timer") {
+        BIOS.addUserStartupFunction(Timer.startup);
     }
 }
 
@@ -287,6 +297,3 @@ function viewInitModule(view, obj)
 {
     view.availMask = Number(obj.availMask).toString(2);
 }
-
-
-

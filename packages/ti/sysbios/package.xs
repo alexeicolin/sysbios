@@ -96,5 +96,125 @@ function close()
             break;
         }
     }
+
+    /* IAR specific fix to get rid of meta strings till noload is supported */
+    var Text = xdc.module('xdc.runtime.Text');
+    if (Program.build.target.$name.match(/iar\.targets/)
+        && (Text.isLoaded == false)) {
+        var Defaults = xdc.module('xdc.runtime.Defaults');
+        var Main = xdc.module('xdc.runtime.Main');
+        var Memory = xdc.module('xdc.runtime.Memory');
+
+        Defaults.common$.namedModule = false;
+        Defaults.common$.namedInstance = false;
+        Main.common$.namedModule = false;
+        Memory.common$.namedModule = false;
+
+        var emsg = [];
+        var amsg = [];
+        var lmsg = [];
+        /* Loop through all modules */
+        for (var i = 0; i < xdc.om.$modules.length; i++) {
+             var mod = xdc.om.$modules[i];
+
+            /* check all Error_Desc's declared in any module */
+            if ('$$errorDescCfgs' in mod && mod.$$errorDescCfgs.length > 0) {
+                for each (var cn in mod.$$errorDescCfgs) {
+                    var desc = mod[cn];
+
+                    /* Strip and create a new string */
+                    var mnew = "E" + emsg.length;
+                    var fmtStrings = desc.msg.match(/%[$\w\d]+/g);
+                    for each (var fmt in fmtStrings) {
+                        mnew += " " + fmt;
+                    }
+
+                    /* Is the new string is not bigger than the orig? */
+                    if (mnew.length < desc.msg.length) {
+                        var msg = {
+                            new: mnew,
+                            orig: desc.msg,
+                            mod: mod
+                        }
+                        /* Save for later */
+                        emsg[emsg.length++] = msg;
+
+                        /* replace the string */
+                        desc.msg = msg.new;
+
+                    }
+                }
+            }
+
+            /* check all Assert_Desc's declared in any module */
+            if ('$$assertDescCfgs' in mod && mod.$$assertDescCfgs.length > 0) {
+                for each (var cn in mod.$$assertDescCfgs) {
+                    var desc = mod[cn];
+
+                    /* Strip and create a new string */
+                    var mnew = "A" + amsg.length;
+                    var fmtStrings = desc.msg.match(/%[$\w\d]+/g);
+                    for each (var fmt in fmtStrings) {
+                        mnew += " " + fmt;
+                    }
+
+                    /* Is the new string is not bigger than the orig? */
+                    if (mnew.length < desc.msg.length) {
+                        var msg = {
+                            new: mnew,
+                            orig: desc.msg,
+                            mod: mod
+                        }
+                        /* Save for later */
+                        amsg[amsg.length++] = msg;
+
+                        /* replace the string */
+                        desc.msg = msg.new;
+                    }
+                }
+            }
+
+            /* create an Id for all Log_Event's declared in the module */
+            if ('$$logEvtCfgs' in mod && mod.$$logEvtCfgs.length > 0) {
+                for each (var cn in mod.$$logEvtCfgs) {
+                    var desc = mod[cn];
+
+                    /* Strip and create a new string */
+                    var mnew = "L" + lmsg.length;
+                    var fmtStrings = desc.msg.match(/%[$\w\d]+/g);
+                    for each (var fmt in fmtStrings) {
+                        mnew += " " + fmt;
+                    }
+
+                    /* Is the new string is not bigger than the orig? */
+                    if (mnew.length < desc.msg.length) {
+                        var msg = {
+                            new: mnew,
+                            orig: desc.msg,
+                            mod: mod
+                        }
+                        /* Save for later */
+                        lmsg[lmsg.length++] = msg;
+
+                        /* replace the string */
+                        desc.msg = msg.new;
+                    }
+                }
+            }
+
+        }
+        /* Pass info to template */
+        var thisObj = {
+            emsg:  emsg,
+            amsg:  amsg,
+            lmsg:  lmsg,
+        };
+
+        /* Generate an html page */
+        var Build = xdc.module("ti.sysbios.Build");
+        var output = Build.$private.outputDir;
+        var tplt = xdc.loadTemplate(this.packageBase + "/DescMsg.xdt");
+        tplt.genFile(output + "/DescriptorMessage.html", thisObj, []);
+    }
 }
 

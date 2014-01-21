@@ -73,6 +73,12 @@
 #define GPT_A2_CLK_GATING   (*(volatile UInt32 *)0x440250A0)
 #define GPT_A3_CLK_GATING   (*(volatile UInt32 *)0x440250A8)
 
+/* CC31xx ARCM GPT Soft Reset registers */
+#define GPT_A0_SOFT_RESET   (*(volatile UInt32 *)0x44025094)
+#define GPT_A1_SOFT_RESET   (*(volatile UInt32 *)0x4402509C)
+#define GPT_A2_SOFT_RESET   (*(volatile UInt32 *)0x440250A4)
+#define GPT_A3_SOFT_RESET   (*(volatile UInt32 *)0x440250AC)
+
 /*
  *  ======== Timer_getNumTimers ========
  */
@@ -176,7 +182,7 @@ Void Timer_setNextTick(Timer_Object *obj, UInt32 newPeriodCounts,
  *  Calls postInit for all statically-created & constructed
  *  timers to initialize them.
  */
-Int Timer_Module_startup(status)
+Int Timer_Module_startup(Int status)
 {
     Int i;
     Timer_Object *obj;
@@ -324,6 +330,8 @@ Int Timer_Instance_init(Timer_Object *obj, Int id, Timer_FuncPtr tickFxn, const 
 
     Timer_module->handles[obj->id] = obj;
 
+    /* enable and reset the timer */
+    Timer_enableFunc(obj->id);
     Timer_initDevice(obj);
 
     if (obj->periodType == Timer_PeriodType_MICROSECS) {
@@ -437,6 +445,8 @@ Void Timer_Instance_finalize(Timer_Object *obj, Int status)
         /* setPeriodMicroSecs failed */
         case 4:
             Timer_initDevice(obj);
+            Timer_disableFunc(obj->id);
+
             if (obj->hwi) {
                 Hwi_delete(&obj->hwi);
             }
@@ -471,67 +481,12 @@ Void Timer_Instance_finalize(Timer_Object *obj, Int status)
 Void Timer_initDevice(Timer_Object *obj)
 {
     UInt key;
-    UInt devClass;
     ti_catalog_arm_peripherals_timers_TimerRegsM4 *timer;
 
     timer = (ti_catalog_arm_peripherals_timers_TimerRegsM4 *)
         Timer_module->device[obj->id].baseAddr;
 
     key = Hwi_disable();
-
-    if (Timer_enableArcmGpTimerClock) {
-        switch (obj->id) {
-            case 0: GPT_A0_CLK_GATING = 0x1;
-                    break;
-            case 1: GPT_A1_CLK_GATING = 0x1;
-                    break;
-            case 2: GPT_A2_CLK_GATING = 0x1;
-                    break;
-            case 3: GPT_A3_CLK_GATING = 0x1;
-                    break;
-            default:
-                    break;
-        }
-    }
-    else {
-        /* if a pre-Flurry class device, and one of the first four timers ... */
-        devClass = HWREG(SYSCTL_DID0) & SYSCTL_DID0_CLASS_M;
-        if (devClass != SYSCTL_DID0_CLASS_TIVAC &&
-             devClass < SYSCTL_DID0_CLASS_FLURRY && (obj->id < 4)) {
-
-            /* enable run mode clock */
-            *RCGC1 |= (UInt32)(1 << (obj->id+16));
-
-            /* ensure at least 5 clock cycle delay for clock enable */
-            *RCGC1;
-            *RCGC1;
-            *RCGC1;
-            *RCGC1;
-            *RCGC1;
-
-            /* do a sw reset on the timer */
-            *SRCR1 |= (UInt32)(1 << (obj->id+16));
-            *SRCR1 &= ~(UInt32)(1 << (obj->id+16));
-        }
-        /* else, Flurry or later device, or 5th timer or above ... */
-        else {
-            /* enable run mode clock */
-            *RCGCTIMERS |= (UInt32)(1 << (obj->id));
-            *SCGCTIMERS |= (UInt32)(1 << (obj->id));
-            *DCGCTIMERS |= (UInt32)(1 << (obj->id));
-
-            /* ensure at least 5 clock cycle delay for clock enable */
-            *RCGCTIMERS;
-            *RCGCTIMERS;
-            *RCGCTIMERS;
-            *RCGCTIMERS;
-            *RCGCTIMERS;
-
-            /* do a sw reset on the timer */
-            *SRTIMER |= (UInt32)(1 << (obj->id));
-            *SRTIMER &= ~(UInt32)(1 << (obj->id));
-        }
-    }
 
     if (obj->hwi) {
         Hwi_disableInterrupt(obj->intNum);
@@ -925,8 +880,10 @@ Void Timer_enableTimers()
 
     for (i = 0; i < Timer_numTimerDevices; i++) {
         obj = Timer_module->handles[i];
+
         /* enable and reset the timer */
         if (obj != NULL) {
+            Timer_enableFunc(obj->id);
             Timer_initDevice(obj);
         }
     }
@@ -986,4 +943,156 @@ Bool Timer_masterDisable(Void)
 Void Timer_masterEnable(Void)
 {
     asm("    cpsie i");
+}
+
+/*
+ *  ======== Timer_enableCC3100 ========
+ */
+Void Timer_enableCC3100(Int id)
+{
+    UInt key;
+
+    key = Hwi_disable();
+
+    switch (id) {
+        case 0: GPT_A0_CLK_GATING |= 0x1;
+                GPT_A0_SOFT_RESET |= 0x1;
+                GPT_A0_SOFT_RESET &= ~(0x1);
+                break;
+        case 1: GPT_A1_CLK_GATING |= 0x1;
+                GPT_A1_SOFT_RESET |= 0x1;
+                GPT_A1_SOFT_RESET &= ~(0x1);
+                break;
+        case 2: GPT_A2_CLK_GATING |= 0x1;
+                GPT_A2_SOFT_RESET |= 0x1;
+                GPT_A2_SOFT_RESET &= ~(0x1);
+                break;
+        case 3: GPT_A3_CLK_GATING |= 0x1;
+                GPT_A3_SOFT_RESET |= 0x1;
+                GPT_A3_SOFT_RESET &= ~(0x1);
+                break;
+        default:
+                break;
+    }
+
+    Hwi_restore(key);
+}
+
+/*
+ *  ======== Timer_enableTiva ========
+ */
+Void Timer_enableTiva(Int id)
+{
+    UInt key;
+    UInt devClass;
+
+    key = Hwi_disable();
+
+    /* if a pre-Flurry class device, and one of the first four timers ... */
+    devClass = HWREG(SYSCTL_DID0) & SYSCTL_DID0_CLASS_M;
+    if (devClass != SYSCTL_DID0_CLASS_TIVAC &&
+         devClass < SYSCTL_DID0_CLASS_FLURRY && (id < 4)) {
+
+        /* enable run mode clock */
+        *RCGC1 |= (UInt32)(1 << (id + 16));
+
+        /* ensure at least 5 clock cycle delay for clock enable */
+        *RCGC1;
+        *RCGC1;
+        *RCGC1;
+        *RCGC1;
+        *RCGC1;
+
+        /* do a sw reset on the timer */
+        *SRCR1 |= (UInt32)(1 << (id + 16));
+        *SRCR1 &= ~(UInt32)(1 << (id + 16));
+    }
+    /* else, Flurry or later device, or 5th timer or above ... */
+    else {
+        /* enable run mode clock */
+        *RCGCTIMERS |= (UInt32)(1 << id);
+        *SCGCTIMERS |= (UInt32)(1 << id);
+        *DCGCTIMERS |= (UInt32)(1 << id);
+
+        /* ensure at least 5 clock cycle delay for clock enable */
+        *RCGCTIMERS;
+        *RCGCTIMERS;
+        *RCGCTIMERS;
+        *RCGCTIMERS;
+        *RCGCTIMERS;
+
+        /* do a sw reset on the timer */
+        *SRTIMER |= (UInt32)(1 << id);
+        *SRTIMER &= ~(UInt32)(1 << id);
+    }
+
+    Hwi_restore(key);
+}
+
+/*
+ *  ======== Timer_disableCC3100 ========
+ */
+Void Timer_disableCC3100(Int id)
+{
+    UInt key;
+
+    key = Hwi_disable();
+
+    switch (id) {
+        case 0: GPT_A0_CLK_GATING &= ~(0x1);
+                break;
+        case 1: GPT_A1_CLK_GATING &= ~(0x1);
+                break;
+        case 2: GPT_A2_CLK_GATING &= ~(0x1);
+                break;
+        case 3: GPT_A3_CLK_GATING &= ~(0x1);
+                break;
+        default:
+                break;
+    }
+
+    Hwi_restore(key);
+}
+
+/*
+ *  ======== Timer_disableTiva ========
+ */
+Void Timer_disableTiva(Int id)
+{
+    UInt key;
+
+    key = Hwi_disable();
+
+    //TODO: Can we remove the delays from the disable code ?
+
+    /* if a pre-Flurry class device, and one of the first four timers ... */
+    if (((HWREG(SYSCTL_DID0) & SYSCTL_DID0_CLASS_M) <
+        SYSCTL_DID0_CLASS_FLURRY) && (id < 4)) {
+
+        /* enable run mode clock */
+        *RCGC1 &= ~(UInt32)(1 << (id + 16));
+
+        /* ensure at least 5 clock cycle delay for clock disable */
+        *RCGC1;
+        *RCGC1;
+        *RCGC1;
+        *RCGC1;
+        *RCGC1;
+    }
+    /* else, Flurry or later device, or 5th timer or above ... */
+    else {
+        /* enable run mode clock */
+        *RCGCTIMERS &= ~(UInt32)(1 << id);
+        *SCGCTIMERS &= ~(UInt32)(1 << id);
+        *DCGCTIMERS &= ~(UInt32)(1 << id);
+
+        /* ensure at least 5 clock cycle delay for clock disable */
+        *RCGCTIMERS;
+        *RCGCTIMERS;
+        *RCGCTIMERS;
+        *RCGCTIMERS;
+        *RCGCTIMERS;
+    }
+
+    Hwi_restore(key);
 }

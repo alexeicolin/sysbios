@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,7 +68,7 @@ BiosBuild.buildLibs(objList, undefined, trgFilter, arguments);
 /* generate smp makefiles */
 BiosBuild.buildLibs(objList, undefined, trgFilter, ["profile=smp"]);
 
-Pkg.otherFiles = ["package.bld", "doc-files"];
+Pkg.otherFiles = ["package.bld", "doc-files", "Exception.xml"];
 
 /* include source files in the release package */
 Pkg.attrs.exportSrc = true;

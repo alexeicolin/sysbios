@@ -1,5 +1,5 @@
 ;
-;  Copyright (c) 2012, Texas Instruments Incorporated
+;  Copyright (c) 2013, Texas Instruments Incorporated
 ;  All rights reserved.
 ; 
 ;  Redistribution and use in source and binary forms, with or without
@@ -36,16 +36,12 @@
 
         .thumb
 
-    .if __TI_EABI_ASSEMBLER
-        .asg ti_sysbios_family_arm_m3_IntrinsicsSupport_maxbit__E, _ti_sysbios_family_arm_m3_IntrinsicsSupport_maxbit__E
-    .endif
+        .global ti_sysbios_family_arm_m3_IntrinsicsSupport_maxbit__E
 
-        .global _ti_sysbios_family_arm_m3_IntrinsicsSupport_maxbit__E
-
-        .sect ".text:_ti_sysbios_family_arm_m3_IntrinsicsSupport_maxbit"
+        .sect ".text:ti_sysbios_family_arm_m3_IntrinsicsSupport_maxbit"
         .clink
-        .thumbfunc _ti_sysbios_family_arm_m3_IntrinsicsSupport_maxbit__E
-_ti_sysbios_family_arm_m3_IntrinsicsSupport_maxbit__E:
+        .thumbfunc ti_sysbios_family_arm_m3_IntrinsicsSupport_maxbit__E
+ti_sysbios_family_arm_m3_IntrinsicsSupport_maxbit__E:
         .asmfunc
         clz     r0, r0
         rsb     r0, r0, #31

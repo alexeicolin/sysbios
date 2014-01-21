@@ -189,6 +189,12 @@ module Timer inherits ti.sysbios.interfaces.ITimer
             ]
         });
 
+    /*! Timer enable function type definition. */
+    typedef Void (*TimerEnableFuncPtr)(Int);
+
+    /*! Timer disable function type definition. */
+    typedef Void (*TimerDisableFuncPtr)(Int);
+
     /*!
      *  Error raised when timer id specified is not supported.
      */
@@ -211,6 +217,23 @@ module Timer inherits ti.sysbios.interfaces.ITimer
      *  Available mask to be used when select = Timer_ANY
      */
     config UInt anyMask = 0x3F;
+
+    /*!
+     *  ======== enableFunc ========
+     *  Pointer to Timer enable callback function
+     *
+     *  Timer enable callback function enables the timer clock and resets
+     *  the timer.
+     */
+    config TimerEnableFuncPtr enableFunc = null;
+
+    /*!
+     *  ======== disableFunc ========
+     *  Pointer to Timer disable callback function
+     *
+     *  Timer disable callback function disables the timer clock.
+     */
+    config TimerDisableFuncPtr disableFunc = null;
 
     /*!
      *  ======== getHandle ========
@@ -240,8 +263,11 @@ instance:
     /*! Previous threshold count value. */
     config UInt prevThreshold = 0xFFFFFFFF;
 
-    /*! Should timer run off of altclk? Default is false. Note that altclk
-     *  is only supported on a subset of LM4 devices. */
+    /*!
+     *  Should timer run off of altclk? Default is false. Note that altclk
+     *  is only supported on a subset of LM4 devices, and some timers may
+     *  not be capable of running off of altclk.
+     */
     config Bool altclk = false;
 
     /*!
@@ -276,13 +302,25 @@ internal:   /* not for client use */
      */
     config Int numTimerDevices;
 
-    /*
-     *  ======== enableArcmGpTimerClock ========
-     *  Flag used to signal to the timer instance init code that
-     *  this device has a Apps-RCM module whose GPT clock needs to
-     *  be enabled.
+    /*!
+     *  ======== enableCC3100 ========
      */
-    config Bool enableArcmGpTimerClock = false;
+    Void enableCC3100(Int id);
+
+    /*!
+     *  ======== disableCC3100 ========
+     */
+    Void disableCC3100(Int id);
+
+    /*!
+     *  ======== enableTiva ========
+     */
+    Void enableTiva(Int id);
+
+    /*!
+     *  ======== disableTiva ========
+     */
+    Void disableTiva(Int id);
 
     /*
      *  ======== initDevice ========

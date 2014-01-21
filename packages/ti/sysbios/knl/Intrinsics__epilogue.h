@@ -76,9 +76,9 @@
 static inline UInt ti_sysbios_knl_Intrinsics_maxbit(UInt bits)
 {
     UInt retVal;
-    __asm__ __volatile__ (
-            "clz %1, %1\n\t"
-            "rsb %0, %1, #31"
+    asm volatile (
+            "clz %0, %1\n\t"
+            "rsb %0, %0, #31"
             : "=r" (retVal)
             : "r" (bits)
             : "cc"
@@ -90,13 +90,13 @@ static inline UInt ti_sysbios_knl_Intrinsics_maxbit(UInt bits)
 #else
 #if defined(xdc_target__isaCompatible_430)
 
-#if defined(__ICC430__)
+#if defined(__IAR_SYSTEMS_ICC__)
 #include <intrinsics.h>
 #endif
 
 __extern const UInt IntrinsicsSupport_maxbitTable[];
 
-#if defined(__ICC430__)
+#if defined(__IAR_SYSTEMS_ICC__)
 #pragma inline=forced
 UInt ti_sysbios_knl_Intrinsics_maxbit(UInt bits)
 #else
@@ -135,8 +135,8 @@ static inline UInt ti_sysbios_knl_Intrinsics_maxbit(UInt bits)
 {
     UInt retVal;
     __asm__ __volatile__ (
-            "clz %1, %1\n\t"
-            "rsb %0, %1, #31"
+            "clz %0, %1\n\t"
+            "rsb %0, %0, #31"
             : "=r" (retVal)
             : "r" (bits)
             : "cc"

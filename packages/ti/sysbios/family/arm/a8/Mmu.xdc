@@ -39,6 +39,8 @@ package ti.sysbios.family.arm.a8;
 
 import xdc.rov.ViewInfo;
 
+import xdc.runtime.Assert;
+
 /*!
  *  ======== Mmu ========
  *  Memory Management Unit Manager.
@@ -59,9 +61,8 @@ import xdc.rov.ViewInfo;
  *  The translation table is placed in
  *  an output section called "ti.sysbios.family.arm.a8.mmuTableSection".
  *  This section is placed into the platform's default dataMemory and
- *  in order to minimize object file size,
- *  specified to not be initialized via the "NOLOAD" type on GNU compilers
- *  and "NOINIT" on TI compilers.
+ *  in order to minimize object file size, specified to not be initialized
+ *  via the "NOLOAD" type on GNU compilers and "NOINIT" on TI compilers.
  *
  *  This module does not manage the second level descriptor tables.
  *  A 'SECTION' mapped access requires only a first level fetch.  In
@@ -70,12 +71,16 @@ import xdc.rov.ViewInfo;
  *  descriptor table which can be supplied by the user.
  *
  *  The following is an example of how to place the MMU table
- *  and how to enable L1 data caching for the address range
+ *  and how to enable L1 data + L2 caching for the address range
  *  0x80000000-0x90000000 in the *.cfg file:
  *
  *  @p(code)
  *
+ *    // For Cortex-A8
  *    var Cache = xdc.useModule('ti.sysbios.family.arm.a8.Cache');
+ *    // For Cortex-A9
+ *    var Cache = xdc.useModule('ti.sysbios.family.arm.a9.Cache');
+ *
  *    var Mmu = xdc.useModule('ti.sysbios.family.arm.a8.Mmu');
  *
  *    // Enable the cache
@@ -87,6 +92,7 @@ import xdc.rov.ViewInfo;
  *    // descriptor attribute structure
  *    var attrs = {
  *        type: Mmu.FirstLevelDesc_SECTION,  // SECTION descriptor
+ *        tex: 0x1,
  *        bufferable: true,                  // bufferable
  *        cacheable: true,                   // cacheable
  *    };
@@ -111,7 +117,7 @@ import xdc.rov.ViewInfo;
  *    if (DDR != null) {
  *        var sectionName = "ti.sysbios.family.arm.a8.mmuTableSection";
  *        Program.sectMap[sectionName] = new Program.SectionSpec();
- *        Program.sectMap[sectionName].type = "NOINIT";
+ *        Program.sectMap[sectionName].type = "NOLOAD"; // NOINIT for TI Tools
  *        Program.sectMap[sectionName].loadSegment = "DDR";
  *    }
  *    else {
@@ -124,7 +130,11 @@ import xdc.rov.ViewInfo;
  *  to the MMU table so that it can be accessed by code at runtime:
  *
  *  @p(code)
+ *    // For Cortex-A8
  *    var Cache = xdc.useModule('ti.sysbios.family.arm.a8.Cache');
+ *    // For Cortex-A9
+ *    var Cache = xdc.useModule('ti.sysbios.family.arm.a9.Cache');
+ *
  *    var Mmu = xdc.useModule('ti.sysbios.family.arm.a8.Mmu');
  *
  *    // Enable the cache
@@ -133,9 +143,10 @@ import xdc.rov.ViewInfo;
  *    // Enable the MMU (Required for L1/L2 data caching)
  *    Mmu.enableMMU = true;
  *
- *    // Force peripheral section to be NON cacheable
+ *    // Force peripheral section to be NON cacheable strongly-ordered memory
  *    var peripheralAttrs = {
  *        type : Mmu.FirstLevelDesc_SECTION, // SECTION descriptor
+ *        tex: 0,
  *        bufferable : false,                // bufferable
  *        cacheable  : false,                // cacheable
  *        shareable  : false,                // shareable
@@ -174,6 +185,7 @@ module Mmu
     /*! @_nodoc */
     metaonly struct PageView {
         String      Type;
+        String      Tex;
         Ptr         AddrVirtual;
         Ptr         AddrPhysical;
         Ptr         Level2TablePtr;
@@ -191,48 +203,79 @@ module Mmu
     metaonly config ViewInfo.Instance rovViewInfo =
         ViewInfo.create({
             viewMap: [
-                ['PageView', {
+                ['0x0-0x7FFFFFFF', {
                     type: ViewInfo.MODULE_DATA,
-                    viewInitFxn: 'viewPages',
+                    viewInitFxn: 'viewPages1',
+                    structName: 'PageView'
+                }],
+                ['0x80000000-0x9FFFFFFF', {
+                    type: ViewInfo.MODULE_DATA,
+                    viewInitFxn: 'viewPages2',
+                    structName: 'PageView'
+                }],
+                ['0xA0000000-0xBFFFFFFF', {
+                    type: ViewInfo.MODULE_DATA,
+                    viewInitFxn: 'viewPages3',
+                    structName: 'PageView'
+                }],
+                ['0xC0000000-0xDFFFFFFF', {
+                    type: ViewInfo.MODULE_DATA,
+                    viewInitFxn: 'viewPages4',
+                    structName: 'PageView'
+                }],
+                ['0xE0000000-0xFFFFFFFF', {
+                    type: ViewInfo.MODULE_DATA,
+                    viewInitFxn: 'viewPages5',
                     structName: 'PageView'
                 }]
            ]
        });
 
-   /*! First Level descriptors */
+    /*!
+     *  First Level descriptors
+     *
+     *  Different descriptor type encodings:
+     *  0b00    ->  Invalid or Fault entry
+     *  0b01    ->  Page table entry
+     *  0b10    ->  Section descriptor
+     *  0b11    ->  Reserved
+     */
     enum FirstLevelDesc {
-        FirstLevelDesc_FAULT = 0,       /*! Virtual address is unmapped */
-        FirstLevelDesc_PAGE_TABLE = 1,  /*! Page table addr descriptor  */
-        FirstLevelDesc_SECTION = 2      /*! Section descriptor          */
+        FirstLevelDesc_FAULT = 0,      /*! Virtual address is unmapped     */
+        FirstLevelDesc_PAGE_TABLE = 1, /*! Page table addr descriptor      */
+        FirstLevelDesc_SECTION = 2,    /*! Section descriptor              */
+        FirstLevelDesc_RESERVED = 3    /*! Reserved                        */
     };
 
     /*!
      *  Structure for setting first level descriptor entries
      *
-     *  If the 'cacheable' attribute is true and 'bufferable' is true,
-     *  L1 data cache operates as a write-back cache.
-     *  If 'cacheable' is true but 'bufferable' is false,
-     *  L1 data cache operates as a write-through cache.
+     *  The B (Bufferable), C (Cacheable), and TEX (Type extension) bits
+     *  in the translation table descriptor define the memory region
+     *  attributes.
      *
-     *  See the 'Translation Tables' section of the ARM v7 Architecture
-     *  Reference Manual for more details.
+     *  See the 'Short-descriptor translation table format' section of the
+     *  ARM v7-AR Architecture Reference Manual issue C for more details.
      */
     struct FirstLevelDescAttrs {
-        FirstLevelDesc type;    /*! first level descriptor type         */
-        Bool  bufferable;       /*! is memory section bufferable        */
-        Bool  cacheable;        /*! is memory section cacheable         */
-        Bool  shareable;        /*! is memory section shareable         */
-        Bool  noexecute;        /*! is memory section not executable    */
-        UInt8 imp;              /*! implementation defined              */
-        UInt8 domain;           /*! domain access control value 0-15    */
-        UInt8 accPerm;          /*! access permission bits value 0-3    */
+        FirstLevelDesc type;    /*! first level descriptor type             */
+        Bool  bufferable;       /*! is memory section bufferable            */
+        Bool  cacheable;        /*! is memory section cacheable             */
+        Bool  shareable;        /*! is memory section shareable             */
+        Bool  noexecute;        /*! is memory section not executable        */
+        UInt8 imp;              /*! implementation defined                  */
+        UInt8 domain;           /*! domain access control value 0-15        */
+        UInt8 accPerm;          /*! access permission bits value 0-7        */
+        UInt8 tex;              /*! memory region attr type extension field */
     };
+
+    // Asserts
 
     /*!
      *  ======== A_nullPointer ========
      *  Assert raised when a pointer is null
      */
-    config xdc.runtime.Assert.Id A_nullPointer  = {
+    config Assert.Id A_nullPointer  = {
         msg: "A_nullPointer: Pointer is null"
     };
 
@@ -240,19 +283,21 @@ module Mmu
      *  ======== A_unknownDescType ========
      *  Assert raised when the descriptor type is not recognized.
      */
-    config xdc.runtime.Assert.Id A_unknownDescType =
-        {msg: "A_unknownDescType: Descriptor type is not recognized"};
+    config Assert.Id A_unknownDescType = {
+        msg: "A_unknownDescType: Descriptor type is not recognized"
+    };
 
     /*! default descriptor attributes structure */
     config FirstLevelDescAttrs defaultAttrs = {
-        type: FirstLevelDesc_SECTION,   /* SECTION descriptor           */
-        bufferable: false,              /* false by default             */
-        cacheable: false,               /* false by default             */
-        shareable: false,               /* false by default             */
-        noexecute: false,               /* false by default             */
-        imp: 1,                         /* set to 1 for A8 devices      */
-        domain: 0,                      /* default Domain is 0          */
-        accPerm: 3,                     /* allow read/write             */
+        type: FirstLevelDesc_SECTION,   /* SECTION descriptor */
+        bufferable: false,              /* false by default     */
+        cacheable: false,               /* false by default     */
+        shareable: false,               /* false by default */
+        noexecute: false,               /* false by default     */
+        imp: 1,                         /* set to 1 for A8/A9 devices */
+        domain: 0,                      /* default Domain is 0 */
+        accPerm: 3,                     /* allow read/write */
+        tex: 1                          /* 1 by default */
     };
 
     /*!
@@ -350,11 +395,28 @@ module Mmu
     Void setFirstLevelDesc(Ptr virtualAddr, Ptr phyAddr,
                            FirstLevelDescAttrs *attrs);
 
+    /*!
+     *  ======== getPhysicalAddr ========
+     *  Returns the translated physical address for the given virtual address.
+     *  If the virtual address cannot be translated i.e. the virtual address
+     *  would generate a fault if translated, ~(0) is returned.
+     *
+     *  @param(virtualAddr)  virtual address
+     *  @b(returns)          translated physical address
+     */
+    @DirectCall
+    Ptr getPhysicalAddr(Ptr virtualAddr);
 
 internal:
 
     /*! static array to hold first level dscriptor table */
     metaonly config UInt32 tableBuf[];
+
+    /*!
+     *  ======== init ========
+     *  initialize mmu registers
+     */
+    Void init();
 
     /*!
      *  ======== enableAsm ========
@@ -369,7 +431,15 @@ internal:
     Void disableAsm();
 
     /*! function generated to initialize first level descriptor table */
-    Void initTableBuf(Module_State *mod);
+    Void initTableBuf(UInt32 *mmuTableBuf);
+
+    /*!
+     *  ======== getPhysicalAddrI ========
+     *  Returns the translated physical address for the given virtual address.
+     *  If the virtual address cannot be translated i.e. the virtual address
+     *  would generate a fault if translated, ~(0) is returned.
+     */
+    Ptr getPhysicalAddrI(Ptr virtualAddr);
 
     /*! Module state */
     struct Module_State {

@@ -99,7 +99,7 @@ package ti.sysbios.family.msp430;
  *  The default Boot module boost values for CS-based FR58x/FR59x devices are:
  *
  *  @p(code)
- *      ACLK  = 32768 Hz
+ *      ACLK  = 39063 Hz
  *      SMCLK = 8000000 Hz
  *  @p
  *

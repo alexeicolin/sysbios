@@ -221,7 +221,7 @@ module Hwi inherits ti.sysbios.interfaces.IHwi
         String      options[4];
         UInt        spuriousInterrupts;
         UInt        lastSpuriousInterrupt;
-        SizeT       hwiStackPeak;
+        String      hwiStackPeak;
         SizeT       hwiStackSize;
         Ptr         hwiStackBase;
     };

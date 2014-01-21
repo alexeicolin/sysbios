@@ -1,5 +1,5 @@
 ;
-;  Copyright (c) 2012, Texas Instruments Incorporated
+;  Copyright (c) 2013, Texas Instruments Incorporated
 ;  All rights reserved.
 ; 
 ;  Redistribution and use in source and binary forms, with or without
@@ -37,12 +37,14 @@
         .cdecls C,NOLIST,"package/internal/Mmu.xdc.h"
 
     .if __TI_EABI_ASSEMBLER
+        .asg ti_sysbios_family_arm_a8_Mmu_init__I, _ti_sysbios_family_arm_a8_Mmu_init__I
         .asg ti_sysbios_family_arm_a8_Mmu_disableAsm__I, _ti_sysbios_family_arm_a8_Mmu_disableAsm__I
         .asg ti_sysbios_family_arm_a8_Mmu_enableAsm__I, _ti_sysbios_family_arm_a8_Mmu_enableAsm__I
         .asg ti_sysbios_family_arm_a8_Mmu_isEnabled__E, _ti_sysbios_family_arm_a8_Mmu_isEnabled__E
         .asg ti_sysbios_family_arm_a8_Mmu_Module__state__V, _ti_sysbios_family_arm_a8_Mmu_Module__state__V
     .endif
 
+        .global _ti_sysbios_family_arm_a8_Mmu_init__I
         .global _ti_sysbios_family_arm_a8_Mmu_disableAsm__I
         .global _ti_sysbios_family_arm_a8_Mmu_enableAsm__I
         .global _ti_sysbios_family_arm_a8_Mmu_isEnabled__E
@@ -51,6 +53,22 @@ _ti_sysbios_family_arm_a8_Mmu_Module__state__V .tag ti_sysbios_family_arm_a8_Mmu
 
         .state32
         .align  4
+
+;
+; ======== Mmu_init ========
+; Initialize mmu registers.
+;
+        .sect ".text:_ti_sysbios_family_arm_a8_Mmu_init"
+        .clink
+        .armfunc _ti_sysbios_family_arm_a8_Mmu_init__I
+
+_ti_sysbios_family_arm_a8_Mmu_init__I
+        .asmfunc
+        mov r0, #0                      ; TTBR0 used and desc uses Short format
+        mcr p15, #0, r0, c2, c0, #2     ; write r0 to TTBCR
+
+        bx r14
+        .endasmfunc
 
 ;
 ; ======== Mmu_disableAsm ========
@@ -62,7 +80,9 @@ _ti_sysbios_family_arm_a8_Mmu_Module__state__V .tag ti_sysbios_family_arm_a8_Mmu
 
 _ti_sysbios_family_arm_a8_Mmu_disableAsm__I
         .asmfunc
-        mcr p15, #0, r0, c8, c7, #0     ; invalidate I+D TLB's
+        mcr p15, #0, r0, c8, c7, #0     ; invalidate unified TLB
+        dsb                             ; wait for invalidation to complete
+        isb                             ; flush instruction pipeline
         mrc p15, #0, r0, c1, c0, #0     ; read register c1
         mov r1, #0x1                    ; move #1 into r1
         bic r0, r0, r1                  ; clear bit 1 in r0
@@ -82,7 +102,9 @@ _ti_sysbios_family_arm_a8_Mmu_disableAsm__I
 _ti_sysbios_family_arm_a8_Mmu_enableAsm__I
         .asmfunc
         mov r1, #0
-        mcr p15, #0, r1, c8, c7, #0     ; invalidate I+D TLB's
+        mcr p15, #0, r1, c8, c7, #0     ; invalidate unified TLB
+        dsb                             ; wait for invalidation to complete
+        isb                             ; flush instruction pipeline
 
         ldr r0, tableBuf                ; get page table pointer
         ldr r0, [r0]                    ; get page table address

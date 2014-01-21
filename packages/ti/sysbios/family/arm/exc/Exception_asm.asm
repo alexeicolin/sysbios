@@ -27,6 +27,15 @@ ti_sysbios_family_arm_exc_Exception_excHandlerAsm__I:
         .asmfunc
         stmfd   sp!, {r0-r12}   ; save r4-r12 while we're at it
 
+        mrc     p15, #0, r12, c5, c0, #0 ; read DFSR into r12
+        stmfd   sp!, {r12}      ; save DFSR
+        mrc     p15, #0, r12, c5, c0, #1 ; read IFSR into r12
+        stmfd   sp!, {r12}      ; save IFSR
+        mrc     p15, #0, r12, c6, c0, #0 ; read DFAR into r12
+        stmfd   sp!, {r12}      ; save DFAR
+        mrc     p15, #0, r12, c6, c0, #2 ; read IFAR into r12
+        stmfd   sp!, {r12}      ; save IFAR
+
         mrs     r12, cpsr
         push    {r12}           ; save current CPSR
 
@@ -61,6 +70,15 @@ excHandlerAddr:
 ti_sysbios_family_arm_exc_Exception_excHandlerDataAsm__I:
         .asmfunc
         stmfd   sp!, {r0-r12}   ; save r4-r12 while we're at it
+
+        mrc     p15, #0, r12, c5, c0, #0 ; read DFSR into r12
+        stmfd   sp!, {r12}      ; save DFSR
+        mrc     p15, #0, r12, c5, c0, #1 ; read IFSR into r12
+        stmfd   sp!, {r12}      ; save DFSR
+        mrc     p15, #0, r12, c6, c0, #0 ; read DFAR into r12
+        stmfd   sp!, {r12}      ; save DFAR
+        mrc     p15, #0, r12, c6, c0, #2 ; read IFAR into r12
+        stmfd   sp!, {r12}      ; save IFAR
 
         mrs     r12, cpsr
         add     r12, r12, #1    ; replace abort (0x17) with 0x18 

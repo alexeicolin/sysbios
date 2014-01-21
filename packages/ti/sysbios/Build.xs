@@ -49,6 +49,7 @@ var customGnuArmM4FOpts = " ";
 var customGnuArmA9Opts = " ";
 var customGnuArmA8Opts = " ";
 var customGnuArmA15Opts = " ";
+var customIarArmOpts = " --silent ";
 
 var ccOptsList = {
     "ti.targets.C28_large"                      : custom28xOpts,
@@ -83,6 +84,9 @@ var ccOptsList = {
     "gnu.targets.arm.A8F"                       : customGnuArmA8Opts,
     "gnu.targets.arm.A9F"                       : customGnuArmA9Opts,
     "gnu.targets.arm.A15F"                      : customGnuArmA15Opts,
+    "iar.targets.arm.M3"                        : customIarArmOpts,
+    "iar.targets.arm.M4"                        : customIarArmOpts,
+    "iar.targets.arm.M4F"                       : customIarArmOpts,
 };
 
 /*
@@ -201,8 +205,6 @@ function module$use()
                 /* Here ONLY if building an application in CCS world */
                 else {
                     /* request output source directory for generated files */
-                    var appName = Program.name.substring(0, Program.name.lastIndexOf('.'));
-                    appName = appName + "_" + Program.name.substr(Program.name.lastIndexOf('.')+1);
                     SourceDir.toBuildDir = "..";
                     var src = SourceDir.create("sysbios/");
                     src.libraryName = this.$private.libraryName.substring(1);
@@ -255,7 +257,8 @@ var smpSources =    "smp/SysMin.c " +
                     "smp/Load.c " +
                     "smp/LoggerBuf.c ";
 
-var utilsSources = "utils/Load.c ";
+var utilsSources = "utils/Load.c " +
+                   "utils/Load_CPU.c ";
 
 var xdcruntimeSources =
                    "xdcruntime/GateThreadSupport.c " +
@@ -264,6 +267,8 @@ var xdcruntimeSources =
                    "xdcruntime/SemProcessSupport.c " +
                    "xdcruntime/ThreadSupport.c " +
                    "xdcruntime/CacheSupport.c ";
+
+var iarCommonSources = "rts/iar/MultithreadSupport.c ";
 
 var commonSources = sysbiosSources + knlSources + heapsSources + gatesSources +
                     halSources + rtaSources + utilsSources + syncsSources +
@@ -336,14 +341,17 @@ var C64TSources = "family/c64p/Hwi.c " +
                   "hal/unicache/Cache.c " +
                   "hal/ammu/AMMU.c ";
 
-var M3Sources   = "family/arm/m3/Hwi.c " +
+var M3CommonSources   = "family/arm/m3/Hwi.c " +
                   "family/arm/m3/TaskSupport.c " +
                   "family/arm/m3/Timer.c " +
                   "family/arm/m3/TimestampProvider.c " +
+                  "family/arm/m3/Power.c " +
                   "family/arm/lm3/Timer.c " +
                   "family/arm/lm3/TimestampProvider.c " +
                   "family/arm/lm4/Timer.c " +
-                  "family/arm/lm4/TimestampProvider.c " +
+                  "family/arm/lm4/TimestampProvider.c ";
+
+var M3Sources   = M3CommonSources +
                   "family/arm/ducati/Core.c " +
                   "family/arm/ducati/GateDualCore.c " +
                   "family/arm/ducati/GateSmp.c " +
@@ -359,14 +367,23 @@ var M3Sources   = "family/arm/m3/Hwi.c " +
                   "hal/ammu/AMMU.c ";
 
 var M3gSources  = M3Sources +
-                  "rts/gnu/ReentSupport.c ";
+                  "rts/gnu/ReentSupport.c " +
+                  "rts/gnu/SemiHostSupport.c ";
 
-var M4Sources   = "family/arm/m3/Hwi.c " +
+var M3rSources  = M3CommonSources +
+                  iarCommonSources;
+
+var M4CommonSources  = "family/arm/m3/Hwi.c " +
                   "family/arm/m3/TaskSupport.c " +
                   "family/arm/m3/Timer.c " +
                   "family/arm/m3/TimestampProvider.c " +
                   "family/arm/lm4/Timer.c " +
                   "family/arm/lm4/TimestampProvider.c " +
+                  "family/arm/tm4l/Power.c " +
+                  "family/arm/tm4l/Timer.c " +
+                  "family/arm/tm4l/TimestampProvider.c ";
+
+var M4Sources  =  M4CommonSources +
                   "family/arm/ducati/Core.c " +
                   "family/arm/ducati/GateDualCore.c " +
                   "family/arm/ducati/GateSmp.c " +
@@ -377,13 +394,17 @@ var M4Sources   = "family/arm/m3/Hwi.c " +
                   "family/arm/ducati/omap4430/Power.c " +
                   "family/arm/ducati/smp/Power.c " +
                   "family/arm/ducati/dm8148/IntMux.c " +
-                  "hal/unicache/Cache.c " +
-                  "hal/ammu/AMMU.c " +
                   "family/shared/vayu/TimerSupport.c " +
-                  "family/shared/vayu/IntXbar.c ";
+                  "family/shared/vayu/IntXbar.c " +
+                  "hal/unicache/Cache.c " +
+                  "hal/ammu/AMMU.c ";
 
 var M4gSources  = M4Sources +
-                  "rts/gnu/ReentSupport.c ";
+                  "rts/gnu/ReentSupport.c " +
+                  "rts/gnu/SemiHostSupport.c ";
+
+var M4rSources  = M4CommonSources +
+                  iarCommonSources;
 
 var Arm9Sources = "family/arm/TaskSupport.c " +
                   "family/arm/HwiCommon.c " +
@@ -411,7 +432,9 @@ var A8FSources  = "family/arm/TaskSupport.c " +
                   "family/arm/a8/intcps/Hwi.c " +
                   "family/arm/a8/omap3430/TimerSupport.c " +
                   "family/arm/a8/ti81xx/TimerSupport.c " +
-                  "family/arm/exc/Exception.c ";
+                  "family/arm/exc/Exception.c " +
+                  "family/arm/v7a/Pmu.c " +
+                  "family/arm/v7a/Timer.c ";
 
 var A8gSources  = A8FSources +
                   "rts/gnu/ReentSupport.c " +
@@ -420,11 +443,15 @@ var A8gSources  = A8FSources +
 var A9Sources =   "family/arm/TaskSupport.c " +
                   "family/arm/IntrinsicsSupport.c " +
                   "family/arm/a15/TimestampProvider.c " +
+                  "family/arm/a8/Mmu.c " +
                   "family/arm/a9/Cache.c " +
-                  "family/arm/a9/Mmu.c " +
                   "family/arm/a9/Timer.c " +
+                  "family/arm/a9/TimerSupport.c " +
+                  "family/arm/a9/am437x/TimerSupport.c " +
                   "family/arm/exc/Exception.c " +
-                  "family/arm/gic/Hwi.c ";
+                  "family/arm/gic/Hwi.c " +
+                  "family/arm/v7a/Pmu.c " +
+                  "family/arm/v7a/Timer.c ";
 
 var A9gSources  = A9Sources +
                   "rts/gnu/ReentSupport.c " +
@@ -438,6 +465,8 @@ var A15gSources = "family/arm/TaskSupport.c " +
                   "family/arm/exc/Exception.c " +
                   "family/arm/gic/Hwi.c " +
                   "family/arm/systimer/Timer.c " +
+                  "family/arm/v7a/Pmu.c " +
+                  "family/arm/v7a/Timer.c " +
                   "family/shared/vayu/TimerSupport.c " +
                   "family/shared/vayu/IntXbar.c " +
                   "rts/gnu/ReentSupport.c " +
@@ -454,6 +483,7 @@ var MSP430Sources = "family/msp430/Hwi.c " +
                   "family/msp430/IntrinsicsSupport.c " +
                   "family/msp430/Power.c " +
                   "family/msp430/TaskSupport.c " +
+                  "family/msp430/ClockFreqs.c " +
                   "family/msp430/Timer.c " +
                   "family/msp430/TimestampProvider.c ";
 
@@ -473,9 +503,12 @@ var cList = {
     "ti.targets.msp430.elf.MSP430X" : commonSources + MSP430Sources,
     "ti.targets.msp430.elf.MSP430X_small" : commonSources + MSP430Sources,
 
-    "iar.targets.msp430.MSP430"     : commonSources + MSP430Sources,
-    "iar.targets.msp430.MSP430X_small" : commonSources + MSP430Sources,
-    "iar.targets.msp430.MSP430X_large" : commonSources + MSP430Sources,
+    "iar.targets.msp430.MSP430"     : commonSources + MSP430Sources
+                                      + iarCommonSources,
+    "iar.targets.msp430.MSP430X_small" : commonSources + MSP430Sources
+                                         + iarCommonSources,
+    "iar.targets.msp430.MSP430X_large" : commonSources + MSP430Sources
+                                         + iarCommonSources,
 
     "ti.targets.C64P"               : commonSources + timer64Sources + dmtimerSources +
                                       gptimerSources + C62Sources + C64PSources,
@@ -512,11 +545,16 @@ var cList = {
     "gnu.targets.arm.M4"            : commonSources + dmtimerSources + M4gSources,
     "gnu.targets.arm.M4F"           : commonSources + dmtimerSources + M4gSources,
 
-    "gnu.targets.arm.A8F"           : commonSources + dmtimerSources + gptimerSources +
-                                      A8gSources,
-    "gnu.targets.arm.A9F"           : commonSources + A9gSources,
+    "gnu.targets.arm.A8F"           : commonSources + dmtimerSources +
+                                      gptimerSources + A8gSources,
+    "gnu.targets.arm.A9F"           : commonSources + dmtimerSources +
+                                      gptimerSources + A9gSources,
     "gnu.targets.arm.A15F"          : commonSources + dmtimerSources +
                                       A15gSources,
+
+    "iar.targets.arm.M3"            : commonSources + M3rSources,
+    "iar.targets.arm.M4"            : commonSources + M4rSources,
+    "iar.targets.arm.M4F"           : commonSources + M4rSources,
 };
 
 /*
@@ -527,6 +565,8 @@ var cList = {
  * -No Mod.c file
  */
 var cFiles = {
+    "ti.sysbios.utils.Load" :
+        { cSources: ["Load.c", "Load_CPU.c"] },
     "ti.sysbios.hal.Hwi" :
         { cSources: ["Hwi.c", "Hwi_stack.c", "Hwi_startup.c"] },
     "ti.sysbios.io.GIO" :
@@ -565,6 +605,7 @@ var biosPackages = [
     "ti.sysbios.family.arm.a8.sim",
     "ti.sysbios.family.arm.a8.ti81xx",
     "ti.sysbios.family.arm.a9",
+    "ti.sysbios.family.arm.a9.am437x",
     "ti.sysbios.family.arm.a15",
     "ti.sysbios.family.arm.gic",
     "ti.sysbios.family.arm.systimer",
@@ -578,11 +619,13 @@ var biosPackages = [
     "ti.sysbios.family.arm.exc",
     "ti.sysbios.family.arm.f28m35x",
     "ti.sysbios.family.arm.lm4",
+    "ti.sysbios.family.arm.tm4l",
     "ti.sysbios.family.arm.lm3",
     "ti.sysbios.family.arm.m3",
     "ti.sysbios.family.arm.omap1030",
     "ti.sysbios.family.arm.sim1030",
     "ti.sysbios.family.arm.tms570",
+    "ti.sysbios.family.arm.v7a",
     "ti.sysbios.family.c28",
     "ti.sysbios.family.c28.f28m35x",
     "ti.sysbios.family.c28.f2837x",
@@ -615,6 +658,7 @@ var biosPackages = [
     "ti.sysbios.rta",
     "ti.sysbios.rts",
     "ti.sysbios.rts.gnu",
+    "ti.sysbios.rts.iar",
     "ti.sysbios.rom.c28",
     "ti.sysbios.smp",
     "ti.sysbios.syncs",
@@ -717,6 +761,14 @@ var asmListM3g = [
     "timers/dmtimer/Timer_asm_gnu.sv7M"
 ];
 
+var asmListM3r = [
+    "family/arm/m3/Clobber_asm_iar.sv7M",
+    "family/arm/m3/IntrinsicsSupport_asm_iar.sv7M",
+    "family/arm/m3/TaskSupport_asm_iar.sv7M",
+    "family/arm/m3/Hwi_asm_iar.sv7M",
+    "family/arm/m3/Hwi_asm_switch_iar.sv7M",
+];
+
 var asmListM4g = [
     "family/arm/m3/Clobber_asm_gnu.sv7M",
     "family/arm/m3/IntrinsicsSupport_asm_gnu.sv7M",
@@ -730,6 +782,14 @@ var asmListM4g = [
     "family/arm/ducati/smp/Power_saveCpu_gnu.sv7M",
     "family/arm/ducati/smp/Power_resumeCpu_gnu.sv7M",
     "timers/dmtimer/Timer_asm_gnu.sv7M"
+];
+
+var asmListM4r = [
+    "family/arm/m3/Clobber_asm_iar.sv7M",
+    "family/arm/m3/IntrinsicsSupport_asm_iar.sv7M",
+    "family/arm/m3/TaskSupport_asm_iar.sv7M",
+    "family/arm/m3/Hwi_asm_iar.sv7M",
+    "family/arm/m3/Hwi_asm_switch_iar.sv7M",
 ];
 
 var asmListA8F = [
@@ -762,8 +822,8 @@ var asmListA9g = [
     "family/arm/TaskSupport_asm_gnu.asm",
     "family/arm/exc/Exception_asm_gnu.asm",
     "family/arm/a15/TimestampProvider_asm_gnu.asm",
-    "family/arm/a9/Mmu_asm_gnu.asm",
-    "family/arm/a9/Cache_asm_gnu.asm",
+    "family/arm/a8/Mmu_asm_gnu.sv7A",
+    "family/arm/a9/Cache_asm_gnu.sv7A",
     "family/arm/gic/Hwi_asm_gnu.asm",
     "timers/gptimer/Timer_asm_gnu.sv7A",
     "timers/dmtimer/Timer_asm_gnu.sv7A"
@@ -856,6 +916,9 @@ var asmList = {
     "gnu.targets.arm.A8F"               : asmListA8g,
     "gnu.targets.arm.A9F"               : asmListA9g,
     "gnu.targets.arm.A15F"              : asmListA15g,
+    "iar.targets.arm.M3"                : asmListM3r,
+    "iar.targets.arm.M4"                : asmListM4r,
+    "iar.targets.arm.M4F"               : asmListM4r,
 };
 
 function getDefaultCustomCCOpts()
@@ -873,11 +936,11 @@ function getDefaultCustomCCOpts()
     /* Gnu targets need to pick up ccOpts.prefix and suffix */
     if (Program.build.target.$name.match(/gnu/)) {
         customCCOpts += " -O3 ";
-        customCCOpts += " " + Program.build.target.ccOpts.prefix + " ";
-        customCCOpts += " " + Program.build.target.ccOpts.suffix + " ";
+        customCCOpts = Program.build.target.ccOpts.prefix + " " + customCCOpts;
+        customCCOpts += Program.build.target.ccOpts.suffix + " ";
     }
     else if (Program.build.target.$name.match(/iar/)) {
-        customCCOpts += " --mfc ";
+        customCCOpts += " --mfc -Ohs ";
     }
     else {
         /* ti targets do program level compile */
@@ -890,6 +953,9 @@ function getDefaultCustomCCOpts()
             customCCOpts = customCCOpts.replace("-O3","");
             /* add in stack frames for stack back trace */
             customCCOpts += " -mapcs ";
+        }
+        else if (Program.build.target.$name.match(/iar/)) {
+            customCCOpts = customCCOpts.replace("-Ohs","--debug");
         }
         else {
             customCCOpts = customCCOpts.replace(" -o3","");
@@ -954,6 +1020,9 @@ function getDefs()
             defs += " -Dti_sysbios_BIOS_useSK__D=1";
         }
 
+        /*
+         * Add Clock module defs
+         */
         switch (Clock.tickSource) {
             case Clock.TickSource_TIMER:
                 defs += " -Dti_sysbios_knl_Clock_TICK_SOURCE=ti_sysbios_knl_Clock_TickSource_TIMER";
@@ -973,31 +1042,48 @@ function getDefs()
             defs += " -Dti_sysbios_knl_Clock_TICK_MODE=ti_sysbios_knl_Clock_TickMode_PERIODIC";
         }
 
-        /* map hal Core module APIs to their delegates */
+        /*
+         * map hal Core module APIs to their delegates
+         */
+
+        var coreDelegate;
+
         if (xdc.module('ti.sysbios.hal.Core').CoreProxy != null) {
-            var coreDelegate = xdc.module('ti.sysbios.hal.Core').CoreProxy.delegate$;
-            var coreDelegateName = coreDelegate.$name;
-            coreDelegateName = coreDelegateName.replace(/\./g, "_");
-
-            defs += " -Dti_sysbios_hal_Core_delegate_getId="
-                    + coreDelegateName
-                    + "_getId__E";
-            defs += " -Dti_sysbios_hal_Core_delegate_interruptCore="
-                    + coreDelegateName
-                    + "_interruptCore__E";
-            defs += " -Dti_sysbios_hal_Core_delegate_lock="
-                    + coreDelegateName
-                 + "_lock__E";
-            defs += " -Dti_sysbios_hal_Core_delegate_unlock="
-                    + coreDelegateName
-                 + "_unlock__E";
-
-            defs += " -Dti_sysbios_hal_Core_numCores__D=" + coreDelegate.numCores;
-
-            defs += " -D" + coreDelegateName + "_numCores__D=" + coreDelegate.numCores;
+            coreDelegate = xdc.module('ti.sysbios.hal.Core').CoreProxy.delegate$;
+        }
+        else {
+            var coreDelegateString = Settings.getDefaultCoreDelegate();
+            if (coreDelegateString == null) {
+                coreDelegate = xdc.module('ti.sysbios.hal.CoreNull');
+            }
+            else {
+                coreDelegate = xdc.module(coreDelegateString);
+            }
         }
 
-        /* add Load module #defines */
+        var coreDelegateName = coreDelegate.$name;
+        coreDelegateName = coreDelegateName.replace(/\./g, "_");
+
+        defs += " -Dti_sysbios_hal_Core_delegate_getId="
+                + coreDelegateName
+                + "_getId__E";
+        defs += " -Dti_sysbios_hal_Core_delegate_interruptCore="
+                + coreDelegateName
+                + "_interruptCore__E";
+        defs += " -Dti_sysbios_hal_Core_delegate_lock="
+                + coreDelegateName
+             + "_lock__E";
+        defs += " -Dti_sysbios_hal_Core_delegate_unlock="
+                + coreDelegateName
+             + "_unlock__E";
+
+        defs += " -Dti_sysbios_hal_Core_numCores__D=" + coreDelegate.numCores;
+
+        defs += " -D" + coreDelegateName + "_numCores__D=" + coreDelegate.numCores;
+
+        /*
+         * add Load module #defines
+         */
         defs += " -Dti_sysbios_utils_Load_taskEnabled__D=" + (Load.taskEnabled ? "TRUE" : "FALSE");
         defs += " -Dti_sysbios_utils_Load_swiEnabled__D=" + (Load.swiEnabled ? "TRUE" : "FALSE");
     }
@@ -1068,12 +1154,16 @@ function getDefs()
                  + (Exception.enablePrint ? "TRUE" : "FALSE");
             }
             break;
-        case "ti.targets.arm.elf.M3" :
-        case "ti.targets.arm.elf.M4" :
-        case "ti.targets.arm.elf.M4F" :
+
         case "gnu.targets.arm.M3" :
         case "gnu.targets.arm.M4" :
         case "gnu.targets.arm.M4F" :
+        case "iar.targets.arm.M3" :
+        case "iar.targets.arm.M4" :
+        case "iar.targets.arm.M4F" :
+        case "ti.targets.arm.elf.M3" :
+        case "ti.targets.arm.elf.M4" :
+        case "ti.targets.arm.elf.M4F" :
             var m3Hwi = xdc.module("ti.sysbios.family.arm.m3.Hwi");
 
             defs +=

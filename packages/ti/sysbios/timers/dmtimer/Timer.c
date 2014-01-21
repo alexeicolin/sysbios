@@ -433,7 +433,7 @@ Int Timer_Instance_init(Timer_Object *obj, Int id, Timer_FuncPtr tickFxn, const 
  *  Calls postInit for all statically-created & constructed
  *  timers to initialize them.
  */
-Int Timer_Module_startup(status)
+Int Timer_Module_startup(Int status)
 {
     Int i;
     Timer_Object *obj;
@@ -596,7 +596,7 @@ Void Timer_getFreq(Timer_Object *obj, Types_FreqHz *freq)
         *freq = obj->extFreq;
     }
     else {
-        *freq = Timer_module->intFreq;
+        *freq = Timer_module->intFreqs[obj->id];
     }
 }
 
@@ -1095,8 +1095,8 @@ Void Timer_checkFreq(Timer_Object *obj)
     if (((deltaTs / deltaCnt) > freqRatio * 2) || 
         ((deltaTs / deltaCnt) < freqRatio / 2)) {
         actualFrequency = ((UInt64)timestampFreq.lo * (UInt64)deltaCnt) / (UInt64)deltaTs;
-        Error_raise(NULL, Timer_E_freqMismatch, Timer_module->intFreq.lo, 
-                actualFrequency);
+        Error_raise(NULL, Timer_E_freqMismatch,
+                Timer_module->intFreqs[obj->id].lo, actualFrequency);
     }
 }
 

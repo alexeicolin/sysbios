@@ -54,9 +54,11 @@
 extern Void ti_sysbios_family_c64p_Hwi_dispatchAlways(Void);
 extern Char *ti_sysbios_family_xxx_Hwi_switchToIsrStack();
 extern Void ti_sysbios_family_xxx_Hwi_switchToTaskStack(Char *oldTaskSP);
+extern Void ti_sysbios_family_xxx_Hwi_switchAndRunFunc(Void (*func)());
 
 #define Hwi_switchToIsrStack ti_sysbios_family_xxx_Hwi_switchToIsrStack
 #define Hwi_switchToTaskStack ti_sysbios_family_xxx_Hwi_switchToTaskStack
+#define Hwi_switchAndRunFunc ti_sysbios_family_xxx_Hwi_switchAndRunFunc
 #define Hwi_dispatchAlways ti_sysbios_family_c64p_Hwi_dispatchAlways
 #define Hwi_vectorsBase ti_sysbios_family_c64p_Hwi_vectorsBase
 
@@ -672,7 +674,26 @@ Void Hwi_setHookContext(Hwi_Object *hwi, Int id, Ptr hookContext)
  *  ======== Hwi_dispatchC ========
  *  Configurable dispatcher.
  */
-Void Hwi_dispatchC(register Int intNum)
+Void Hwi_dispatchC(Int intNum)
+{
+    Int tskKey;
+
+    if (Hwi_dispatcherTaskSupport) {
+        tskKey = TASK_DISABLE();
+    }
+
+    Hwi_switchAndDispatch(intNum);
+
+    if (Hwi_dispatcherTaskSupport) {
+	TASK_RESTORE(tskKey);   /* returns with ints disabled */
+    }
+}
+
+/*
+ *  ======== Hwi_dispatchCore ========
+ *  Configurable dispatcher.
+ */
+Void Hwi_dispatchCore(Int intNum)
 {
     /*
      * Enough room is reserved above the isr stack to handle
@@ -683,9 +704,7 @@ Void Hwi_dispatchC(register Int intNum)
 
     Hwi_Object *hwi;
     BIOS_ThreadType prevThreadType;
-    Char *oldTaskSP;
     UInt16 oldIER, disableMask, restoreMask;
-    Int tskKey;
     Int swiKey;
     Int i;
     Hwi_FuncPtr fxn;
@@ -693,34 +712,6 @@ Void Hwi_dispatchC(register Int intNum)
 
     /* save away intNum in module state because it might be saved on stack */
     Hwi_module->intNum = intNum;
-
-    if (Hwi_dispatcherTaskSupport) {
-        tskKey = TASK_DISABLE();
-
-        /*
-          * If this is a non-nested interrupt,
-         * tskkey is saved on the task stack.
-         * It must not be referenced again until
-         * switching back to the task stack!!!!
-         * All other local variables will be
-         * on the isr stack.
-         */
-    }
-
-    /*
-     * Switch to Hwi stack if not already on it.
-     * This step, and the corresponding switch back to the task
-     * stack are performed outside the "if (Hwi_dispatcherTaskSupport)"
-     * conditionals because sometimes the generated code placed a copy
-     * of Hwi_dispatcherTaskSupport on the task stack for use below.
-     */
-    oldTaskSP = Hwi_switchToIsrStack();
-
-    /*
-     * all references to local variables beyond this point
-     * will be on the isr stack
-     */
-    intNum = Hwi_module->intNum;
 
     /*
      * pre-read local copies of the variables used
@@ -791,23 +782,4 @@ Void Hwi_dispatchC(register Int intNum)
 
     /* restore thread type */
     BIOS_setThreadType(prevThreadType);
-
-    /*
-     * Switch back to Task stack if at bottom of Hwi stack
-     * While it seems that this step should be placed in the
-     * "if (Hwi_dispatcherTaskSupport)" conditional below,
-     * some code generators placed a copy of the Hwi_dispatcherTaskSupport
-     * constant on the task stack (see above comment), which would
-     * make the test below bogus as it would be being performed on
-     * on the ISR stack...
-     */
-    Hwi_switchToTaskStack(oldTaskSP);
-
-    /* Run Task scheduler */
-    if (Hwi_dispatcherTaskSupport) {
-        /* tskKey fetched from task stack if this is a non-nested interrupt */
-        TASK_RESTORE(tskKey);   /* returns with ints disabled */
-    }
 }
-
-

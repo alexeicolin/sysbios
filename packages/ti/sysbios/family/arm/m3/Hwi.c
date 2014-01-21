@@ -59,9 +59,11 @@
 
 extern Char *ti_sysbios_family_xxx_Hwi_switchToIsrStack();
 extern Void ti_sysbios_family_xxx_Hwi_switchToTaskStack(Char *oldTaskSP);
+extern Void ti_sysbios_family_xxx_Hwi_switchAndRunFunc(Void (*func)());
 
 #define Hwi_switchToIsrStack ti_sysbios_family_xxx_Hwi_switchToIsrStack
 #define Hwi_switchToTaskStack ti_sysbios_family_xxx_Hwi_switchToTaskStack
+#define Hwi_switchAndRunFunc ti_sysbios_family_xxx_Hwi_switchAndRunFunc
 
 #ifdef ti_sysbios_family_arm_m3_Hwi_dispatcherTaskSupport__D
 #define TASK_DISABLE Task_disable
@@ -104,6 +106,11 @@ Int Hwi_Module_startup(Int phase)
     /* Set up the enable registers per static config */
     Hwi_initEnables();
 
+#if defined(__IAR_SYSTEMS_ICC__)
+#pragma section = "CSTACK"
+    Hwi_module->isrStackBase = __section_begin("CSTACK");
+    Hwi_module->isrStackSize = __section_size("CSTACK");
+#endif
     /*
      * Initialize the pointer to the isrStack.
      *
@@ -418,7 +425,7 @@ Void Hwi_restoreFxn(UInt key)
 UInt Hwi_disableFxn()
 {
     UInt key;
-    __asm__ __volatile__ (
+    asm volatile (
             "mrs %0, basepri\n\t"
             "msr basepri, %1"
             : "=&r" (key)
@@ -432,7 +439,7 @@ UInt Hwi_disableFxn()
  */
 Void Hwi_restoreFxn(UInt key)
 {
-    __asm__ __volatile__ (
+    asm volatile (
             "msr basepri, %0"
             :: "r" (key)
             );
@@ -444,7 +451,7 @@ Void Hwi_restoreFxn(UInt key)
 UInt Hwi_enableFxn()
 {
     UInt key;
-    __asm__ __volatile__ (
+    asm volatile (
             "movw r12, #0\n\t"
             "mrs %0, basepri\n\t"
             "msr basepri, r12"
@@ -617,8 +624,14 @@ Bool Hwi_getStackInfo(Hwi_StackInfo *stkInfo, Bool computeStackDepth)
     Bool stackOverflow;
 
     /* Copy the stack base address and size */
+#if defined(__IAR_SYSTEMS_ICC__)
+#pragma section = "CSTACK"
+    stkInfo->hwiStackSize = __section_size("CSTACK");
+    stkInfo->hwiStackBase = __section_begin("CSTACK");
+#else
     stkInfo->hwiStackSize = Hwi_module->isrStackSize;
     stkInfo->hwiStackBase = Hwi_module->isrStackBase;
+#endif
 
     isrSP = stkInfo->hwiStackBase;
 
@@ -1127,7 +1140,7 @@ Void Hwi_excNoIsr(UInt *excStack, UInt excNum)
     Error_raise(&eb, Hwi_E_noIsr, excNum, excStack[14]);
 }
 
-#ifndef __ti__
+#if defined(__GNUC__)
 #pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
 #endif
 
@@ -1202,7 +1215,7 @@ Void Hwi_excFillContext()
     excContext->AFSR = (Ptr)Hwi_nvic.AFSR;
 }
 
-#ifndef __ti__
+#if defined(__GNUC__)
 #pragma GCC diagnostic warning "-Wint-to-pointer-cast"
 #endif
 

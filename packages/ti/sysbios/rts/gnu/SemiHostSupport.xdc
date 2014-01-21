@@ -38,12 +38,14 @@ package ti.sysbios.rts.gnu;
 /*!
  *  ======== SemiHostSupport ========
  *  This module does the required setup for supporting Semi-Hosted SYS/BIOS
- *  applications for all Cortex-A GNU targets.
+ *  applications for all Cortex-A and Cortex-M GNU targets.
  *
- *  This module generates a SVC_Handler() function and registers it as the
- *  default SWI/SVC handler. This module also registers a startup last function
+ *  For Cortex-A targets, this module generates a SVC_Handler() function and
+ *  registers it as the default SWI/SVC handler.
+ *
+ *  This module also registers a startup last function
  *  (see {@link xdc.runtime.Startup#lastFxns Startup.lastFxns}) that initializes
- *  the file handles.
+ *  the file handles for all Cortex-A and Cortex-M GNU targets.
  *
  *  Adding Semi-Hosting support to a SYS/BIOS application requires linking
  *  with a semi-hosting gnu library called "librdimon" and including this
@@ -66,8 +68,20 @@ package ti.sysbios.rts.gnu;
  *      // For Cortex-A8 target
  *      gccArmTargets.A8F.bspLib = "rdimon";
  *
+ *      // For Cortex-A9 target
+ *      gccArmTargets.A9F.bspLib = "rdimon";
+ *
  *      // For Cortex-A15 target
  *      gccArmTargets.A15F.bspLib = "rdimon";
+ *
+ *      // For Cortex-M3 target
+ *      gccArmTargets.M3.bspLib = "rdimon";
+ *
+ *      // For Cortex-M4 target
+ *      gccArmTargets.M4.bspLib = "rdimon";
+ *
+ *      // For Cortex-M4F target
+ *      gccArmTargets.M4F.bspLib = "rdimon";
  *  @p
  *
  *  - When using configuro or building a CCS project, the user needs to add

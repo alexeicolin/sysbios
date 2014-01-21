@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@
  */
 /*
  *  ======== Mmu.xs ========
- *
  */
 
 var Mmu = null;
@@ -60,6 +59,33 @@ if (xdc.om.$name == "cfg") {
             timer2BaseAddr: 0x49032000,
             timer9BaseAddr: 0x49040000,
         },
+        "OMAP4430": {
+            intcBaseAddr        : 0x48240000,
+            timer1BaseAddr      : 0x4A318000,
+            timer2BaseAddr      : 0x48032000,
+            timer3BaseAddr      : 0x48034000,
+            timer4BaseAddr      : 0x48036000,
+            timer10BaseAddr     : 0x48086000,
+            cmClkCtrlBaseAddr   : 0x4A000000,
+            l2CacheCtrlBaseAddr : 0x48242000,
+        },
+        "AM437X": {
+            intcBaseAddr        : 0x48240000,
+            timer0BaseAddr      : 0x44E05000,
+            timer1BaseAddr      : 0x44E31000,
+            timer2BaseAddr      : 0x48040000,
+            timer3BaseAddr      : 0x48042000,
+            timer4BaseAddr      : 0x48044000,
+            timer5BaseAddr      : 0x48046000,
+            timer6BaseAddr      : 0x48048000,
+            timer7BaseAddr      : 0x4804A000,
+            timer8BaseAddr      : 0x481C1000,
+            timer9BaseAddr      : 0x4833D000,
+            timer10BaseAddr     : 0x4833F000,
+            timer11BaseAddr     : 0x48341000,
+            l2CacheCtrlBaseAddr : 0x48242000,
+            controlModuleReg    : 0x44E10000
+        }
     }
 
     deviceTable["TMS320C3.*"] = deviceTable["TMS320C3430"];
@@ -103,7 +129,7 @@ function deviceSupportCheck()
         catalogName = catalog.$modules[i].$name.substring(Program.cpu.catalogName.length+1);
         for (device in deviceTable) {
             if (catalogName.match(device)) {
-                supportedDevices[catalogName] = catalogName;
+                    supportedDevices[catalogName] = catalogName;
             }
         }
     }
@@ -153,9 +179,20 @@ function module$meta$init()
 function module$use()
 {
     Memory = xdc.useModule('xdc.runtime.Memory');
-    Cache  = xdc.useModule('ti.sysbios.family.arm.a8.Cache');
 
     device = deviceSupportCheck();
+
+    if ((Program.build.target.name == "A8F") ||
+        (Program.build.target.name == "A8Fnv")) {
+        Cache  = xdc.useModule('ti.sysbios.family.arm.a8.Cache');
+    }
+    else if (Program.build.target.name == "A9F") {
+        Cache  = xdc.useModule('ti.sysbios.family.arm.a9.Cache');
+    }
+    else {
+       Mmu.$logError("Target " + Program.build.target.name + " is not " +
+              "supported. ", Mmu);
+    }
 }
 
 /*
@@ -195,9 +232,14 @@ function module$static$init(mod, params)
         var start = map[i].base >>> SECTION_DESC_SHIFT;
         var end = (map[i].base + map[i].len - 1) >>> SECTION_DESC_SHIFT;
         var index = start;
+        /*
+         * TEX[2:0] = 0b001, C = 1 & B = 1 marks the memory region as
+         * inner and outer cacheable with write-back and write-allocate
+         */
         var attrs =
             {
                 type       : Mmu.FirstLevelDesc_SECTION,  // SECTION descriptor
+                tex        : 1,                           // TEX[2:0]
                 bufferable : true,                        // bufferable
                 cacheable  : true,                        // cacheable
             };
@@ -220,10 +262,11 @@ function module$static$init(mod, params)
         } while (index <= end);
     }
 
-    /* Force peripheral sections to be NON cacheable */
+    /* Force peripheral sections to be NON cacheable strongly-ordered memory */
     var peripheralAttrs =
             {
                 type       : Mmu.FirstLevelDesc_SECTION,  // SECTION descriptor
+                tex        : 0,
                 bufferable : false,                       // bufferable
                 cacheable  : false,                       // cacheable
                 shareable  : false,                       // shareable
@@ -247,6 +290,11 @@ function setFirstLevelDescMeta(virtualAddr, phyAddr, attrs)
     /* Set type field to default if undefined */
     if (attrs.type === undefined) {
         attrs.type = Mmu.defaultAttrs.type;
+    }
+
+    /* Set tex field to default if undefined */
+    if (attrs.tex === undefined) {
+        attrs.tex = Mmu.defaultAttrs.tex;
     }
 
     /* Set bufferable field to default if undefined */
@@ -287,22 +335,24 @@ function setFirstLevelDescMeta(virtualAddr, phyAddr, attrs)
     switch (attrs.type) {
         /* Page table descriptor */
         case Mmu.FirstLevelDesc_PAGE_TABLE:
-            desc = (attrs.type) |
-                   (attrs.domain << 5) |
-                   (attrs.imp << 9) |
+            desc = (attrs.type & 0x3) |
+                   ((attrs.domain & 0xF) << 5) |
+                   ((attrs.imp & 0x1) << 9) |
                    (phyAddr & 0xFFFFFC00);
             break;
 
         /* Section descriptor */
         case Mmu.FirstLevelDesc_SECTION:
-            desc = (attrs.type) |
-                   (attrs.bufferable << 2) |
-                   (attrs.cacheable << 3) |
-                   (attrs.noexecute << 4) |
-                   (attrs.domain << 5) |
-                   (attrs.imp << 9) |
-                   (attrs.accPerm << 10) |
-                   (attrs.shareable << 16) |
+            desc = (attrs.type & 0x3) |
+                   ((attrs.bufferable & 0x1) << 2) |
+                   ((attrs.cacheable & 0x1) << 3) |
+                   ((attrs.noexecute & 0x1) << 4) |
+                   ((attrs.domain & 0xF) << 5) |
+                   ((attrs.imp & 0x1) << 9) |
+                   ((attrs.accPerm & 0x3) << 10) |
+                   ((attrs.tex & 0x7) << 12) |
+                   ((attrs.accPerm & 0x4) << 13) |
+                   ((attrs.shareable & 0x1) << 16) |
                    (phyAddr & 0xFFF00000);
             break;
 
@@ -344,9 +394,8 @@ function viewGetPolicy(elem, policyVal)
         elem.Type = "Page Table Address";
 
         /* Set the level 2 table pointer */
-        elem.Level2TablePtr =
-                utils.toHex(convertToUInt32(
-                            Number(policyVal & 0xFFFFFC00)));
+        elem.Level2TablePtr = utils.toHex(convertToUInt32(
+                              Number(policyVal & 0xFFFFFC00)));
 
         /*
          *  The elem.AddrPhysical, elem.Bufferable, and elem.Cacheable
@@ -363,11 +412,14 @@ function viewGetPolicy(elem, policyVal)
         /* Case its a "Section" */
         elem.Type = "Section";
 
+        /* Set the memory-region attributes type extension (TEX) field */
+        elem.Tex = Number((policyVal >> 12) & 0x7).toString(2) + 'b';
+
         /* Set the bufferability and cacheability fields */
         elem.Bufferable = policyVal & (0x1 << 2);
-        elem.Cacheable = policyVal & (0x1 << 3);
-        elem.Shareable = policyVal & (0x1 << 16);
-        elem.Noexecute = policyVal & (0x1 << 4);
+        elem.Cacheable  = policyVal & (0x1 << 3);
+        elem.Shareable  = policyVal & (0x1 << 16);
+        elem.Noexecute  = policyVal & (0x1 << 4);
 
         /* Determine the cacheability policy */
         if (elem.Cacheable) {
@@ -384,28 +436,38 @@ function viewGetPolicy(elem, policyVal)
 
         /* Set the IMP and Domain fields */
         elem.Domain = (policyVal & (0xF << 5)) >>> 5;
-        elem.IMP = (policyVal & (0x1 << 9)) >>> 9;
+        elem.IMP    = (policyVal & (0x1 << 9)) >>> 9;
 
         /* Determine the Access policy */
-        if (policyVal & (0x3 << 10)) {
-            elem.Access = "read/write";
-        }
-        else {
-            /* This state is dependent on "S and R bits" in c1 register */
-            elem.Access = "Unknown";
+        var ap = ((policyVal >> 13) & 0x4) | ((policyVal >> 10) & 0x3);
+
+        switch (ap)
+        {
+            case 0:  elem.Access = "No access";
+                     break;
+            case 1:
+            case 2:
+            case 3:  elem.Access = "Read/Write";
+                     break;
+            case 4:  elem.Access = "Unknown";
+                     break;
+            case 5:
+            case 6:
+            case 7:  elem.Access = "Read-only";
+                     break;
+            default: elem.Access = "Unknown";
         }
 
         /* Set the physical address */
-        elem.AddrPhysical =
-            utils.toHex(convertToUInt32(
-                        Number(policyVal & 0xFFF00000)));
+        elem.AddrPhysical = utils.toHex(convertToUInt32(
+                            Number(policyVal & 0xFFF00000)));
     }
 }
 
 /*
- *  ======== viewPages ========
+ *  ======== viewPagesCommon ========
  */
-function viewPages(view)
+function viewPagesCommon(view, viewName, viewId)
 {
     var Program = xdc.useModule('xdc.rov.Program');
     var Mmu = xdc.useModule('ti.sysbios.family.arm.a8.Mmu');
@@ -417,7 +479,6 @@ function viewPages(view)
         rawView = Program.scanRawView('ti.sysbios.family.arm.a8.Mmu');
     }
     catch (e) {
-        // TODO - report problem.
         print("Caught exception while retrieving raw view: " + e);
     }
 
@@ -431,17 +492,37 @@ function viewPages(view)
                                               mmuTableSize);
     }
     catch (e) {
-        // TODO - Report problem
-        print("Caught exception while trying to retrieve dispatch table: " +
-              e);
+        print("Caught exception while trying to retrieve dispatch table: " + e);
+    }
+
+    var startAddr, endAddr;
+    if (viewId == 1) {
+        startAddr = 0;
+        endAddr = 0x800;
+    }
+    else if (viewId == 2) {
+        startAddr = 0x800;
+        endAddr = 0xA00;
+    }
+    else if (viewId == 3) {
+        startAddr = 0xA00;
+        endAddr = 0xC00;
+    }
+    else if (viewId == 4) {
+        startAddr = 0xC00;
+        endAddr = 0xE00;
+    }
+    else {
+        startAddr = 0xE00;
+        endAddr = 0x1000;
     }
 
     /* Walk through the level 1 descriptor table */
-    for (var i = 0; i < mmuTableSize; i++) {
+    for (var i = startAddr; i < endAddr; i++) {
         /* Only display mapped entries */
         if ((mmuDescTable[i] & 0x3) != 0) {
             var elem = Program.newViewStruct('ti.sysbios.family.arm.a8.Mmu',
-                'PageView');
+                viewName);
 
             /* Virtual address is the index shifted left by 20 */
             elem.AddrVirtual = utils.toHex(convertToUInt32(Number(i << 20)));
@@ -453,4 +534,44 @@ function viewPages(view)
             view.elements.$add(elem);
         }
     }
+}
+
+/*
+ *  ======== viewPages1 ========
+ */
+function viewPages1(view)
+{
+    viewPagesCommon(view, '0x0-0x7FFFFFFF', 1);
+}
+
+/*
+ *  ======== viewPages2 ========
+ */
+function viewPages2(view)
+{
+    viewPagesCommon(view, '0x80000000-0x9FFFFFFF', 2);
+}
+
+/*
+ *  ======== viewPages3 ========
+ */
+function viewPages3(view)
+{
+    viewPagesCommon(view, '0xA0000000-0xBFFFFFFF', 3);
+}
+
+/*
+ *  ======== viewPages4 ========
+ */
+function viewPages4(view)
+{
+    viewPagesCommon(view, '0xC0000000-0xDFFFFFFF', 4);
+}
+
+/*
+ *  ======== viewPages5 ========
+ */
+function viewPages5(view)
+{
+    viewPagesCommon(view, '0xE0000000-0xFFFFFFFF', 5);
 }

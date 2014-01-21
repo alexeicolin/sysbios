@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2012-2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -72,8 +72,11 @@ function module$use()
         xdc.loadPackage('ti.sysbios.family.c674.pscl');
     }
 
-    /* if enabled to idle the CPU: plug the idling function */
-    if (Power.idleCpu == true) {
+    /*
+     *  If enabled to idle the CPU: plug the idling function (Power.idleCpu
+     *  is deprecated and replaced with Power.idle, so check both).
+     */
+    if ((Power.idle == true) || (Power.idleCpu == true)) {
         Idle = xdc.useModule('ti.sysbios.knl.Idle');
 
         Idle.addFunc(Power.idleFunc);

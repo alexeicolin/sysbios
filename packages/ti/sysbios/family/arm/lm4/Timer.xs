@@ -83,8 +83,22 @@ function module$use()
      */
     halTimer = xdc.useModule("ti.sysbios.hal.Timer");
 
-    if (Program.cpu.deviceName.match(/CC3101/)) {
-        Timer.enableArcmGpTimerClock = true;
+    if (Timer.enableFunc == null) {
+        if (Program.cpu.deviceName.match(/CC3101/)) {
+            Timer.enableFunc = '&ti_sysbios_family_arm_lm4_Timer_enableCC3100';
+        }
+        else {
+            Timer.enableFunc = '&ti_sysbios_family_arm_lm4_Timer_enableTiva';
+        }
+    }
+
+    if (Timer.disableFunc == null) {
+        if (Program.cpu.deviceName.match(/CC3101/)) {
+            Timer.disableFunc = '&ti_sysbios_family_arm_lm4_Timer_disableCC3100';
+        }
+        else {
+            Timer.disableFunc = '&ti_sysbios_family_arm_lm4_Timer_disableTiva';
+        }
     }
 }
 

@@ -7,7 +7,7 @@
   </head>
   <body>
     <h2>C28x large model Timing Benchmarks</h2>
-    <h3>ti.platforms.ezdsp28335 (compiler version: 6.2.0B1)</h3>
+    <h3>ti.platforms.ezdsp28335 (compiler version: 6.2.0)</h3>
   </body>
   <body xmlns="">
     <table>
@@ -27,27 +27,27 @@
       </tr>
       <tr>
         <td>Hwi_restore()</td>
-        <td>23</td>
-      </tr>
-      <tr>
-        <td>Hwi_disable()</td>
         <td>19</td>
       </tr>
       <tr>
+        <td>Hwi_disable()</td>
+        <td>17</td>
+      </tr>
+      <tr>
         <td>Hwi dispatcher prolog</td>
-        <td>242</td>
+        <td>237</td>
       </tr>
       <tr>
         <td>Hwi dispatcher epilog</td>
-        <td>166</td>
+        <td>175</td>
       </tr>
       <tr>
         <td>Hwi dispatcher()</td>
-        <td>409</td>
+        <td>411</td>
       </tr>
       <tr>
         <td>Hardware Interrupt to Blocked Task</td>
-        <td>647</td>
+        <td>640</td>
       </tr>
       <tr>
         <td>Hardware Interrupt to Software Interrupt</td>
@@ -55,11 +55,11 @@
       </tr>
       <tr>
         <td>Swi_enable()</td>
-        <td>102</td>
+        <td>103</td>
       </tr>
       <tr>
         <td>Swi_disable()</td>
-        <td>18</td>
+        <td>16</td>
       </tr>
       <tr>
         <td>Post Software Interrupt Again</td>
@@ -67,19 +67,19 @@
       </tr>
       <tr>
         <td>Post Software Interrupt without Context Switch</td>
-        <td>136</td>
+        <td>137</td>
       </tr>
       <tr>
         <td>Post Software Interrupt with Context Switch</td>
-        <td>270</td>
+        <td>278</td>
       </tr>
       <tr>
         <td>Create a New Task without Context Switch</td>
-        <td>3177</td>
+        <td>3132</td>
       </tr>
       <tr>
         <td>Set a Task Priority without a Context Switch</td>
-        <td>220</td>
+        <td>223</td>
       </tr>
       <tr>
         <td>Task_yield</td>
@@ -87,7 +87,7 @@
       </tr>
       <tr>
         <td>Post Semaphore, No Waiting Task</td>
-        <td>61</td>
+        <td>59</td>
       </tr>
       <tr>
         <td>Post Semaphore No Task Switch</td>
@@ -95,7 +95,7 @@
       </tr>
       <tr>
         <td>Post Semaphore with Task Switch</td>
-        <td>301</td>
+        <td>298</td>
       </tr>
       <tr>
         <td>Pend on Semaphore, No Context Switch</td>
@@ -107,7 +107,7 @@
       </tr>
       <tr>
         <td>Clock_getTicks</td>
-        <td>15</td>
+        <td>13</td>
       </tr>
     </table>
     <div>

@@ -56,13 +56,11 @@
 
     /* determine IAR lib config header type: normal or full */
     var profile = Program.build.profile;
-    if (profile.match(/full/)) {
-        var DLIBCFG ="dl430xsff.h";
-    }
-    else {
-        var DLIBCFG ="dl430xsfn.h";
-    }
+    var POPTS = TARGET.profiles[profile].compileOpts.copts;
+    POPTS = POPTS.replace("\$(rootDir)",CGEN).replace(/-O[hml][sz ]/, "");
+    POPTS = POPTS.replace(/--debug/, "");
 
+    var CMDPREFIX = TARGET.cmdPrefix;
 %%}
 
 XOPTS = `'-I"' + XDCROOT + '"' + " -Dxdc_target_types__=" + File.getDOSPath(TARGET.$package.packageRepository) + TARGET.stdInclude + " -Dxdc_target_name__=" + TARGET.name`
@@ -78,15 +76,13 @@ BIOS_DEFS = `Build.getDefs()`
 
 BIOS_INC  = -I"`File.getDOSPath(this.$package.packageRepository)`"
 
-CCOPTS    = `BIOS.getCCOpts(TARGET.name).replace("\$(rootDir)",CGEN)`
+CCOPTS    = `BIOS.getCCOpts(TARGET.name).replace("\$(rootDir)",CGEN)` `POPTS`
 
-TARGET.cmdPrefix = TARGET.packageBase + "runh -h sanbud01 " 
+CC = `CMDPREFIX` `CGEN`/bin/`TARGET.cc.cmd` $(CCOPTS)
 
-CC = `TARGET.cmdPrefix` `CGEN`/bin/`TARGET.cc.cmd` $(CCOPTS) -r --dlib_config `CGEN`/lib/dlib/`DLIBCFG` -I`CGEN`/inc/dlib/c
+ASM = `CMDPREFIX` `CGEN`/bin/`TARGET.asm.cmd` `TARGET.asm.opts`
 
-ASM = `TARGET.cmdPrefix` `CGEN`/bin/`TARGET.asm.cmd` `TARGET.asm.opts`
-
-AR = `TARGET.cmdPrefix` `CGEN`/bin/`TARGET.ar.cmd` `TARGET.ar.opts`
+AR = `CMDPREFIX` `CGEN`/bin/`TARGET.ar.cmd` `TARGET.ar.opts`
 
 %if (environment["os.name"].match(/Windows.*/i)) {
 %if (BIOS.buildingAppLib == false) {
@@ -126,10 +122,10 @@ all: `LIB`
 	$(ASSEMBLE) -S -o `obj`
 %}
 
-BIOS.r43: `Build.getCFiles(TARGET.$name)` makefile
-	@-$(call RM, BIOS.r43)
+BIOS.o: `Build.getCFiles(TARGET.$name)` makefile
+	@-$(call RM, BIOS.o)
 	@echo cl`TARGET.suffix` $< ...
-	@$(CC) $(BIOS_DEFS) $(XOPTS) $(BIOS_INC) \
+	@$(CC) -o BIOS.o $(BIOS_DEFS) $(XOPTS) $(BIOS_INC) \
 %var sources = Build.getCFiles(TARGET.$name).split(' ');
 %for each (var s in sources) {
 %    if (s.substring(0,4) == "xdc/") {
@@ -141,7 +137,7 @@ BIOS.r43: `Build.getCFiles(TARGET.$name)` makefile
 %    }
 %}
 
-`LIB`: BIOS.r43 `OBJS.join(" ")`
+`LIB`: BIOS.o `OBJS.join(" ")`
 	@echo ar`TARGET.suffix` $^ ...
 	@-$(call RM, $@)
 	@$(AR) $@ $^
@@ -158,7 +154,7 @@ clean:
 %if (BIOS.buildingAppLib == false) {
 	@-$(call RM, "`Build.$private.libDir``LIB`")
 %}
-	@-$(call RM, BIOS.r43)
+	@-$(call RM, BIOS.o)
 %for (var i = 0; i < OBJS.length; i++) {
 	@-$(call RM, `OBJS[i]`)
 %}

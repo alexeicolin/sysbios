@@ -41,8 +41,8 @@
 #include <xdc/runtime/Error.h>
 
 #include <ti/sysbios/BIOS.h>
-#include <ti/sysbios/knl/Task.h>
 #include <ti/sysbios/hal/Hwi.h>
+#include <ti/sysbios/knl/Task.h>
 
 #include "package/internal/ReentSupport.xdc.h"
 
@@ -82,6 +82,7 @@ Void ReentSupport_taskDeleteHook(Task_Handle task)
                                              ReentSupport_module->taskHId);
 
     if (pStoredContext != NULL) {
+        _reclaim_reent(pStoredContext);
         Memory_free(Task_Object_heap(), pStoredContext, sizeof(struct _reent));
     }
 }

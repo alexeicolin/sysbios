@@ -36,6 +36,7 @@
 
 var Timer = null;
 var TimestampProvider = null;
+var BIOS = null;
 
 /*
  *  ======== module$meta$init ========
@@ -56,6 +57,7 @@ function module$meta$init()
  */
 function module$use()
 {
+    BIOS = xdc.useModule('ti.sysbios.BIOS');
     Timer = xdc.useModule('ti.sysbios.timers.timer64.Timer');
     Startup = xdc.useModule('xdc.runtime.Startup');
     var Clock = xdc.om['ti.sysbios.knl.Clock'];
@@ -112,8 +114,34 @@ function module$view$init(view, mod)
  */
 function getFreqMeta()
 {
-    Timer.$logWarning("ti.sysbios.timers.timer64.TimestampProvider." +
-            "getFreqMeta not implemented!");
+    var freq = {lo: 0, hi: 0};
+    var modObj = TimestampProvider.$object;
+    var timer = null;
 
-    return ({lo : 0, hi : 0});
+    if (TimestampProvider.useClockTimer == false) {
+        timer = modObj.timer;
+    }
+    else {
+        var Clock = xdc.module('ti.sysbios.knl.Clock');
+        timer = Clock.$object.timer.$object.pi.delegate$;
+    }
+
+    if (timer) {
+        if (Timer.freqDivisor) {
+            freq = BIOS.getCpuFreqMeta();
+            freq.lo /= Timer.freqDivisor;
+            freq.hi = 0;  // Don't support freqs > 4GHz
+        }
+        else {
+            if (timer.$object.extFreq.lo) {
+                freq.lo = timer.$object.extFreq.lo;
+            }
+            else {
+                freq = Timer.intFreqs[timer.$object.id >> 1];
+            }
+        }
+    }
+
+    //print("***** timer64.TimestampProvider.getFreqMeta() freq = " + freq.lo);
+    return (freq);
 }

@@ -97,7 +97,7 @@ Void Timer_setNextTick(Timer_Object *obj, UInt32 newPeriodCounts,
  *  Calls postInit for all statically-created & constructed
  *  timers to initialize them.
  */
-Int Timer_Module_startup(status)
+Int Timer_Module_startup(Int status)
 {
     Int i;
     Timer_Object *obj;
@@ -233,6 +233,7 @@ Int Timer_Instance_init(Timer_Object *obj, Int id, Timer_FuncPtr tickFxn, const 
 
     Timer_module->handles[obj->id] = obj;
 
+    Timer_enableFunc(obj->id);
     Timer_initDevice(obj);
 
     if (obj->periodType == Timer_PeriodType_MICROSECS) {
@@ -335,6 +336,7 @@ Void Timer_Instance_finalize(Timer_Object *obj, Int status)
         /* setPeriodMicroSecs failed */
         case 4:
             Timer_initDevice(obj);
+            Timer_disableFunc(obj->id);
             if (obj->hwi) {
                 Hwi_delete(&obj->hwi);
             }
@@ -369,38 +371,12 @@ Void Timer_Instance_finalize(Timer_Object *obj, Int status)
 Void Timer_initDevice(Timer_Object *obj)
 {
     UInt key;
-    UInt allow;
     ti_catalog_arm_peripherals_timers_TimerRegs *timer;
-    volatile UInt32 *wrallow = (volatile UInt32 *)Timer_WRALLOW;
 
     timer = (ti_catalog_arm_peripherals_timers_TimerRegs *)
         Timer_module->device[obj->id].baseAddr;
 
     key = Hwi_disable();
-
-    /* Need to allow writes to protected registers on concerto parts */
-    if (Timer_WRALLOW) {
-        allow = *wrallow;
-        *wrallow = 0xA5A5A5A5;
-    }
-
-    /* enable run mode clock */
-    *RCGC1 |= (UInt32)(1 << (obj->id+16));
-
-    *RCGC1;   /* ensure at least 5 clock cycle delay for clock enable */
-    *RCGC1;
-    *RCGC1;
-    *RCGC1;
-    *RCGC1;
-
-    /* do a sw reset on the timer */
-    *SRCR1 |= (UInt32)(1 << (obj->id+16));
-    *SRCR1 &= ~(UInt32)(1 << (obj->id+16));
-
-    /* Need to set protection back to what is was originally */
-    if (Timer_WRALLOW) {
-        *wrallow = allow;
-    }
 
     if (obj->hwi) {
         Hwi_disableInterrupt(obj->intNum);
@@ -715,8 +691,80 @@ Void Timer_enableTimers()
         obj = Timer_module->handles[i];
         /* enable and reset the timer */
         if (obj != NULL) {
+            Timer_enableFunc(obj->id);
             Timer_initDevice(obj);
         }
     }
 }
 
+/*
+ *  ======== Timer_disableStellaris ========
+ */
+Void Timer_disableStellaris(Int id)
+{
+    UInt key;
+    UInt allow;
+    volatile UInt32 *wrallow = (volatile UInt32 *)Timer_WRALLOW;
+
+    key = Hwi_disable();
+
+    /* Need to allow writes to protected registers on concerto parts */
+    if (Timer_WRALLOW) {
+        allow = *wrallow;
+        *wrallow = 0xA5A5A5A5;
+    }
+
+    /* enable run mode clock */
+    *RCGC1 &= ~(UInt32)(1 << (id + 16));
+
+    *RCGC1;   /* ensure at least 5 clock cycle delay for clock enable */
+    *RCGC1;
+    *RCGC1;
+    *RCGC1;
+    *RCGC1;
+
+    /* Need to set protection back to what is was originally */
+    if (Timer_WRALLOW) {
+        *wrallow = allow;
+    }
+
+    Hwi_restore(key);
+}
+
+/*
+ *  ======== Timer_enableStellaris ========
+ */
+Void Timer_enableStellaris(Int id)
+{
+    UInt key;
+    UInt allow;
+    volatile UInt32 *wrallow = (volatile UInt32 *)Timer_WRALLOW;
+
+    key = Hwi_disable();
+
+    /* Need to allow writes to protected registers on concerto parts */
+    if (Timer_WRALLOW) {
+        allow = *wrallow;
+        *wrallow = 0xA5A5A5A5;
+    }
+
+    /* enable run mode clock */
+    *RCGC1 |= (UInt32)(1 << (id + 16));
+
+    *RCGC1;   /* ensure at least 5 clock cycle delay for clock enable */
+    *RCGC1;
+    *RCGC1;
+    *RCGC1;
+    *RCGC1;
+
+    /* do a sw reset on the timer */
+    *SRCR1 |= (UInt32)(1 << (id + 16));
+    *SRCR1 &= ~(UInt32)(1 << (id + 16));
+
+    /* Need to set protection back to what is was originally */
+    if (Timer_WRALLOW) {
+        *wrallow = allow;
+    }
+
+    Hwi_restore(key);
+}

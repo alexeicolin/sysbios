@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -222,7 +222,7 @@ module Hwi inherits ti.sysbios.interfaces.IHwi
      */
     metaonly struct ModuleView {
         String      options[4];
-        SizeT       hwiStackPeak;
+        String      hwiStackPeak;
         SizeT       hwiStackSize;
         Ptr         hwiStackBase;
         UInt        priorities[256];

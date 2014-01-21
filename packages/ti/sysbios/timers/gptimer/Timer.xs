@@ -35,6 +35,7 @@
  */
 
 var Timer = null;
+var halTimer = null;
 var Hwi = null;
 var catalogName;
 
@@ -263,6 +264,30 @@ if (xdc.om.$name == "cfg" || typeof(genCdoc) != "undefined") {
             },
         },
         "ti.catalog.arm.cortexa9": {
+            "AM437X": {
+                timer: [
+                    {
+                        name: "Unavailable",
+                        baseAddr: 0x44E05000,  /* L4 address */
+                        intNum:  66 + 32,
+                        eventId: -1,
+                        intFreq: {
+                            lo: 24000000,
+                            hi: 0,
+                        },
+                    },
+                    {
+                        name: "DMTimer1",
+                        baseAddr: 0x44E31000,  /* L4 address */
+                        intNum:  67 + 32,
+                        eventId: -1,
+                        intFreq: {
+                            lo: 24000000,
+                            hi: 0,
+                        },
+                    },
+                ]
+            },
             "OMAP4430": {
                 timer: [
                     {
@@ -404,7 +429,7 @@ function module$use()
      *  BIOS_start(). hal/Timer_startup will call the proxy_Timer_startup.
      *  This is required for the Timer to startup.
      */
-    xdc.useModule("ti.sysbios.hal.Timer");
+    halTimer = xdc.useModule("ti.sysbios.hal.Timer");
 
     var Settings = xdc.module("ti.sysbios.family.Settings");
     var delegate = Settings.getDefaultTimerSupportDelegate();
@@ -417,7 +442,11 @@ function module$use()
 function module$static$init(mod, params)
 {
     var device = deviceTable[catalogName][Program.cpu.deviceName].timer;
-    mod.availMask = (1 << device.length) - 1;
+
+    if (mod.availMask == undefined) {
+        mod.availMask = (1 << device.length) - 1;
+    }
+
     mod.device.length = device.length;
 
     /*
@@ -447,6 +476,16 @@ function module$static$init(mod, params)
 
         mod.device[i].eventId = device[i].eventId;
         mod.handles[i] = null;
+    }
+
+    /*
+     * if this timer module is not the hal.Timer delegate,
+     * plug Timer.startup into BIOS.startupFxns array
+     */
+    if (halTimer.TimerProxy.delegate$.$name !=
+            "ti.sysbios.timers.gptimer.Timer") {
+        var BIOS = xdc.module ('ti.sysbios.BIOS');
+        BIOS.addUserStartupFunction(Timer.startup);
     }
 }
 

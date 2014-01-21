@@ -38,27 +38,15 @@
 
         .thumb
 
-    .if __TI_EABI_ASSEMBLER
-        .asg ti_sysbios_family_arm_m3_Hwi_nvic, _ti_sysbios_family_arm_m3_Hwi_nvic
-        .asg ti_sysbios_family_arm_m3_Hwi_doSwiRestore__I, _ti_sysbios_family_arm_m3_Hwi_doSwiRestore__I
-        .asg ti_sysbios_family_arm_m3_Hwi_doTaskRestore__I, _ti_sysbios_family_arm_m3_Hwi_doTaskRestore__I
-        .asg ti_sysbios_family_arm_m3_Hwi_dispatchC__I, _ti_sysbios_family_arm_m3_Hwi_dispatchC__I
-        .asg ti_sysbios_family_arm_m3_Hwi_dispatch__I, _ti_sysbios_family_arm_m3_Hwi_dispatch__I
-        .asg ti_sysbios_family_arm_m3_Hwi_pendSV__I, _ti_sysbios_family_arm_m3_Hwi_pendSV__I
-        .asg ti_sysbios_family_arm_m3_Hwi_excHandlerAsm__I, _ti_sysbios_family_arm_m3_Hwi_excHandlerAsm__I
-        .asg ti_sysbios_family_arm_m3_Hwi_excHandler__I, _ti_sysbios_family_arm_m3_Hwi_excHandler__I
-        .asg ti_sysbios_family_arm_m3_Hwi_return, _ti_sysbios_family_arm_m3_Hwi_return
-    .endif
-
-        .global _ti_sysbios_family_arm_m3_Hwi_nvic
-        .global _ti_sysbios_family_arm_m3_Hwi_doSwiRestore__I
-        .global _ti_sysbios_family_arm_m3_Hwi_doTaskRestore__I
-        .global _ti_sysbios_family_arm_m3_Hwi_dispatchC__I
-        .global _ti_sysbios_family_arm_m3_Hwi_dispatch__I
-        .global _ti_sysbios_family_arm_m3_Hwi_pendSV__I
-        .global _ti_sysbios_family_arm_m3_Hwi_excHandlerAsm__I
-        .global _ti_sysbios_family_arm_m3_Hwi_excHandler__I
-        .global _ti_sysbios_family_arm_m3_Hwi_return
+        .global ti_sysbios_family_arm_m3_Hwi_nvic
+        .global ti_sysbios_family_arm_m3_Hwi_doSwiRestore__I
+        .global ti_sysbios_family_arm_m3_Hwi_doTaskRestore__I
+        .global ti_sysbios_family_arm_m3_Hwi_dispatchC__I
+        .global ti_sysbios_family_arm_m3_Hwi_dispatch__I
+        .global ti_sysbios_family_arm_m3_Hwi_pendSV__I
+        .global ti_sysbios_family_arm_m3_Hwi_excHandlerAsm__I
+        .global ti_sysbios_family_arm_m3_Hwi_excHandler__I
+        .global ti_sysbios_family_arm_m3_Hwi_return
 
         .global ti_sysbios_family_arm_ducati_Core_unlock__E
 
@@ -68,7 +56,7 @@ ti_sysbios_family_arm_m3_Hwi_Module__state__V .tag ti_sysbios_family_arm_m3_Hwi_
 ; Set the NVIC struct address
 ;
 
-_ti_sysbios_family_arm_m3_Hwi_nvic .set    0xe000e000
+ti_sysbios_family_arm_m3_Hwi_nvic .set    0xe000e000
 
 ;
 ; Here on all dispatched interrupts
@@ -76,9 +64,9 @@ _ti_sysbios_family_arm_m3_Hwi_nvic .set    0xe000e000
 
         .sect ".text:ti_sysbios_family_arm_m3_Hwi_dispatch__I"
         .clink
-        .thumbfunc _ti_sysbios_family_arm_m3_Hwi_dispatch__I
+        .thumbfunc ti_sysbios_family_arm_m3_Hwi_dispatch__I
 
-_ti_sysbios_family_arm_m3_Hwi_dispatch__I:
+ti_sysbios_family_arm_m3_Hwi_dispatch__I:
         .asmfunc
 
 ;
@@ -241,8 +229,8 @@ $1
         msr     basepri, r0     ; causes pendSV to happen
 
         .clink
-        .thumbfunc _ti_sysbios_family_arm_m3_Hwi_pendSV__I
-_ti_sysbios_family_arm_m3_Hwi_pendSV__I:
+        .thumbfunc ti_sysbios_family_arm_m3_Hwi_pendSV__I
+ti_sysbios_family_arm_m3_Hwi_pendSV__I:
         tst     lr, #4          ; context on PSP?
         ite     NE
         mrsne   r1, psp         ; if yes, then use PSP
@@ -257,7 +245,7 @@ _ti_sysbios_family_arm_m3_Hwi_pendSV__I:
         msrne   psp, r1         ; update appropriate SP
         moveq   sp, r1
 
-_ti_sysbios_family_arm_m3_Hwi_return:
+ti_sysbios_family_arm_m3_Hwi_return:
     .if ti_sysbios_BIOS_smpEnabled__D
 
         push    {lr}
@@ -276,16 +264,16 @@ _ti_sysbios_family_arm_m3_Hwi_return:
         .endasmfunc
 
 nvic_icsr:              .word           0xe000ed04
-dispatchAddr:           .word           _ti_sysbios_family_arm_m3_Hwi_dispatchC__I
-doSwiRestoreAddr:       .word           _ti_sysbios_family_arm_m3_Hwi_doSwiRestore__I
-doTaskRestoreAddr:      .word           _ti_sysbios_family_arm_m3_Hwi_doTaskRestore__I
+dispatchAddr:           .word           ti_sysbios_family_arm_m3_Hwi_dispatchC__I
+doSwiRestoreAddr:       .word           ti_sysbios_family_arm_m3_Hwi_doSwiRestore__I
+doTaskRestoreAddr:      .word           ti_sysbios_family_arm_m3_Hwi_doTaskRestore__I
 swiTaskKeyAddr:         .word           ti_sysbios_family_arm_m3_Hwi_Module__state__V.swiTaskKeys
 $1Addr:                 .word           $1
 
         .clink
-        .thumbfunc _ti_sysbios_family_arm_m3_Hwi_excHandlerAsm__I
+        .thumbfunc ti_sysbios_family_arm_m3_Hwi_excHandlerAsm__I
 
-_ti_sysbios_family_arm_m3_Hwi_excHandlerAsm__I:
+ti_sysbios_family_arm_m3_Hwi_excHandlerAsm__I:
         .asmfunc
         tst     lr, #4          ; context on PSP?
         ite     NE
@@ -300,7 +288,7 @@ _ti_sysbios_family_arm_m3_Hwi_excHandlerAsm__I:
         ldr     pc, excHandlerAddr
 
 excHandlerAddr:
-        .word          _ti_sysbios_family_arm_m3_Hwi_excHandler__I
+        .word          ti_sysbios_family_arm_m3_Hwi_excHandler__I
         .endasmfunc
 
         .end

@@ -52,7 +52,7 @@ package ti.sysbios.smp;
  */
 @CustomHeader
 module SysStd inherits xdc.runtime.ISystemSupport {
-    /*
+    /*!
      *  ======== abort ========
      *  Backend for `{@link xdc.runtime.System#abort()}`
      *
@@ -61,7 +61,7 @@ module SysStd inherits xdc.runtime.ISystemSupport {
      *
      *  @see xdc.runtime.ISystemSupport#abort
      */
-    /*override Void abort(String str);*/
+    override Void abort(CString str);
 
     /*!
      *  ======== exit ========

@@ -1,0 +1,597 @@
+%var BIOS = xdc.module('ti.sysbios.BIOS');
+%var Program = xdc.module('xdc.cfg.Program');
+-u LL$$DIV
+-u LL$$MOD
+-u ULL$$DIV
+-u ULL$$MOD
+-u  _ti_sysbios_family_c28_Hwi_Object__create__S
+-u  _ti_sysbios_knl_Semaphore_Object__create__S
+-u  _ti_sysbios_knl_Queue_Object__create__S
+-u  _ti_sysbios_family_c28_Hwi_Object__get__S
+-u  _ti_sysbios_knl_Queue_Object__get__S
+-u  _ti_sysbios_heaps_HeapMem_Object__get__S
+-u  _ti_sysbios_knl_Mailbox_Object__get__S
+-u  _ti_sysbios_knl_Swi_Object__get__S
+-u  _ti_sysbios_knl_Task_Object__get__S
+%if (BIOS.clockEnabled == true) {
+-u  _ti_sysbios_knl_Clock_doTick__I
+%}
+-u  _ti_sysbios_knl_Task_Object__next__S
+-u  _xdc_runtime_Error_raiseX__E
+-u  _ti_sysbios_family_c28_Hwi_Object__delete__S
+-u  _ti_sysbios_family_c28_Hwi_Params__init__S
+-u  _ti_sysbios_family_c28_Hwi_disableIER__E
+-u  _ti_sysbios_knl_Semaphore_Params__init__S
+-u  _ti_sysbios_knl_Swi_Params__init__S
+-u  _ti_sysbios_knl_Task_Object__delete__S
+-u  _ti_sysbios_hal_Hwi_HwiProxy_Object__create__S
+-u  _ti_sysbios_hal_Timer_TimerProxy_Object__create__S
+-u  _ti_sysbios_knl_Task_Object__first__S
+-u  _ti_sysbios_family_c28_Hwi_enableIER__E
+-u  _ti_sysbios_knl_Semaphore_Object__destruct__S
+-u  _ti_sysbios_knl_Queue_Object__destruct__S
+-u  _ti_sysbios_family_c28_Hwi_restoreIER__E
+-u  _ti_sysbios_knl_Task_SupportProxy_start__E
+-u  _xdc_runtime_Memory_alloc__E
+-u  _xdc_runtime_Memory_calloc__E
+-u  _ti_sysbios_hal_Hwi_HwiProxy_setFunc__E
+-u  _ti_sysbios_hal_Timer_TimerProxy_setFunc__E
+-u  _ti_sysbios_hal_Timer_TimerProxy_setNextTick__E
+-u  _xdc_runtime_Memory_free__E
+-u  _ti_sysbios_hal_Hwi_HwiProxy_setHookContext__E
+-u  _ti_sysbios_BIOS_RtsGateProxy_leave__E
+-u  _ti_sysbios_hal_Hwi_HwiProxy_getFunc__E
+-u  _ti_sysbios_hal_Timer_TimerProxy_getFreq__E
+-u  _ti_sysbios_hal_Timer_TimerProxy_getFunc__E
+-u  _ti_sysbios_hal_Timer_TimerProxy_getMaxTicks__E
+-u  _ti_sysbios_hal_Timer_TimerProxy_setPeriodMicroSecs__E
+-u  _ti_sysbios_hal_Timer_TimerProxy_setPeriod__E
+-u  _ti_sysbios_hal_Timer_TimerProxy_trigger__E
+-u  _ti_sysbios_heaps_HeapMem_Module_GateProxy_leave__E
+-u  _ti_sysbios_knl_Task_SupportProxy_checkStack__E
+-u  _ti_sysbios_knl_Task_SupportProxy_stackUsed__E
+-u  _ti_sysbios_knl_Task_SupportProxy_swap__E
+-u  _ti_sysbios_hal_Hwi_HwiProxy_getHookContext__E
+-u  _ti_sysbios_hal_Hwi_HwiProxy_getStackInfo__E
+-u  _ti_sysbios_BIOS_RtsGateProxy_enter__E
+-u  _ti_sysbios_family_c28_Hwi_disable__E
+-u  _ti_sysbios_family_c28_Hwi_enable__E
+-u  _ti_sysbios_hal_Hwi_HwiProxy_Object__delete__S
+-u  _ti_sysbios_hal_Hwi_HwiProxy_getIrp__E
+-u  _ti_sysbios_hal_Hwi_HwiProxy_restoreInterrupt__E
+-u  _ti_sysbios_hal_Timer_TimerProxy_Object__delete__S
+-u  _ti_sysbios_hal_Timer_TimerProxy_getCount__E
+-u  _ti_sysbios_hal_Timer_TimerProxy_getExpiredCounts__E
+-u  _ti_sysbios_hal_Timer_TimerProxy_getPeriod__E
+-u  _ti_sysbios_hal_Timer_TimerProxy_start__E
+-u  _ti_sysbios_hal_Timer_TimerProxy_stop__E
+-u  _ti_sysbios_heaps_HeapMem_Module_GateProxy_enter__E
+-u  _xdc_runtime_Error_check__E
+-u  _ti_sysbios_hal_Hwi_HwiProxy_clearInterrupt__E
+-u  _ti_sysbios_hal_Hwi_HwiProxy_disableInterrupt__E
+-u  _ti_sysbios_hal_Hwi_HwiProxy_enableInterrupt__E
+-u  _ti_sysbios_hal_Hwi_HwiProxy_post__E
+-u  _ti_sysbios_hal_Hwi_HwiProxy_restore__E
+-u  _ti_sysbios_hal_Timer_TimerProxy_getStatus__E
+-u  _ti_sysbios_heaps_HeapMem_Module_GateProxy_query__E
+-u  _ti_sysbios_knl_Intrinsics_SupportProxy_maxbit__E
+-u  _xdc_runtime_System_exit__E
+-u  _ti_sysbios_hal_Hwi_HwiProxy_Module__startupDone__S
+-u  _ti_sysbios_hal_Hwi_HwiProxy_disable__E
+-u  _ti_sysbios_hal_Hwi_HwiProxy_enable__E
+-u  _ti_sysbios_hal_Hwi_HwiProxy_getTaskSP__E
+-u  _ti_sysbios_hal_Hwi_HwiProxy_startup__E
+-u  _ti_sysbios_hal_Hwi_HwiProxy_switchFromBootStack__E
+-u  _ti_sysbios_hal_Timer_Module__startupDone__S
+-u  _ti_sysbios_hal_Timer_TimerProxy_Module__startupDone__S
+-u  _ti_sysbios_hal_Timer_TimerProxy_getNumTimers__E
+-u  _ti_sysbios_hal_Timer_TimerProxy_startup__E
+-u  _ti_sysbios_knl_Task_SupportProxy_Module__startupDone__S
+-u  _ti_sysbios_knl_Task_SupportProxy_getStackAlignment__E
+-u  _xdc_runtime_Memory_getMaxDefaultTypeAlign__E
+-u  _ti_sysbios_family_c28_Hwi_vectors
+-u  _ti_sysbios_knl_Idle_coreList__C
+-u  _ti_sysbios_knl_Idle_funcList__C
+-u  _ti_sysbios_knl_Task_hooks__C
+-u  _ti_sysbios_family_c28_Timer_intNumDef__C
+-u  _ti_sysbios_BIOS_installedErrorHook__C
+-u  _ti_sysbios_family_c28_Hwi_E_alreadyDefined__C
+-u  _ti_sysbios_family_c28_Hwi_E_unpluggedInterrupt__C
+-u  _ti_sysbios_family_c28_TaskSupport_E_invalidStack__C
+-u  _ti_sysbios_family_c28_TaskSupport_defaultStackSize__C
+-u  _ti_sysbios_family_c28_Timer_E_cannotSupport__C
+-u  _ti_sysbios_family_c28_Timer_E_notAvailable__C
+-u  _ti_sysbios_gates_GateMutex_Instance_State_sem__O
+-u  _ti_sysbios_hal_Hwi_E_stackOverflow__C
+-u  _ti_sysbios_heaps_HeapMem_E_memory__C
+-u  _ti_sysbios_heaps_HeapMem_Module__gateObj__C
+-u  _ti_sysbios_heaps_HeapMem_reqAlign__C
+-u  _ti_sysbios_knl_Clock_Module_State_clockQ__O
+-u  _ti_sysbios_knl_Clock_tickPeriod__C
+-u  _ti_sysbios_knl_Event_Instance_State_pendQ__O
+-u  _ti_sysbios_knl_Mailbox_Instance_State_dataQue__O
+-u  _ti_sysbios_knl_Mailbox_Instance_State_dataSem__O
+-u  _ti_sysbios_knl_Mailbox_Instance_State_freeQue__O
+-u  _ti_sysbios_knl_Mailbox_Instance_State_freeSem__O
+-u  _ti_sysbios_knl_Semaphore_Instance_State_pendQ__O
+-u  _ti_sysbios_knl_Task_E_deleteNotAllowed__C
+-u  _ti_sysbios_knl_Task_E_spOutOfBounds__C
+-u  _ti_sysbios_knl_Task_E_stackOverflow__C
+-u  _ti_sysbios_knl_Task_Module_State_inactiveQ__O
+-u  _ti_sysbios_knl_Task_Module_State_terminatedQ__O
+-u  _ti_sysbios_knl_Task_Object__heap__C
+-u  _ti_sysbios_knl_Task_allBlockedFunc__C
+-u  _ti_sysbios_knl_Task_defaultStackHeap__C
+-u  _ti_sysbios_knl_Task_defaultStackSize__C
+-u  _xdc_runtime_Assert_E_assertFailed__C
+-u  _ti_sysbios_family_c28_Hwi_Module__id__C
+-u  _ti_sysbios_family_c28_Hwi_Object__count__C
+-u  _ti_sysbios_family_c28_Hwi_zeroLatencyIERMask__C
+-u  _ti_sysbios_family_c28_TaskSupport_Module__id__C
+-u  _ti_sysbios_family_c28_TaskSupport_stackAlignment__C
+-u  _ti_sysbios_family_c28_Timer_Module__id__C
+-u  _ti_sysbios_family_c28_Timer_anyMask__C
+-u  _ti_sysbios_family_c28_Timer_startupNeeded__C
+-u  _ti_sysbios_hal_Hwi_Module__id__C
+-u  _ti_sysbios_heaps_HeapMem_Module__id__C
+-u  _ti_sysbios_heaps_HeapMem_Object__count__C
+-u  _ti_sysbios_knl_Clock_tickMode__C
+-u  _ti_sysbios_knl_Clock_tickSource__C
+-u  _ti_sysbios_knl_Mailbox_Object__count__C
+-u  _ti_sysbios_knl_Swi_Object__count__C
+-u  _ti_sysbios_knl_Task_Module__id__C
+-u  _ti_sysbios_knl_Task_Object__count__C
+-u  _ti_sysbios_knl_Task_deleteTerminatedTasks__C
+-u  _ti_sysbios_knl_Task_initStackFlag__C
+-u  _ti_sysbios_knl_Task_numConstructedTasks__C
+-u  _ti_sysbios_knl_Task_Module__state__V
+-u  _ti_sysbios_knl_Clock_Module__state__V
+-u  _ti_sysbios_knl_Swi_Module__state__V
+-u  _ti_sysbios_BIOS_Module__state__V
+-u  _ti_sysbios_family_c28_Hwi_Module__state__V
+-u  _ti_sysbios_family_c28_Timer_Module__state__V
+_ti_sysbios_family_c28_Timer_Instance_init__F = 0x003f8002;
+_ti_sysbios_knl_Task_Instance_init__F = 0x003f80f6;
+_ti_sysbios_knl_Mailbox_Instance_init__F = 0x003f81c7;
+_ti_sysbios_knl_Task_Instance_finalize__F = 0x003f828c;
+_ti_sysbios_knl_Clock_workFuncDynamic__E = 0x003f8342;
+_ti_sysbios_heaps_HeapMem_alloc__E = 0x003f83e1;
+_ti_sysbios_knl_Semaphore_pend__E = 0x003f8479;
+_ti_sysbios_family_c28_Timer_reconfig__E = 0x003f8503;
+_ti_sysbios_family_c28_Hwi_clearInterrupt__E = 0x003f858b;
+_ti_sysbios_knl_Event_pend__E = 0x003f860a;
+_ti_sysbios_family_c28_Timer_stopAndClear__I = 0x003f8686;
+_ti_sysbios_knl_Task_postInit__I = 0x003f86fe;
+_ti_sysbios_knl_Task_checkStacks__E = 0x003f8770;
+_ti_sysbios_knl_Task_setPri__E = 0x003f87dd;
+_ti_sysbios_knl_Swi_schedule__I = 0x003f8845;
+_ti_sysbios_family_c28_Hwi_dispatchC__I = 0x003f88aa;
+_ti_sysbios_family_c28_Hwi_Instance_init__F = 0x003f890b;
+_ti_sysbios_knl_Task_exit__E = 0x003f8967;
+_ti_sysbios_knl_Mailbox_Instance_finalize__F = 0x003f89be;
+_ti_sysbios_heaps_HeapMem_free__E = 0x003f8a14;
+_ti_sysbios_family_c28_Timer_setPeriodMicroSecs__E = 0x003f8a69;
+_ti_sysbios_knl_Task_schedule__I = 0x003f8abb;
+_ti_sysbios_knl_Task_startCore__E = 0x003f8b0c;
+_ti_sysbios_knl_Swi_setAttrs__E = 0x003f8b5d;
+_ti_sysbios_family_c28_Hwi_post__E = 0x003f8bad;
+_ti_sysbios_knl_Mailbox_post__E = 0x003f8bfc;
+_ti_sysbios_knl_Task_Module_startup__F = 0x003f8c4b;
+_ti_sysbios_knl_Clock_workFunc__E = 0x003f8c98;
+_ti_sysbios_family_c28_Hwi_Module_startup__F = 0x003f8ce4;
+_ti_sysbios_family_c28_Timer_postInit__I = 0x003f8d2c;
+_ti_sysbios_knl_Swi_run__I = 0x003f8d74;
+_ti_sysbios_knl_Event_post__E = 0x003f8db9;
+_ti_sysbios_knl_Swi_Instance_init__F = 0x003f8dfd;
+_ti_sysbios_family_c28_Hwi_reconfig__E = 0x003f8e40;
+_ti_sysbios_family_c28_Hwi_unPluggedInterrupt__I = 0x003f8e82;
+_ti_sysbios_knl_Clock_startI__E = 0x003f8ec3;
+_ti_sysbios_family_c28_TaskSupport_start__E = 0x003f8f04;
+_ti_sysbios_knl_Mailbox_pend__E = 0x003f8f43;
+_ti_sysbios_knl_Semaphore_post__E = 0x003f8f81;
+_ti_sysbios_knl_Swi_restoreHwi__E = 0x003f8fbb;
+_ti_sysbios_knl_Mailbox_Module_startup__F = 0x003f8ff3;
+_ti_sysbios_knl_Task_sleep__E = 0x003f902a;
+_ti_sysbios_knl_Task_unblockI__E = 0x003f9060;
+_ti_sysbios_heaps_HeapMem_Instance_init__F = 0x003f9096;
+_ti_sysbios_family_c28_Timer_start__E = 0x003f90cb;
+_ti_sysbios_heaps_HeapMem_init__I = 0x003f90fd;
+_ti_sysbios_family_c28_Hwi_disablePIEIER__E = 0x003f912c;
+_ti_sysbios_heaps_HeapMem_getStats__E = 0x003f915a;
+_ti_sysbios_family_c28_Hwi_enablePIEIER__E = 0x003f9187;
+_ti_sysbios_knl_Clock_getTicks__E = 0x003f91b2;
+_ti_sysbios_family_c28_Hwi_getStackInfo__E = 0x003f91dd;
+_ti_sysbios_family_c28_Hwi_restorePIEIER__E = 0x003f9207;
+_ti_sysbios_family_c28_Timer_getExpiredCounts64__E = 0x003f9231;
+_ti_sysbios_knl_Clock_tickReconfig__E = 0x003f925b;
+_ti_sysbios_knl_Task_deleteTerminatedTasksFunc__I = 0x003f9285;
+_ti_sysbios_family_c28_Hwi_enableInterrupt__E = 0x003f92ac;
+_ti_sysbios_family_c28_Timer_getExpiredCounts__E = 0x003f92d2;
+_ti_sysbios_family_c28_Timer_setPrescale__F = 0x003f92f8;
+_ti_sysbios_hal_Hwi_Instance_init__F = 0x003f931e;
+_ti_sysbios_hal_Timer_Instance_init__F = 0x003f9344;
+_ti_sysbios_knl_Task_stat__E = 0x003f936a;
+_ti_sysbios_knl_Idle_run__E = 0x003f938f;
+_ti_sysbios_knl_Swi_post__E = 0x003f93b3;
+_ti_sysbios_knl_Clock_Instance_init__F = 0x003f93d7;
+_ti_sysbios_knl_Event_pendTimeout__I = 0x003f93fa;
+_ti_sysbios_knl_Semaphore_pendTimeout__I = 0x003f941c;
+_ti_sysbios_knl_Task_blockI__E = 0x003f943e;
+_ti_sysbios_knl_Task_allBlockedFunction__I = 0x003f9460;
+_ti_sysbios_BIOS_errorRaiseHook__I = 0x003f9481;
+_ti_sysbios_knl_Task_yield__E = 0x003f94a1;
+_ti_sysbios_knl_Semaphore_Instance_init__F = 0x003f94c1;
+_ti_sysbios_knl_Swi_getAttrs__E = 0x003f94e0;
+_ti_sysbios_family_c28_Hwi_getInterruptFlag__E = 0x003f94fe;
+_ti_sysbios_family_c28_Timer_trigger__E = 0x003f951b;
+_ti_sysbios_knl_Clock_addI__E = 0x003f9538;
+_ti_sysbios_family_c28_Timer_Instance_finalize__F = 0x003f9555;
+_ti_sysbios_family_c28_Hwi_disableInterrupt__E = 0x003f9571;
+_ti_sysbios_knl_Swi_raisePri__E = 0x003f958c;
+_ti_sysbios_hal_Hwi_checkStack = 0x003f95a7;
+_ti_sysbios_family_c28_Timer_oneShotStub__I = 0x003f95c2;
+_ti_sysbios_gates_GateMutex_Instance_init__F = 0x003f95dc;
+_ti_sysbios_gates_GateMutex_enter__E = 0x003f95f6;
+_ti_sysbios_hal_Hwi_initStack = 0x003f9610;
+_ti_sysbios_BIOS_exit__E = 0x003f962a;
+_ti_sysbios_family_c28_Timer_setFunc__E = 0x003f9643;
+_ti_sysbios_knl_Mailbox_postInit__I = 0x003f965c;
+_ti_sysbios_knl_Swi_restore__E = 0x003f9675;
+_ti_sysbios_family_c28_Timer_getPrescaleCount__F = 0x003f968e;
+_ti_sysbios_family_c28_Timer_getPrescale__F = 0x003f96a6;
+_ti_sysbios_knl_Task_processVitalTaskFlag__I = 0x003f96be;
+_ti_sysbios_knl_Task_sleepTimeout__I = 0x003f96d6;
+_ti_sysbios_knl_Clock_Module_startup__F = 0x003f96ee;
+_ti_sysbios_knl_Swi_Module_startup__F = 0x003f9705;
+_ti_sysbios_family_c28_Timer_Module_startup__F = 0x003f971c;
+_ti_sysbios_family_c28_Timer_startup__E = 0x003f9732;
+_ti_sysbios_knl_Clock_setupTimerToSkipTicks__E = 0x003f9748;
+_ti_sysbios_knl_Task_restore__E = 0x003f975e;
+_ti_sysbios_family_c28_Hwi_Instance_finalize__F = 0x003f9774;
+_ti_sysbios_knl_Swi_andn__E = 0x003f9789;
+_ti_sysbios_knl_Swi_dec__E = 0x003f979e;
+_ti_sysbios_family_c28_Timer_setPeriod__E = 0x003f97b2;
+_ti_sysbios_knl_Event_Instance_init__F = 0x003f97c5;
+_ti_sysbios_knl_Task_getMode__E = 0x003f97d8;
+_ti_sysbios_family_c28_Timer_checkOverflow__I = 0x003f97eb;
+_ti_sysbios_family_c28_Timer_stop__E = 0x003f97fd;
+_ti_sysbios_knl_Swi_restorePri__E = 0x003f980f;
+_ti_sysbios_BIOS_rtsLock__I = 0x003f9821;
+_ti_sysbios_knl_Task_restoreHwi__E = 0x003f9831;
+_ti_sysbios_BIOS_removeRTSLock__I = 0x003f9841;
+_ti_sysbios_knl_Clock_getTimeout__E = 0x003f9850;
+_ti_sysbios_knl_Event_checkEvents__I = 0x003f985f;
+_ti_sysbios_knl_Task_getFunc__E = 0x003f986e;
+_ti_sysbios_family_c28_f2837x_TimestampProvider_get64__E = 0x003f987d;
+_ti_sysbios_BIOS_registerRTSLock__I = 0x003f988b;
+_ti_sysbios_BIOS_rtsUnlock__I = 0x003f9898;
+_ti_sysbios_knl_Swi_getFunc__E = 0x003f98a5;
+_ti_sysbios_knl_Task_enter__I = 0x003f98b2;
+_ti_sysbios_gates_GateMutex_leave__E = 0x003f98bf;
+_ti_sysbios_knl_Clock_Instance_finalize__F = 0x003f98cb;
+_ti_sysbios_knl_Clock_setFunc__E = 0x003f98d7;
+_ti_sysbios_knl_Queue_get__E = 0x003f98e3;
+_ti_sysbios_knl_Queue_put__E = 0x003f98ef;
+_ti_sysbios_family_c28_Hwi_plug__E = 0x003f98fb;
+_ti_sysbios_knl_Clock_tickStart__E = 0x003f9906;
+_ti_sysbios_knl_Clock_tickStop__E = 0x003f9911;
+_ti_sysbios_knl_Queue_isQueued__E = 0x003f991c;
+_ti_sysbios_knl_Swi_inc__E = 0x003f9927;
+_ti_sysbios_knl_Swi_or__E = 0x003f9932;
+_ti_sysbios_knl_Task_enabled__E = 0x003f993d;
+_ti_sysbios_knl_Task_unblock__E = 0x003f9948;
+_ti_sysbios_family_c28_Hwi_getIERBit__I = 0x003f9953;
+_ti_sysbios_family_c28_TaskSupport_checkStack__E = 0x003f995d;
+_ti_sysbios_family_c28_Timer_getCount__E = 0x003f9967;
+_ti_sysbios_knl_Clock_start__E = 0x003f9971;
+_ti_sysbios_family_c28_Hwi_ack__I = 0x003f997b;
+_ti_sysbios_family_c28_Hwi_getHandle__E = 0x003f9984;
+_ti_sysbios_family_c28_Hwi_getHookContext__E = 0x003f998d;
+_ti_sysbios_family_c28_Hwi_setHookContext__E = 0x003f9996;
+_ti_sysbios_family_c28_TaskSupport_stackUsed__E = 0x003f999f;
+_ti_sysbios_family_c28_Timer_getPeriod__E = 0x003f99a8;
+_ti_sysbios_hal_Hwi_Module_startup__F = 0x003f99b1;
+_ti_sysbios_hal_Timer_Module_startup__F = 0x003f99ba;
+_ti_sysbios_knl_Swi_getHookContext__E = 0x003f99c3;
+_ti_sysbios_knl_Swi_setHookContext__E = 0x003f99cc;
+_ti_sysbios_knl_Task_getHookContext__E = 0x003f99d5;
+_ti_sysbios_knl_Task_setHookContext__E = 0x003f99de;
+_ti_sysbios_BIOS_setThreadType__E = 0x003f99e7;
+_ti_sysbios_family_c28_Hwi_getFunc__E = 0x003f99ef;
+_ti_sysbios_family_c28_Hwi_restoreInterrupt__E = 0x003f99f7;
+_ti_sysbios_gates_GateMutex_Instance_finalize__F = 0x003f99ff;
+_ti_sysbios_hal_Timer_setNextTick__E = 0x003f9a07;
+_ti_sysbios_heaps_HeapMem_restore__E = 0x003f9a0f;
+_ti_sysbios_knl_Queue_empty__E = 0x003f9a17;
+_ti_sysbios_knl_Semaphore_Instance_finalize__F = 0x003f9a1f;
+_ti_sysbios_knl_Task_block__E = 0x003f9a27;
+_ti_sysbios_BIOS_getCpuFreq__E = 0x003f9a2f;
+_ti_sysbios_family_c28_f2837x_TimestampProvider_getFreq__E = 0x003f9a2f;
+_ti_sysbios_BIOS_setCpuFreq__E = 0x003f9a36;
+_ti_sysbios_family_c28_Hwi_setFunc__E = 0x003f9a3d;
+_ti_sysbios_family_c28_Timer_getFreq__E = 0x003f9a44;
+_ti_sysbios_family_c28_Timer_getStatus__E = 0x003f9a4b;
+_ti_sysbios_heaps_HeapNull_getStats__F = 0x003f9a52;
+_ti_sysbios_knl_Clock_removeI__E = 0x003f9a59;
+_ti_sysbios_knl_Event_sync__E = 0x003f9a60;
+_ti_sysbios_knl_Mailbox_getNumPendingMsgs__E = 0x003f9a67;
+_ti_sysbios_knl_Queue_remove__E = 0x003f9a6e;
+_ti_sysbios_knl_Semaphore_reset__E = 0x003f9a75;
+_ti_sysbios_knl_Swi_enabled__E = 0x003f9a7c;
+_ti_sysbios_family_c28_Timer_getFunc__E = 0x003f9a83;
+_ti_sysbios_hal_Hwi_Instance_finalize__F = 0x003f9a89;
+_ti_sysbios_hal_Timer_Instance_finalize__F = 0x003f9a8f;
+_ti_sysbios_heaps_HeapMem_enter__E = 0x003f9a95;
+_ti_sysbios_heaps_HeapMem_getExtendedStats__E = 0x003f9a9b;
+_ti_sysbios_heaps_HeapMem_leave__E = 0x003f9aa1;
+_ti_sysbios_knl_Queue_dequeue__E = 0x003f9aa7;
+_ti_sysbios_knl_Queue_enqueue__E = 0x003f9aad;
+_ti_sysbios_knl_Queue_insert__E = 0x003f9ab3;
+_ti_sysbios_knl_Swi_disable__E = 0x003f9ab9;
+_ti_sysbios_knl_Task_disable__E = 0x003f9abf;
+_ti_sysbios_BIOS_start__E = 0x003f9ac5;
+_ti_sysbios_family_c28_Hwi_switchFromBootStack__E = 0x003f9aca;
+_ti_sysbios_gates_GateHwi_enter__E = 0x003f9acf;
+_ti_sysbios_knl_Task_getIdleTask__E = 0x003f9ad4;
+_ti_sysbios_BIOS_getThreadType__E = 0x003f9ad9;
+_ti_sysbios_family_c28_Hwi_getTaskSP__E = 0x003f9add;
+_ti_sysbios_family_c28_TaskSupport_getDefaultStackSize__E = 0x003f9ae1;
+_ti_sysbios_family_c28_TaskSupport_getStackAlignment__E = 0x003f9ae5;
+_ti_sysbios_family_c28_f2837x_TimestampProvider_get32__E = 0x003f9ae9;
+_ti_sysbios_hal_Hwi_getFunc__E = 0x003f9aed;
+_ti_sysbios_hal_Hwi_getIrp__E = 0x003f9af1;
+_ti_sysbios_hal_Hwi_setFunc__E = 0x003f9af5;
+_ti_sysbios_hal_Timer_getCount__E = 0x003f9af9;
+_ti_sysbios_hal_Timer_getExpiredCounts__E = 0x003f9afd;
+_ti_sysbios_hal_Timer_getFreq__E = 0x003f9b01;
+_ti_sysbios_hal_Timer_getFunc__E = 0x003f9b05;
+_ti_sysbios_hal_Timer_getMaxTicks__E = 0x003f9b09;
+_ti_sysbios_hal_Timer_getPeriod__E = 0x003f9b0d;
+_ti_sysbios_hal_Timer_setFunc__E = 0x003f9b11;
+_ti_sysbios_hal_Timer_setPeriodMicroSecs__E = 0x003f9b15;
+_ti_sysbios_hal_Timer_setPeriod__E = 0x003f9b19;
+_ti_sysbios_hal_Timer_start__E = 0x003f9b1d;
+_ti_sysbios_hal_Timer_stop__E = 0x003f9b21;
+_ti_sysbios_hal_Timer_trigger__E = 0x003f9b25;
+_ti_sysbios_heaps_HeapMem_isBlocking__E = 0x003f9b29;
+_ti_sysbios_knl_Clock_getCompletedTicks__E = 0x003f9b2d;
+_ti_sysbios_knl_Clock_getTickPeriod__E = 0x003f9b31;
+_ti_sysbios_knl_Clock_getTimerHandle__E = 0x003f9b35;
+_ti_sysbios_knl_Clock_tick__E = 0x003f9b39;
+_ti_sysbios_knl_Swi_enable__E = 0x003f9b3d;
+_ti_sysbios_knl_Swi_getTrigger__E = 0x003f9b41;
+_ti_sysbios_knl_Swi_self__E = 0x003f9b45;
+_ti_sysbios_knl_Swi_startup__E = 0x003f9b49;
+_ti_sysbios_knl_Swi_unlockSched__E = 0x003f9b4d;
+_ti_sysbios_knl_Task_enable__E = 0x003f9b51;
+_ti_sysbios_knl_Task_self__E = 0x003f9b55;
+_ti_sysbios_knl_Task_unlockSched__E = 0x003f9b59;
+_ti_sysbios_family_c28_Hwi_getIrp__E = 0x003f9b5d;
+_ti_sysbios_family_c28_f2837x_TimestampProvider_Module_startup__F = 0x003f9b60;
+_ti_sysbios_gates_GateHwi_leave__E = 0x003f9b63;
+_ti_sysbios_hal_Hwi_clearInterrupt__E = 0x003f9b66;
+_ti_sysbios_hal_Hwi_disableInterrupt__E = 0x003f9b69;
+_ti_sysbios_hal_Hwi_enableInterrupt__E = 0x003f9b6c;
+_ti_sysbios_hal_Hwi_getHookContext__E = 0x003f9b6f;
+_ti_sysbios_hal_Hwi_getStackInfo__E = 0x003f9b72;
+_ti_sysbios_hal_Hwi_getTaskSP__E = 0x003f9b75;
+_ti_sysbios_hal_Hwi_post__E = 0x003f9b78;
+_ti_sysbios_hal_Hwi_restoreInterrupt__E = 0x003f9b7b;
+_ti_sysbios_hal_Hwi_setHookContext__E = 0x003f9b7e;
+_ti_sysbios_hal_Hwi_startup__E = 0x003f9b81;
+_ti_sysbios_hal_Hwi_switchFromBootStack__E = 0x003f9b84;
+_ti_sysbios_hal_Timer_getNumTimers__E = 0x003f9b87;
+_ti_sysbios_hal_Timer_getStatus__E = 0x003f9b8a;
+_ti_sysbios_hal_Timer_startup__E = 0x003f9b8d;
+_ti_sysbios_knl_Clock_getPeriod__E = 0x003f9b90;
+_ti_sysbios_knl_Clock_isActive__E = 0x003f9b93;
+_ti_sysbios_knl_Clock_setPeriod__E = 0x003f9b96;
+_ti_sysbios_knl_Clock_stop__E = 0x003f9b99;
+_ti_sysbios_knl_Idle_loop__E = 0x003f9b9c;
+_ti_sysbios_knl_Intrinsics_maxbit__E = 0x003f9b9f;
+_ti_sysbios_knl_Mailbox_getNumFreeMsgs__E = 0x003f9ba2;
+_ti_sysbios_knl_Queue_Instance_init__F = 0x003f9ba5;
+_ti_sysbios_knl_Queue_elemClear__E = 0x003f9ba8;
+_ti_sysbios_knl_Swi_getPri__E = 0x003f9bab;
+_ti_sysbios_knl_Task_getArg0__E = 0x003f9bae;
+_ti_sysbios_knl_Task_getArg1__E = 0x003f9bb1;
+_ti_sysbios_knl_Task_getEnv__E = 0x003f9bb4;
+_ti_sysbios_knl_Task_setArg0__E = 0x003f9bb7;
+_ti_sysbios_knl_Task_setArg1__E = 0x003f9bba;
+_ti_sysbios_knl_Task_setEnv__E = 0x003f9bbd;
+_ti_sysbios_knl_Task_startup__E = 0x003f9bc0;
+_ti_sysbios_hal_Hwi_disable__E = 0x003f9bc3;
+_ti_sysbios_hal_Hwi_enable__E = 0x003f9bc6;
+_ti_sysbios_hal_Hwi_restore__E = 0x003f9bc9;
+_ti_sysbios_family_c28_Hwi_postInit__I = 0x003f9bcc;
+_ti_sysbios_family_c28_Timer_getMaxTicks__E = 0x003f9bce;
+_ti_sysbios_family_c28_Timer_getNumTimers__E = 0x003f9bd0;
+_ti_sysbios_gates_GateHwi_query__F = 0x003f9bd2;
+_ti_sysbios_gates_GateMutex_query__F = 0x003f9bd4;
+_ti_sysbios_heaps_HeapNull_alloc__F = 0x003f9bd6;
+_ti_sysbios_heaps_HeapNull_isBlocking__F = 0x003f9bd8;
+_ti_sysbios_knl_Clock_setTimeout__E = 0x003f9bda;
+_ti_sysbios_knl_Event_getPostedEvents__E = 0x003f9bdc;
+_ti_sysbios_knl_Mailbox_getMsgSize__E = 0x003f9bde;
+_ti_sysbios_knl_Queue_head__E = 0x003f9be0;
+_ti_sysbios_knl_Queue_next__E = 0x003f9be2;
+_ti_sysbios_knl_Queue_prev__E = 0x003f9be4;
+_ti_sysbios_knl_Semaphore_getCount__E = 0x003f9be6;
+_ti_sysbios_knl_Swi_postInit__I = 0x003f9be8;
+_ti_sysbios_knl_Task_getPri__E = 0x003f9bea;
+_ti_sysbios_BIOS_nullFunc__I = 0x003f9bec;
+_ti_sysbios_family_c28_Timer_setNextTick__E = 0x003f9bed;
+_ti_sysbios_gates_GateHwi_Instance_init__F = 0x003f9bee;
+_ti_sysbios_heaps_HeapNull_Instance_init__F = 0x003f9bef;
+_ti_sysbios_heaps_HeapNull_free__F = 0x003f9bf0;
+_ti_sysbios_knl_Clock_logTick__E = 0x003f9bf1;
+_ti_sysbios_knl_Semaphore_registerEvent__E = 0x003f9bf2;
+_ti_sysbios_knl_Swi_Instance_finalize__F = 0x003f9bf3;
+_ti_sysbios_family_c28_Clobber_checkScratchRegs__F = 0x003f9bf4;
+_ti_sysbios_family_c28_Clobber_checkPreservedRegs__F = 0x003f9c32;
+_ti_sysbios_family_c28_Clobber_trashScratchRegs__F = 0x003f9c62;
+_ti_sysbios_family_c28_Clobber_trashPreservedRegs__F = 0x003f9c89;
+_ti_sysbios_family_xxx_Hwi_switchToIsrStack = 0x003f9ca4;
+_ti_sysbios_family_xxx_Hwi_switchToTaskStack = 0x003f9cb1;
+_ti_sysbios_family_c28_Hwi_getIFR__I = 0x003f9cbb;
+_ti_sysbios_family_c28_Hwi_interruptReturn__I = 0x003f9cbe;
+_ti_sysbios_family_c28_Hwi_dispatchPie = 0x003f9cc7;
+_ti_sysbios_family_c28_Hwi_dispatchTable = 0x003f9d18;
+_ti_sysbios_family_c28_IntrinsicsSupport_maxbit__E = 0x003f9d87;
+_ti_sysbios_family_c28_TaskSupport_buildTaskStack = 0x003f9d8d;
+_ti_sysbios_family_c28_TaskSupport_swap__E = 0x003f9db2;
+_ti_sysbios_family_c28_TaskSupport_glue = 0x003f9dcf;
+SECTIONS
+{
+	.text:_ti_sysbios_family_c28_Hwi_Object__create__S: LOAD > 0x00080010, PAGE = 0
+	.text:_ti_sysbios_knl_Semaphore_Object__create__S: LOAD > 0x00080053, PAGE = 0
+	.text:_ti_sysbios_knl_Queue_Object__create__S: LOAD > 0x0008007b, PAGE = 0
+	.text:_ti_sysbios_family_c28_Hwi_Object__get__S: LOAD > 0x000800b3, PAGE = 0
+	.text:_ti_sysbios_knl_Queue_Object__get__S: LOAD > 0x000800d3, PAGE = 0
+	.text:_ti_sysbios_heaps_HeapMem_Object__get__S: LOAD > 0x000800f3, PAGE = 0
+	.text:_ti_sysbios_knl_Mailbox_Object__get__S: LOAD > 0x00080110, PAGE = 0
+	.text:_ti_sysbios_knl_Swi_Object__get__S: LOAD > 0x0008012d, PAGE = 0
+	.text:_ti_sysbios_knl_Task_Object__get__S: LOAD > 0x0008014a, PAGE = 0
+%if (BIOS.clockEnabled == true) {
+	.text:_ti_sysbios_knl_Clock_doTick__I: LOAD > 0x00080167, PAGE = 0
+%}
+	.text:_ti_sysbios_knl_Task_Object__next__S: LOAD > 0x00080182, PAGE = 0
+	.text:_xdc_runtime_Error_raiseX__E: LOAD > 0x00080199, PAGE = 0
+	.text:_ti_sysbios_family_c28_Hwi_Object__delete__S: LOAD > 0x000801b0, PAGE = 0
+	.text:_ti_sysbios_family_c28_Hwi_Params__init__S: LOAD > 0x000801c6, PAGE = 0
+	.text:_ti_sysbios_family_c28_Hwi_disableIER__E: LOAD > 0x000801dc, PAGE = 0
+	.text:_ti_sysbios_knl_Semaphore_Params__init__S: LOAD > 0x000801f2, PAGE = 0
+	.text:_ti_sysbios_knl_Swi_Params__init__S: LOAD > 0x00080208, PAGE = 0
+	.text:_ti_sysbios_knl_Task_Object__delete__S: LOAD > 0x0008021e, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_Object__create__S: LOAD > 0x00080234, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_Object__create__S: LOAD > 0x00080249, PAGE = 0
+	.text:_ti_sysbios_knl_Task_Object__first__S: LOAD > 0x0008025e, PAGE = 0
+	.text:_ti_sysbios_family_c28_Hwi_enableIER__E: LOAD > 0x00080273, PAGE = 0
+	.text:_ti_sysbios_knl_Semaphore_Object__destruct__S: LOAD > 0x00080287, PAGE = 0
+	.text:_ti_sysbios_knl_Queue_Object__destruct__S: LOAD > 0x0008029a, PAGE = 0
+	.text:_ti_sysbios_family_c28_Hwi_restoreIER__E: LOAD > 0x000802ac, PAGE = 0
+	.text:_ti_sysbios_knl_Task_SupportProxy_start__E: LOAD > 0x000802bd, PAGE = 0
+	.text:_xdc_runtime_Memory_alloc__E: LOAD > 0x000802ce, PAGE = 0
+	.text:_xdc_runtime_Memory_calloc__E: LOAD > 0x000802df, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_setFunc__E: LOAD > 0x000802f0, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_setFunc__E: LOAD > 0x000802ff, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_setNextTick__E: LOAD > 0x0008030e, PAGE = 0
+	.text:_xdc_runtime_Memory_free__E: LOAD > 0x0008031d, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_setHookContext__E: LOAD > 0x0008032c, PAGE = 0
+	.text:_ti_sysbios_BIOS_RtsGateProxy_leave__E: LOAD > 0x0008033a, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_getFunc__E: LOAD > 0x00080347, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_getFreq__E: LOAD > 0x00080354, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_getFunc__E: LOAD > 0x00080361, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_getMaxTicks__E: LOAD > 0x0008036e, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_setPeriodMicroSecs__E: LOAD > 0x0008037b, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_setPeriod__E: LOAD > 0x00080388, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_trigger__E: LOAD > 0x00080395, PAGE = 0
+	.text:_ti_sysbios_heaps_HeapMem_Module_GateProxy_leave__E: LOAD > 0x000803a2, PAGE = 0
+	.text:_ti_sysbios_knl_Task_SupportProxy_checkStack__E: LOAD > 0x000803af, PAGE = 0
+	.text:_ti_sysbios_knl_Task_SupportProxy_stackUsed__E: LOAD > 0x000803bc, PAGE = 0
+	.text:_ti_sysbios_knl_Task_SupportProxy_swap__E: LOAD > 0x000803c9, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_getHookContext__E: LOAD > 0x000803d6, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_getStackInfo__E: LOAD > 0x000803e2, PAGE = 0
+	.text:_ti_sysbios_BIOS_RtsGateProxy_enter__E: LOAD > 0x000803ee, PAGE = 0
+	.text:_ti_sysbios_family_c28_Hwi_disable__E: LOAD > 0x000803f9, PAGE = 0
+	.text:_ti_sysbios_family_c28_Hwi_enable__E: LOAD > 0x00080404, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_Object__delete__S: LOAD > 0x0008040f, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_getIrp__E: LOAD > 0x0008041a, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_restoreInterrupt__E: LOAD > 0x00080425, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_Object__delete__S: LOAD > 0x00080430, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_getCount__E: LOAD > 0x0008043b, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_getExpiredCounts__E: LOAD > 0x00080446, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_getPeriod__E: LOAD > 0x00080451, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_start__E: LOAD > 0x0008045c, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_stop__E: LOAD > 0x00080467, PAGE = 0
+	.text:_ti_sysbios_heaps_HeapMem_Module_GateProxy_enter__E: LOAD > 0x00080472, PAGE = 0
+	.text:_xdc_runtime_Error_check__E: LOAD > 0x0008047d, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_clearInterrupt__E: LOAD > 0x00080488, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_disableInterrupt__E: LOAD > 0x00080492, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_enableInterrupt__E: LOAD > 0x0008049c, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_post__E: LOAD > 0x000804a6, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_restore__E: LOAD > 0x000804b0, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_getStatus__E: LOAD > 0x000804ba, PAGE = 0
+	.text:_ti_sysbios_heaps_HeapMem_Module_GateProxy_query__E: LOAD > 0x000804c4, PAGE = 0
+	.text:_ti_sysbios_knl_Intrinsics_SupportProxy_maxbit__E: LOAD > 0x000804ce, PAGE = 0
+	.text:_xdc_runtime_System_exit__E: LOAD > 0x000804d8, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_Module__startupDone__S: LOAD > 0x000804e2, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_disable__E: LOAD > 0x000804e9, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_enable__E: LOAD > 0x000804f0, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_getTaskSP__E: LOAD > 0x000804f7, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_startup__E: LOAD > 0x000804fe, PAGE = 0
+	.text:_ti_sysbios_hal_Hwi_HwiProxy_switchFromBootStack__E: LOAD > 0x00080505, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_Module__startupDone__S: LOAD > 0x0008050c, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_Module__startupDone__S: LOAD > 0x00080513, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_getNumTimers__E: LOAD > 0x0008051a, PAGE = 0
+	.text:_ti_sysbios_hal_Timer_TimerProxy_startup__E: LOAD > 0x00080521, PAGE = 0
+	.text:_ti_sysbios_knl_Task_SupportProxy_Module__startupDone__S: LOAD > 0x00080528, PAGE = 0
+	.text:_ti_sysbios_knl_Task_SupportProxy_getStackAlignment__E: LOAD > 0x0008052f, PAGE = 0
+	.text:_xdc_runtime_Memory_getMaxDefaultTypeAlign__E: LOAD > 0x00080536, PAGE = 0
+	.state:ti_sysbios_knl_Task_Module__state__V: LOAD > 0x00000780, PAGE = 1
+	.state:ti_sysbios_knl_Clock_Module__state__V: LOAD > 0x0000079e, PAGE = 1
+	.state:ti_sysbios_knl_Swi_Module__state__V: LOAD > 0x000007b2, PAGE = 1
+	.state:ti_sysbios_BIOS_Module__state__V: LOAD > 0x000007c0, PAGE = 1
+	.state:ti_sysbios_family_c28_Hwi_Module__state__V: LOAD > 0x000007d0, PAGE = 1
+	.state:ti_sysbios_family_c28_Timer_Module__state__V: LOAD > 0x000007e0, PAGE = 1
+	.textRTSll_div: {-l `Program.build.target.rootDir`/lib/rts2800_fpu32.lib<ll_div.obj> (.text)} > 0x0008053d, PAGE = 0
+	.textRTSmemcpy_ff: {-l `Program.build.target.rootDir`/lib/rts2800_fpu32.lib<memcpy_ff.obj> (.text)} > 0x00080644, PAGE = 0
+	.textRTS_lock: {-l `Program.build.target.rootDir`/lib/rts2800_fpu32.lib<_lock.obj> (.text)} > 0x00080665, PAGE = 0
+    .econstROM : {
+	    *(.econst:_ti_sysbios_family_c28_Hwi_vectors)
+    	*(.econst:ti_sysbios_knl_Idle_coreList__C)
+    	*(.econst:ti_sysbios_knl_Idle_funcList__C)
+    	*(.econst:ti_sysbios_knl_Task_hooks__C)
+    	*(.econst:ti_sysbios_family_c28_Timer_intNumDef__C)
+    	*(.econst:ti_sysbios_BIOS_installedErrorHook__C)
+    	*(.econst:ti_sysbios_family_c28_Hwi_E_alreadyDefined__C)
+    	*(.econst:ti_sysbios_family_c28_Hwi_E_unpluggedInterrupt__C)
+    	*(.econst:ti_sysbios_family_c28_TaskSupport_E_invalidStack__C)
+    	*(.econst:ti_sysbios_family_c28_TaskSupport_defaultStackSize__C)
+    	*(.econst:ti_sysbios_family_c28_Timer_E_cannotSupport__C)
+    	*(.econst:ti_sysbios_family_c28_Timer_E_notAvailable__C)
+    	*(.econst:ti_sysbios_gates_GateMutex_Instance_State_sem__O)
+    	*(.econst:ti_sysbios_hal_Hwi_E_stackOverflow__C)
+    	*(.econst:ti_sysbios_heaps_HeapMem_E_memory__C)
+    	*(.econst:ti_sysbios_heaps_HeapMem_Module__gateObj__C)
+    	*(.econst:ti_sysbios_heaps_HeapMem_reqAlign__C)
+    	*(.econst:ti_sysbios_knl_Clock_Module_State_clockQ__O)
+    	*(.econst:ti_sysbios_knl_Clock_tickPeriod__C)
+    	*(.econst:ti_sysbios_knl_Event_Instance_State_pendQ__O)
+    	*(.econst:ti_sysbios_knl_Mailbox_Instance_State_dataQue__O)
+    	*(.econst:ti_sysbios_knl_Mailbox_Instance_State_dataSem__O)
+    	*(.econst:ti_sysbios_knl_Mailbox_Instance_State_freeQue__O)
+    	*(.econst:ti_sysbios_knl_Mailbox_Instance_State_freeSem__O)
+    	*(.econst:ti_sysbios_knl_Semaphore_Instance_State_pendQ__O)
+    	*(.econst:ti_sysbios_knl_Task_E_deleteNotAllowed__C)
+    	*(.econst:ti_sysbios_knl_Task_E_spOutOfBounds__C)
+    	*(.econst:ti_sysbios_knl_Task_E_stackOverflow__C)
+    	*(.econst:ti_sysbios_knl_Task_Module_State_inactiveQ__O)
+    	*(.econst:ti_sysbios_knl_Task_Module_State_terminatedQ__O)
+    	*(.econst:ti_sysbios_knl_Task_Object__heap__C)
+    	*(.econst:ti_sysbios_knl_Task_allBlockedFunc__C)
+    	*(.econst:ti_sysbios_knl_Task_defaultStackHeap__C)
+    	*(.econst:ti_sysbios_knl_Task_defaultStackSize__C)
+    	*(.econst:xdc_runtime_Assert_E_assertFailed__C)
+    	*(.econst:ti_sysbios_family_c28_Hwi_Module__id__C)
+    	*(.econst:ti_sysbios_family_c28_Hwi_Object__count__C)
+    	*(.econst:ti_sysbios_family_c28_Hwi_zeroLatencyIERMask__C)
+    	*(.econst:ti_sysbios_family_c28_TaskSupport_Module__id__C)
+    	*(.econst:ti_sysbios_family_c28_TaskSupport_stackAlignment__C)
+    	*(.econst:ti_sysbios_family_c28_Timer_Module__id__C)
+    	*(.econst:ti_sysbios_family_c28_Timer_anyMask__C)
+    	*(.econst:ti_sysbios_family_c28_Timer_startupNeeded__C)
+    	*(.econst:ti_sysbios_hal_Hwi_Module__id__C)
+    	*(.econst:ti_sysbios_heaps_HeapMem_Module__id__C)
+    	*(.econst:ti_sysbios_heaps_HeapMem_Object__count__C)
+    	*(.econst:ti_sysbios_knl_Clock_tickMode__C)
+    	*(.econst:ti_sysbios_knl_Clock_tickSource__C)
+    	*(.econst:ti_sysbios_knl_Mailbox_Object__count__C)
+    	*(.econst:ti_sysbios_knl_Swi_Object__count__C)
+    	*(.econst:ti_sysbios_knl_Task_Module__id__C)
+    	*(.econst:ti_sysbios_knl_Task_Object__count__C)
+    	*(.econst:ti_sysbios_knl_Task_deleteTerminatedTasks__C)
+        *(.econst:ti_sysbios_knl_Task_initStackFlag__C)
+    	*(.econst:ti_sysbios_knl_Task_numConstructedTasks__C)
+    } LOAD > 0x0008066e, PAGE = 0
+}

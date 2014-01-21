@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -574,6 +574,23 @@ interface IHwi {
      *  purely for implementation efficiency and thus can have implementation
      *  dependent definitions.
      */
+
+    /*
+     *  @_nodoc
+     *  ======== switchAndRunFunc ========
+     *  If not on ISR stack already, switch to it, then call
+     *  the function whose address is passed as an argument
+     *  and then switch back to Task stack.
+     *
+     *  Used by the Swi scheduler.
+     *
+     *  This function must be implemented by all Hwi modules
+     *  name) because it can't be _E and _F'd due to its
+     *  inherent stack switching behavior.
+     *
+     *  @a(param)       Function pointer
+     */
+    /*  Char *ti_bios_family_xxx_Hwi_switchAndRunFunc(); */
 
     /*
      *  @_nodoc

@@ -469,9 +469,6 @@ module BIOS
      *  @p(blist)
      *  - Static {@link ti.sysbios.knl.Swi Swi} creation will
      *    result in a fatal build error.
-     *  - The {@link ti.sysbios.knl.Clock Clock module} is
-     *    effectively disabled as it uses a Swi
-     *    to process the Clock objects.
      *  - See other effects as noted for {@link #clockEnabled} = false;
      *  - Runtime calls to Swi_create will trigger an assertion violation
      *    via {@link xdc.runtime.Assert#isTrue}.

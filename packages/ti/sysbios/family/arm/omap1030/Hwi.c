@@ -51,9 +51,11 @@
 extern Void ti_sysbios_family_arm_omap1030_Hwi_init(Void);
 extern Char *ti_sysbios_family_xxx_Hwi_switchToIsrStack();
 extern Void ti_sysbios_family_xxx_Hwi_switchToTaskStack(Char *oldTaskSP);
+extern Void ti_sysbios_family_xxx_Hwi_switchAndRunFunc(Void (*func)());
 
 #define Hwi_switchToIsrStack ti_sysbios_family_xxx_Hwi_switchToIsrStack
 #define Hwi_switchToTaskStack ti_sysbios_family_xxx_Hwi_switchToTaskStack
+#define Hwi_switchAndRunFunc ti_sysbios_family_xxx_Hwi_switchAndRunFunc
 #define Hwi_init ti_sysbios_family_arm_omap1030_Hwi_init
 
 static Int postInit(Hwi_Object *hwi, Error_Block *eb);

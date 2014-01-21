@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -355,46 +355,6 @@ module Cache inherits ti.sysbios.interfaces.ICache
      */
     @DirectCall
     Void disableBP();
-
-    /*!
-     *  @_nodoc
-     *  ======== enablePmc ========
-     *  For debug purposes only.
-     */
-    @DirectCall
-    Void enablePmc();
-
-    /*!
-     *  @_nodoc
-     *  ======== resetPmc ========
-     *  For debug purposes only.
-     */
-    @DirectCall
-    Void resetPmc();
-
-    /*!
-     *  @_nodoc
-     *  ======== getPmcMiss ========
-     *  For debug purposes only.
-     */
-    @DirectCall
-    UInt getPmcMiss();
-
-    /*!
-     *  @_nodoc
-     *  ======== getPmcAxs ========
-     *  For debug purposes only.
-     */
-    @DirectCall
-    UInt getPmcAxs();
-
-    /*!
-     *  @_nodoc
-     *  ======== getPmcCycle ========
-     *  For debug purposes only.
-     */
-    @DirectCall
-    UInt getPmcCycle();
 
 internal:
 

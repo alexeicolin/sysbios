@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -518,7 +518,7 @@ Int Timer_Instance_init(Timer_Object *obj, Int id, Timer_FuncPtr tickFxn, const 
  *  Calls postInit for all statically-created & constructed
  *  timers to initialize them.
  */
-Int Timer_Module_startup(status)
+Int Timer_Module_startup(Int status)
 {
     Int i;
     Timer_Object *obj;

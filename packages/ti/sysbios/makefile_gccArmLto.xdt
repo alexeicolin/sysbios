@@ -46,6 +46,8 @@
 	+ " -Dxdc_target_types__=" + File.getDOSPath(TARGET.$package.packageRepository) + TARGET.stdInclude
 	+ " -Dxdc_target_name__=" + TARGET.name;
 
+    var GCCTARG = TARGET.GCCTARG;
+
     var CGEN = TARGET.rootDir.replace(/\\/g, "/");
 
     function baseName(path) {
@@ -71,8 +73,10 @@ BIOS_DEFS = `Build.getDefs()`
 
 BIOS_INC  = -I"`File.getDOSPath(this.$package.packageRepository)`"
 
-CC = `CGEN`/`TARGET.ccBin.cmd` $(CCOPTS) -I `CGEN`/arm-none-eabi/include
-ASM = `CGEN`/`TARGET.asmBin.cmd` $(CCOPTS) -I `CGEN`/arm-none-eabi/include
+GCCTARG = `GCCTARG`
+
+CC = `CGEN`/`TARGET.ccBin.cmd` $(CCOPTS)
+ASM = `CGEN`/`TARGET.asmBin.cmd` $(CCOPTS)
 AR = `CGEN`/`TARGET.arBin.cmd` `TARGET.ar.opts`
 
 %if (environment["os.name"].match(/Windows.*/i)) {
@@ -146,13 +150,8 @@ clean:
 %if (BIOS.buildingAppLib == false) {
 	@-$(call RM, "`Build.$private.libDir``LIB`")
 %}
-%if (TARGET.$name.match(/gnu/)) {
-	@-$(call RM, BIOS.o)
-%}
-%else {
-	@-$(call RM, BIOS.obj)
-%}
 %for (var i = 0; i < OBJS.length; i++) {
 	@-$(call RM, `OBJS[i]`)
+	@-$(call RM, `OBJS[i] + ".dep"`)
 %}
 

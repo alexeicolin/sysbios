@@ -1,5 +1,5 @@
 ;
-;  Copyright (c) 2012, Texas Instruments Incorporated
+;  Copyright (c) 2013, Texas Instruments Incorporated
 ;  All rights reserved.
 ; 
 ;  Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,7 @@
 
     .global ti_sysbios_family_xxx_Hwi_switchToIsrStack
     .global ti_sysbios_family_xxx_Hwi_switchToTaskStack
+    .global ti_sysbios_family_xxx_Hwi_switchAndRunFunc
 
 
 ;
@@ -245,6 +246,134 @@ doneSwitchT:
 
     ; branch back to caller (using return address popped above)
     BR R14      
+
+    .endif
+
+    .endasmfunc
+
+
+;
+;  ======== ti_sysbios_family_xxx_Hwi_switchAndRunFunc ========
+;
+;  Hwi_switchAndRunFunc(Void (*func)());
+;
+;  Switch to ISR stack, call the function Func() and then switch
+;  back to Task stack.
+;
+;
+
+    .align 2
+    .sect ".text:ti_sysbios_family_xxx_Hwi_switchAndRunFunc"
+    .clink
+ti_sysbios_family_xxx_Hwi_switchAndRunFunc:
+    .asmfunc
+
+ .if $DEFINED(__LARGE_CODE_MODEL__) & $DEFINED(__LARGE_DATA_MODEL__)
+
+    ; save R4 on the stack
+    PUSH.A R4
+
+    ; move R12 = func pointer to R4 so it is preserved across
+    ; function calls
+    MOV R12, R4
+
+    ; Switch to ISR stack
+    MOV.A #ti_sysbios_family_xxx_Hwi_switchToIsrStack, R15
+    CALLA R15
+
+    ; Save oldTaskSP
+    PUSH.A R12
+
+    ; Call func()
+    CALLA R4
+
+    ; Restore oldTaskSP
+    POP.A R12
+
+    ; Switch back to Task stack
+    MOV.A #ti_sysbios_family_xxx_Hwi_switchToTaskStack, R15
+    CALLA R15
+
+    ; restore R4 from stack
+    POP.A R4
+
+    ; pop the return address from stack
+    POP.A R14
+
+    ; branch back to caller (using return address popped above)
+    BRA R14
+
+
+ .elseif $DEFINED(__LARGE_CODE_MODEL__)
+
+    ; save R4 on the stack
+    PUSH.A R4
+
+    ; move R12 = func pointer to R4 so it is preserved across
+    ; function calls
+    MOV R12, R4
+
+    ; Switch to ISR stack
+    MOV.A #ti_sysbios_family_xxx_Hwi_switchToIsrStack, R15
+    CALLA R15
+
+    ; Save oldTaskSP
+    PUSH.A R12
+
+    ; Call func()
+    CALLA R4
+
+    ; Restore oldTaskSP
+    POP.A R12
+
+    ; Switch back to Task stack
+    MOV.A #ti_sysbios_family_xxx_Hwi_switchToTaskStack, R15
+    CALLA R15
+
+    ; restore R4 from stack
+    POP.A R4
+
+    ; pop the return address from stack
+    POP.A R14
+
+    ; branch back to caller (using return address popped above)
+    BRA R14
+
+
+ .else
+
+    ; save R4 on stack
+    PUSH.W R4
+
+    ; move R12 = func pointer to R4 so it is preserved across
+    ; function calls
+    MOV R12, R4
+
+    ; Switch to ISR stack
+    MOV.W #ti_sysbios_family_xxx_Hwi_switchToIsrStack, R15
+    CALL R15
+
+    ; Save oldTaskSP
+    PUSH.W R12
+
+    ; Call func()
+    CALL R4
+
+    ; Restore oldTaskSP
+    POP.W R12
+
+    ; Switch back to Task stack
+    MOV.W #ti_sysbios_family_xxx_Hwi_switchToTaskStack, R15
+    CALL R15
+
+    ; restore R4 from stack
+    POP.W R4
+
+    ; pop the return address from stack
+    POP.W R14
+
+    ; branch back to caller (using return address popped above)
+    BR R14
 
     .endif
 

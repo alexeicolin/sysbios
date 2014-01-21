@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -144,6 +144,7 @@ import ti.sysbios.knl.Clock;
  */
 
 @InstanceFinalize       /* to destruct queue */
+@InstanceInitStatic     /* Construct/Destruct CAN becalled at runtime */
 
 module Semaphore
 {

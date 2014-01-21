@@ -98,7 +98,7 @@ Void Timer_setNextTick(Timer_Object *obj, UInt32 newPeriodCounts,
  *  Calls postInit for all statically-created & constructed
  *  timers to initialize them.
  */
-Int Timer_Module_startup(status)
+Int Timer_Module_startup(Int status)
 {
     Timer_Object *obj;
 

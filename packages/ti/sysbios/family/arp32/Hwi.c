@@ -53,9 +53,11 @@
 extern Void ti_sysbios_family_arp32_Hwi_dispatchAlways(Int intnum);
 extern Char *ti_sysbios_family_xxx_Hwi_switchToIsrStack();
 extern Void ti_sysbios_family_xxx_Hwi_switchToTaskStack(Char *oldTaskSP);
+extern Void ti_sysbios_family_xxx_Hwi_switchAndRunFunc(Void (*func)());
 
 #define Hwi_switchToIsrStack ti_sysbios_family_xxx_Hwi_switchToIsrStack
 #define Hwi_switchToTaskStack ti_sysbios_family_xxx_Hwi_switchToTaskStack
+#define Hwi_switchAndRunFunc ti_sysbios_family_xxx_Hwi_switchAndRunFunc
 #define Hwi_dispatchAlways ti_sysbios_family_arp32_Hwi_dispatchAlways
 
 extern cregister volatile unsigned int IRP;
@@ -685,10 +687,10 @@ Void Hwi_setHookContext(Hwi_Object *hwi, Int id, Ptr hookContext)
 }
 
 /*
- *  ======== Hwi_intcDispatch ========
- *  Function that gets called from Hwi_dispatchC
+ *  ======== Hwi_dispatchCore ========
  */
-Void Hwi_intcDispatch(Int vectorNum)
+#pragma FUNC_EXT_CALLED(ti_sysbios_family_arp32_Hwi_dispatchCore);
+Void Hwi_dispatchCore(Int vectorNum)
 {
     Hwi_Object *hwi;
     Int i, lmbd;
@@ -699,11 +701,26 @@ Void Hwi_intcDispatch(Int vectorNum)
     UInt32 status;
     UInt16 oldIER, disableIerMask, restoreIerMask;
     Hwi_IntcRegs **intc = (Hwi_IntcRegs **)Hwi_INTCREGSBASEADDRS;
+    BIOS_ThreadType prevThreadType;
+    Int swiKey;
+
+    Hwi_module->vectNum = vectorNum;
+
+    if (Hwi_dispatcherIrpTrackingSupport) {
+        Hwi_module->irp[vectorNum] = IRP;
+    }
 
     if (Hwi_dispatcherAutoNestingSupport) {
         disableIerMask = Hwi_module->disableIerMask[vectorNum];
         restoreIerMask = Hwi_module->restoreIerMask[vectorNum];
     }
+
+    if (Hwi_dispatcherSwiSupport) {
+        swiKey = SWI_DISABLE();
+    }
+
+    /* set thread type to Hwi */
+    prevThreadType = BIOS_setThreadType(BIOS_ThreadType_Hwi);
 
     /* determine which intc to read */
     if (vectorNum < 12) {
@@ -774,7 +791,7 @@ Void Hwi_intcDispatch(Int vectorNum)
             IER |= (restoreIerMask & oldIER);
         }
         else {
-            Hwi_intcDispatch(vectorNum);
+            (fxn)(arg);
         }
 
 
@@ -789,42 +806,6 @@ Void Hwi_intcDispatch(Int vectorNum)
         }
 #endif
     }
-}
-
-/*
- *  ======== Hwi_dispatchCore ========
- *  The "FUNC_CANNOT_INLINE" pragma below is really important.  This keeps
- *  this function from being inlined into Hwi_dispatchC which exposes a
- *  problem with local variables being stored on one stack and referenced on
- *  the other (isr stack and task stack).
- */
-#pragma FUNC_EXT_CALLED(ti_sysbios_family_arp32_Hwi_dispatchCore);
-#pragma FUNC_CANNOT_INLINE(ti_sysbios_family_arp32_Hwi_dispatchCore);
-Void Hwi_dispatchCore()
-{
-    Int vectorNum;
-    BIOS_ThreadType prevThreadType;
-    Int swiKey;
-
-    /*
-     * all references to local variables beyond this point
-     * will be on the isr stack
-     */
-    vectorNum = Hwi_module->vectNum;
-
-    if (Hwi_dispatcherIrpTrackingSupport) {
-        Hwi_module->irp[vectorNum] = IRP;
-    }
-
-    if (Hwi_dispatcherSwiSupport) {
-        swiKey = SWI_DISABLE();
-    }
-
-    /* set thread type to Hwi */
-    prevThreadType = BIOS_setThreadType(BIOS_ThreadType_Hwi);
-
-    /* call the intc dispatcher */
-    Hwi_intcDispatch(vectorNum);
 
     /* Run Swi scheduler */
     if (Hwi_dispatcherSwiSupport) {
@@ -840,30 +821,15 @@ Void Hwi_dispatchCore()
  *  Configurable dispatcher.
  */
 #pragma FUNC_EXT_CALLED(ti_sysbios_family_arp32_Hwi_dispatchC);
-Void Hwi_dispatchC(register Int vectorNum)
+Void Hwi_dispatchC(Int vectorNum)
 {
     Int tskKey;
-    Char *oldTaskSP;
-
-    /* save away vectNum in module state because it might be saved on stack */
-    Hwi_module->vectNum = vectorNum;
 
     if (Hwi_dispatcherTaskSupport) {
         tskKey = TASK_DISABLE();
     }
 
-    /*
-     * Switch to Hwi stack if not already on it.
-     * This step, and the corresponding switch back to the task
-     * stack are performed outside the "if (Hwi_dispatcherTaskSupport)"
-     * conditionals because sometimes the generated code placed a copy
-     * of Hwi_dispatcherTaskSupport on the task stack for use below.
-     */
-    oldTaskSP = Hwi_switchToIsrStack();
-
-    Hwi_dispatchCore();
-
-    Hwi_switchToTaskStack(oldTaskSP);
+    Hwi_switchAndDispatch(vectorNum);
 
     /* Run Task scheduler */
     if (Hwi_dispatcherTaskSupport) {
@@ -871,5 +837,3 @@ Void Hwi_dispatchC(register Int vectorNum)
         TASK_RESTORE(tskKey);   /* returns with ints disabled */
     }
 }
-
-

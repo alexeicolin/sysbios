@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -164,7 +164,7 @@ function exportMod()
  */
 function destroy()
 {
-    this.$logError("Please remove the associated create() call, " +
+    this.$module.$logError("Please remove the associated create() call, " +
         "the destroy() method is not supported", this);
 }
 

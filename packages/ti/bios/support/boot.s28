@@ -1,17 +1,5 @@
-; --COPYRIGHT--,EPL
-;   Copyright (c) 2008 Texas Instruments and others.
-;   All rights reserved. This program and the accompanying materials
-;   are made available under the terms of the Eclipse Public License v1.0
-;   which accompanies this distribution, and is available at
-;   http://www.eclipse.org/legal/epl-v10.html
-;  
-;   Contributors:
-;       Texas Instruments - initial implementation
-;  
-;
 ;******************************************************************************
-;* BOOT  v5.0.0A07060
-;* Copyright (c) 2000-2007 Texas Instruments Incorporated
+;* Copyright (c) 2000-2013 Texas Instruments Incorporated
 ;******************************************************************************
 
 ;****************************************************************************
@@ -36,12 +24,11 @@
 ;****************************************************************************
 CONST_COPY      .set 0
 
-        .global  _c_int00, cinit, pinit
-        .global  __args_main, _exit
-        .global  __stack
+	.global  _c_int00, cinit, pinit, binit
+	.global  __args_main, _exit
+	.global  __stack
 
-    .ref    _ti_sysbios_BIOS_start__E
-
+	.ref _ti_sysbios_BIOS_start__E
 
 ****************************************************************************
 * Declare the stack.  Size is determined by the linker option -stack.  The *
@@ -61,7 +48,11 @@ __stack:        .usect  ".stack",0
 *                                                                          *
 ****************************************************************************
 
-_c_int00:       .asmfunc
+_c_int00:	.asmfunc
+        setc INTM,DBGM                  ; disable interrupts and
+        mov @al, #0                     ; clear IER in case boot ROM
+        MOV IER, @al                    ; left these enabled
+
 ****************************************************************************
 *  INITIALIZE STACK POINTER.                                               *
 ****************************************************************************
@@ -106,6 +97,23 @@ _c_int00:       .asmfunc
         B      noreset,EQ
         LCR    _xdc_runtime_Startup_reset__I
 noreset:
+
+****************************************************************************
+*  IF binit IS NOT -1, PROCESS THE BINIT INITIALIZATION TABLE	           *
+****************************************************************************
+	MOV	AL,#binit
+	MOV	AH,#hi16(binit)
+	ADDB	ACC,#1
+	B	DO_CINIT,EQ		; if binit < 0 (-1) no init table
+
+****************************************************************************
+*  PROCESS BINIT INITIALIZATION TABLE.                                     *
+****************************************************************************
+	.global	_far_copy_in
+	MOVL	XAR4,#binit
+	LCR	_far_copy_in
+
+DO_CINIT:
 
 ****************************************************************************
 *  IF cinit IS NOT -1, PROCESS CINIT INITIALIZATION TABLE                  *

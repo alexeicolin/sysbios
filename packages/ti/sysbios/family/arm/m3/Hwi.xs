@@ -79,10 +79,28 @@ if (xdc.om.$name == "cfg") {
             resetVectorAddress : 0,
             vectorTableAddress : 0x20000000,
         },
-        "F28M3.*": {
-            numInterrupts : 16 + 91,
+        "F28M35.*": {
+            numInterrupts : 16 + 92,            /* suppports 108 interrupts */
             numPriorities : 8,
             resetVectorAddress : 0x00200040,    /* placed low in flash */
+            vectorTableAddress : 0x20000000,
+        },
+        "F28M36.*": {
+            numInterrupts : 16 + 134,           /* supports 150 interrupts */
+            numPriorities : 8,
+            resetVectorAddress : 0x00200040,    /* placed low in flash */
+            vectorTableAddress : 0x20000000,
+        },
+        "CC2538.*": {
+            numInterrupts : 16 + 147,           /* supports 163 interrupts */
+            numPriorities : 8,
+            resetVectorAddress : 0x00200000,    /* placed low in flash */
+            vectorTableAddress : 0x20000000,
+        },
+        "CC26.*": {
+            numInterrupts : 16 + 34,            /* supports 50 interrupts */
+            numPriorities : 8,
+            resetVectorAddress : 0x0,           /* placed low in flash */
             vectorTableAddress : 0x20000000,
         },
         "CC3101": {
@@ -152,6 +170,13 @@ function module$meta$init()
 
     var deviceName = deviceSupportCheck();
 
+    if (Program.platformName.match(/ti\.platforms\.tiva/)) {
+        Hwi.isTiva = true;
+    }
+    else {
+        Hwi.isTiva = false;
+    }
+
     Hwi.NUM_INTERRUPTS = deviceTable[deviceName].numInterrupts;
     Hwi.NUM_PRIORITIES = deviceTable[deviceName].numPriorities;
     Hwi.resetVectorAddress = deviceTable[deviceName].resetVectorAddress;
@@ -205,7 +230,12 @@ function module$meta$init()
         Hwi.intAffinity[intNum] = 0;
     }
 
-    Hwi.resetFunc = '&_c_int00';
+    if (Program.build.target.$name.match(/iar/)) {
+        Hwi.resetFunc = '&__iar_program_start';
+    }
+    else {
+        Hwi.resetFunc = '&_c_int00';
+    }
 
     switch (Hwi.NUM_PRIORITIES) {
         case 2:
@@ -424,15 +454,22 @@ function module$static$init(mod, params)
         }
     }
 
+    if (Program.build.target.$name.match(/iar/)) {
+        mod.isrStack = null;
+        mod.isrStackBase = null;
+        mod.isrStackSize = null;
+    }
     /*
      * ROM
      * These members of the module state are added for ROM. They are tied to
      * their respective symbol name because the symbols will not be defined
      * at the time the ROM assembly is made.
      */
-    mod.isrStack = null;
-    mod.isrStackBase = $externPtr('__TI_STACK_BASE');
-    mod.isrStackSize = Program.stack;
+    else {
+        mod.isrStack = null;
+        mod.isrStackBase = $externPtr('__TI_STACK_BASE');
+        mod.isrStackSize = Program.stack;
+    }
 
     /*
      * Force module state's priorities array pointer to null
@@ -896,8 +933,16 @@ function viewGetStackInfo()
 
     /* Fetch the Hwi stack */
     try {
-        var size = Program.getSymbolValue("__STACK_SIZE");
-        var stackBase = Program.getSymbolValue("__stack");
+        if (Program.build.target.$name.match(/iar/)) {
+            var size = Program.getSymbolValue("CSTACK$$Limit")
+                       - Program.getSymbolValue("CSTACK$$Base");
+            var stackBase = Program.getSymbolValue("CSTACK$$Base");
+        }
+        else {
+            var size = Program.getSymbolValue("__STACK_SIZE");
+            var stackBase = Program.getSymbolValue("__stack");
+        }
+
         var stackData = Program.fetchArray({type: 'xdc.rov.support.ScalarStructs.S_UChar', isScalar: true}, stackBase, size);
     }
     catch (e) {
@@ -1319,7 +1364,7 @@ function viewInitException()
 function viewInitModule(view, mod)
 {
     var Program = xdc.useModule('xdc.rov.Program');
-
+    var halHwiModCfg = Program.getModuleConfig('ti.sysbios.hal.Hwi');
     var hwiModCfg = Program.getModuleConfig('ti.sysbios.family.arm.m3.Hwi');
 
     viewNvicFetch(this);
@@ -1351,14 +1396,21 @@ function viewInitModule(view, mod)
         view.$status["hwiStackBase"] = "Error fetching Hwi stack info!";
     }
     else {
-        view.hwiStackPeak = stackInfo.hwiStackPeak;
-        view.hwiStackSize = stackInfo.hwiStackSize;
-        view.hwiStackBase = "0x"+ stackInfo.hwiStackBase.toString(16);
+        if (halHwiModCfg.initStackFlag) {
+            view.hwiStackPeak = String(stackInfo.hwiStackPeak);
+            view.hwiStackSize = stackInfo.hwiStackSize;
+            view.hwiStackBase = "0x"+ stackInfo.hwiStackBase.toString(16);
 
-        if (view.hwiStackPeak == view.hwiStackSize) {
-            view.$status["hwiStackPeak"] = "Overrun!  ";
-            /*                                  ^^  */
-            /* (extra spaces to overcome right justify) */
+            if (stackInfo.hwiStackPeak == stackInfo.hwiStackSize) {
+                view.$status["hwiStackPeak"] = "Overrun!  ";
+                /*                                  ^^  */
+                /* (extra spaces to overcome right justify) */
+            }
         }
+	else {
+            view.hwiStackPeak = "n/a - set Hwi.initStackFlag";
+            view.hwiStackSize = stackInfo.hwiStackSize;
+            view.hwiStackBase = "0x"+ stackInfo.hwiStackBase.toString(16);
+	}
     }
 }

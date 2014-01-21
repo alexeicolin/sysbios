@@ -134,7 +134,7 @@
                value="value:this.create.intNum"
                tooltip="value:this.create.intNum.$summary"/></td>
           <td><control type="label" align="left" 
-               label="value:'Warning: Reference Manual MPU IRQ 0 to N maps to GIC interrupt number 32 to (N+32)'"/></td>
+               label="value:'Note: Reference Manual MPU IRQ 0 to N maps to GIC interrupt number 32 to (N+32)'"/></td>
         </tr>
       </table>
       <h1>Additional Settings</h1>

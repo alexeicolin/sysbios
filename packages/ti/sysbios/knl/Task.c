@@ -72,7 +72,9 @@ Void Task_schedule()
     Queue_Handle maxQ;
     Task_Object *prevTask;
     Task_Object *curTask;
+#ifndef ti_sysbios_knl_Task_DISABLE_ALL_HOOKS
     Int i;
+#endif
 
     do {
         Task_module->workFlag = 0;
@@ -204,7 +206,9 @@ Void Task_startCore(UInt coreId)
     Queue_Handle maxQ;
     Task_Object *prevTask;
     Task_Struct dummyTask;
+#ifndef ti_sysbios_knl_Task_DISABLE_ALL_HOOKS
     Int i;
+#endif
 
     Hwi_disable();      /* re-enabled in Task_enter of first task */
 
@@ -401,7 +405,9 @@ Void Task_exit()
 {
     UInt tskKey, hwiKey;
     Task_Object *tsk;
+#ifndef ti_sysbios_knl_Task_DISABLE_ALL_HOOKS
     Int i;
+#endif
 
     tsk = Task_self();
 
@@ -571,6 +577,16 @@ Task_Handle Task_getIdleTask()
 }
 
 /*
+ *  ======== Task_getIdleTaskHandle ========
+ */
+Task_Handle Task_getIdleTaskHandle(UInt coreId)
+{
+    Assert_isTrue((coreId == 0), Task_A_invalidCoreId);
+
+    return(Task_module->idleTask[coreId]);
+}
+
+/*
  *************************************************************************
  *                       Instance functions
  *************************************************************************
@@ -703,8 +719,10 @@ Int Task_Instance_init(Task_Object *tsk, Task_FuncPtr fxn,
 Int Task_postInit(Task_Object *tsk, Error_Block *eb)
 {
     UInt tskKey, hwiKey;
-    Int i;
     Queue_Handle readyQ;
+#ifndef ti_sysbios_knl_Task_DISABLE_ALL_HOOKS
+    Int i;
+#endif
 
     tsk->context = Task_SupportProxy_start(tsk,
                 (Task_SupportProxy_FuncPtr)Task_enter,
@@ -757,7 +775,9 @@ Int Task_postInit(Task_Object *tsk, Error_Block *eb)
  */
 Void Task_Instance_finalize(Task_Object *tsk, Int status)
 {
+#ifndef ti_sysbios_knl_Task_DISABLE_ALL_HOOKS
     Int i, cnt;
+#endif
     UInt taskKey, hwiKey;
 
     /*
@@ -1127,7 +1147,9 @@ Void Task_unblock(Task_Object *tsk)
  */
 Void Task_unblockI(Task_Object *tsk, UInt hwiKey)
 {
+#ifndef ti_sysbios_knl_Task_DISABLE_ALL_HOOKS
     Int i;
+#endif
     UInt curset = Task_module->curSet;
     UInt mask = tsk->mask;
 

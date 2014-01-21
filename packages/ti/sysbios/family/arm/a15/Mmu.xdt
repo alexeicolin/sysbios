@@ -61,18 +61,31 @@ UInt64 *firstLevelTableBuf, UInt64 **secondLevelTableBuf)
 %}
 }
 
-Void ti_sysbios_family_arm_a15_Mmu_initSecondLevelTableBuf__I(
+#if defined(__GNUC__) && !defined(__ti__)
+Void __attribute__((naked)) ti_sysbios_family_arm_a15_Mmu_initSecondLevelTableBuf__I(
 UInt64 **secondLevelTableBuf)
 {
-    UInt64 desc;
+    __asm__ __volatile__ (
+        "ldr r0, [r0] \n\t"
+                         );
 %for (var i = 0; i < Mmu.NUM_LEVEL1_ENTRIES; i++) {
 %    for (var j = 0; j < 512; j++) {
 %        if (Mmu.secondLevelTableBuf[i][j * 2] != undefined) {
-             desc = 
-             (`utils.toHex(Mmu.secondLevelTableBuf[i][j * 2 + (0 ^ BigEndian)])`) |
-             (((UInt64)`utils.toHex(Mmu.secondLevelTableBuf[i][(j * 2) + (1 ^ BigEndian)])`) << 32);
-             secondLevelTableBuf[`i`][`j`] = desc;
+    __asm__ __volatile__ (
+        "movw r2, #`utils.toHex((Mmu.secondLevelTableBuf[i][j * 2 + (0 ^ BigEndian)]) & 0xFFFF)` \n\t"
+        "movt r2, #`utils.toHex(((Mmu.secondLevelTableBuf[i][j * 2 + (0 ^ BigEndian)]) >> 16) & 0xFFFF)` \n\t"
+        "movw r1, #`utils.toHex(i * Mmu.NUM_LEVEL2_ENTRIES * 8 + j * 8)` \n\t"
+        "str r2, [r0, r1] \n\t"
+        "movw r2, #`utils.toHex((Mmu.secondLevelTableBuf[i][j * 2 + (1 ^ BigEndian)]) & 0xFFFF)` \n\t"
+        "movt r2, #`utils.toHex(((Mmu.secondLevelTableBuf[i][j * 2 + (1 ^ BigEndian)]) >> 16) & 0xFFFF)` \n\t"
+        "movw r1, #`utils.toHex(i * Mmu.NUM_LEVEL2_ENTRIES * 8 + j * 8 + 4)` \n\t"
+        "str r2, [r0, r1] \n\t"
+                         );
 %        }
 %    }
 %}
+    __asm__ __volatile__ (
+        "bx lr"
+                         );
 }
+#endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2012-2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,43 +49,34 @@ import xdc.runtime.Error;
 
 /*!
  *  ======== Load ========
- *  The Load module reports execution times and load information for threads 
- *  in a system. 
+ *  The Load module reports execution times and load information for threads
+ *  in a system.
  *
  *  SYS/BIOS manages four distinct levels of execution threads: hardware
  *  interrupt service routines, software interrupt routines, tasks, and
- *  background idle functions. This module reports execution time and load on a 
- *  per-task basis, and also provides information globally for hardware 
- *  interrupt service routines, software interrupt routines and idle functions 
- *  (in the form of the idle task). It can also report an estimate of the 
- *  global CPU load, which is computed as the percentage of time in the
- *  benchmark window which was NOT spent in the idle loop. 
- *  More specifically, the load is computed as follows:
+ *  background idle functions. This module reports execution time and load on a
+ *  per-task basis, and also provides information globally for hardware
+ *  interrupt service routines, software interrupt routines and idle functions
+ *  (in the form of the idle task). It can also report an estimate of the
+ *  global CPU load.
  *
- *  global CPU load = 100 * (1 - (min. time for a trip around idle loop * 
- *      # times in idle loop)/(benchmark time window) )
- *      
- *  Any work done in the idle loop is included in the CPU load - in other 
- *  words, any time spent in the loop beyond the shortest trip around the idle
- *  loop is counted as non-idle time.
- * 
- *  Execution time is reported in units of 
- *  {@link xdc.runtime.Timestamp Timestamp} counts, and load is reported 
+ *  Execution time is reported in units of
+ *  {@link xdc.runtime.Timestamp Timestamp} counts, and load is reported
  *  in percentages.
  *
- *  By default, load data is gathered in all threads. 
- *  {@link #hwiEnabled hwiEnabled}, {@link #swiEnabled swiEnabled} 
- *  and {@link #taskEnabled taskEnabled} can be used to select which 
- *  type(s) of threads are monitored. These statistics are automatically 
- *  recorded to the load module's logger instance. Users can also choose 
- *  to call {@link #getTaskLoad}, {@link #getGlobalSwiLoad}, 
+ *  By default, load data is gathered for Task threads.
+ *  {@link #hwiEnabled hwiEnabled}, {@link #swiEnabled swiEnabled}
+ *  and {@link #taskEnabled taskEnabled} can be used to select which
+ *  type(s) of threads are monitored. These statistics are automatically
+ *  recorded to the load module's logger instance. Users can also choose
+ *  to call {@link #getTaskLoad}, {@link #getGlobalSwiLoad},
  *  {@link #getGlobalHwiLoad} and {@link #getCPULoad} at any time to obtain the
- *  statistics at runtime.   
- *  
- *  The module relies on {@link #update} to be called to compute load and 
+ *  statistics at runtime.
+ *
+ *  The module relies on {@link #update} to be called to compute load and
  *  execution times from the time when {@link #update} was last called. This
- *  is automatically done for every period specified by 
- *  {@link #windowInMs windowInMs} in an {@link ti.sysbios.knl.Idle Idle} 
+ *  is automatically done for every period specified by
+ *  {@link #windowInMs windowInMs} in an {@link ti.sysbios.knl.Idle Idle}
  *  function when {@link #updateInIdle updateInIdle} is 
  *  set to true. The time between 2 calls to {@link #update} is called the 
  *  benchmark time window. 
@@ -105,6 +96,80 @@ import xdc.runtime.Error;
  *  priority Task) instead to ensure statistics are computed even when the 
  *  system is never idle.  
  *     
+ *  @a(CPU Load Calculation Methods)
+ *
+ *  The CPU load is computed in three different ways,
+ *  depending on what threads are monitored, and whether or not Power
+ *  management is used to idle the CPU when no threads are running.
+ *
+ *  @p(html)
+ *  <B>Task Load Disabled and No Power Management</B>
+ *  @p
+ *
+ *  The first method of calculating CPU load is used when
+ *  Task load logging is disabled, ie, {@link #taskEnable}
+ *  is false, and Power management is not used. The CPU load is computed as
+ *  the percentage of time in the benchmark window which was NOT spent in the
+ *  idle loop. More specifically, the load is computed as follows:
+ *
+ *  global CPU load = 100 * (1 - (min. time for a trip around idle loop *
+ *      # times in idle loop)/(benchmark time window) )
+ *
+ *  Any work done in the idle loop is included in the CPU load - in other
+ *  words, any time spent in the loop beyond the shortest trip around the idle
+ *  loop is counted as non-idle time.
+ *
+ *  This method works fairly well if the timestamp frequency is
+ *  sufficiently high (for example, if it's equal to the CPU frequency).
+ *  For the MSP430, however, with the CPU running at 8MHz, when the 32KHz
+ *  ACLK is used for the timestamp counter, the CPU load is only a very
+ *  rough approximation, due to the courseness of the timestamp.  The CPU load
+ *  accuracy can also be affected by caching and user idle functions.
+ *
+ *  @p(html)
+ *  <B>Task Load Enabled and No Power Management</B>
+ *  @p
+ *
+ *  The second method of calculating CPU load is used when Task load logging
+ *  is enabled ({@link #taskEnable} = true) and Power management is not used.
+ *  In this case the CPU load is calculted as
+ *
+ *      global CPU load = 100 - (Idle task load)
+ *
+ *  This prevents any discrepancy between the calculated CPU load had we
+ *  used the first method, and 100 - the Idle task load.  If Swi and
+ *  Hwi load logging are not enabled, however, time spent in a Swi
+ *  or Hwi will be charged to the task in which it ran.  This will
+ *  affect the accuracy of the CPU (and Task) load, but the trade off
+ *  is more overhead to do the Hwi and Swi load logging.
+ *
+ *  @p(html)
+ *  <B>Power Management Enabled</B>
+ *  @p
+ *
+ *  The third method of calculating CPU load is used when Power
+ *  management is enabled.  In this case, the idle loop has a
+ *  function brought in by the Power module that idles the CPU.
+ *  The timestamp timer must continue to run during idle, in order
+ *  to measure idle and non-idle time, however.  This method of
+ *  calculating CPU load plugs a Hwi hook function which is run
+ *  at the beginning of every Hwi. An idle function will call
+ *  Timestamp_get32() to mark the beginning of idle time, and
+ *  when the first Hwi causes the CPU to come out of idle, the
+ *  Hwi hook function will call Timestamp_get32() to mark the end
+ *  of idle time.  The idle function accumulates the idle time
+ *  and total time elapsed, and the CPU load is calculated as:
+ *
+ *    global CPU load = 100 * (1 - idle time / time elapsed)
+ *
+ *  With this method of CPU load calculation, all idle functions are
+ *  included in the CPU load.  When Power is enabled, Task, Swi, and
+ *  Hwi load logging can be enabled, but you may find that the
+ *  CPU load does not equal (100 - idle task load), since the CPU load
+ *  is calculated as the percentage of time that the processor is not
+ *  powered down, while the idle task load includes powered down time
+ *  plus time executing idle functions.
+ *
  *  @a(Examples)
  *  Configuration example: The following statements configure the Load module
  *  to obtain output in the CCS output window. This is useful for early
@@ -173,23 +238,24 @@ import xdc.runtime.Error;
  *  Thus, for better accuracy, it is best to leave monitoring on for threads of
  *  a higher priority relative to the thread type of interest.  
  *   
- *  - The implementation of {@link #getCPULoad()} self-calibrates the shortest 
- *  path through the idle loop. It does this by keeping track of the shortest 
- *  time between invocations of an idle function automatically inserted by the 
+ *  - When Task load logging is not enabled and Power management is not used,
+ *  the implementation of {@link #getCPULoad()} self-calibrates the shortest
+ *  path through the idle loop. It does this by keeping track of the shortest
+ *  time between invocations of an idle function automatically inserted by the
  *  Load module, and assumes that to be the time it takes for one iteration
- *  through the idle loop. Because of this, the CPU load value is only an 
- *  estimate since the idle loop might occasionally take longer to run 
- *  (e.g. due to caching effects, stalls). The reported CPU load tends to be 
- *  slightly higher than reality, especially when the load is low. 
- *   
- *  - If {@link #taskEnabled taskEnabled} is set to true, 
- *  task name support will be automatically turned on so that the Load module 
+ *  through the idle loop. Because of this, the CPU load value is only an
+ *  estimate since the idle loop might occasionally take longer to run
+ *  (e.g. due to caching effects, stalls). The reported CPU load tends to be
+ *  slightly higher than reality, especially when the load is low.
+ *
+ *  - If {@link #taskEnabled taskEnabled} is set to true,
+ *  task name support will be automatically turned on so that the Load module
  *  can print out the task names in its log output.
- *  
- *  - Currently does not support {@link xdc.runtime.Timestamp Timestamp} 
- *  frequencies over 4 GHz.       
+ *
+ *  - Currently does not support {@link xdc.runtime.Timestamp Timestamp}
+ *  frequencies over 4 GHz.
  *  @p
- *  
+ *
  *  @p(html)
  *  <h3> Calling Context </h3>
  *  <table border="1" cellpadding="3">
@@ -237,6 +303,9 @@ import xdc.runtime.Error;
  *  </table>
  *  @p  
  */
+
+@Template("./Load.xdt")
+
 module Load
 {
     /*!
@@ -472,15 +541,63 @@ module Load
     Void update();
 
     /*!
+     *  @_nodoc
+     *  ======== updateCPULoad ========
+     *  Record CPU load only.  This function is used only when Power idling
+     *  is enabled.
+     *
+     *  If Power idling is available for the device and enabled, a different
+     *  method of CPU load calculation must be used. Since the idle loop will
+     *  not be executing while the CPU is idle, we cannot measure the idle
+     *  time by multiplying the number of times the idle loop ran, by the
+     *  minumum time through one iteration of the idle loop.  Instead, we
+     *  use a {@link ti.sysbios.knl.hal.Hwi} hook function for measuring
+     *  idle time. The hook function is run at the beginning of each Hwi,
+     *  and the first Hwi to cause the CPU to come out of idle, will mark
+     *  the end of idle time.
+     *
+     */
+    @DirectCall
+    Void updateCPULoad();
+
+    /*!
+     *  @_nodoc
+     *  ======== updateLoads ========
+     *  Record CPU load and thread loads if Task, Swi, or Hwi load logging
+     *  is enabled. This function is called by Load_update() if Power
+     *  management is not used.
+     */
+    @DirectCall
+    Void updateLoads();
+
+    /*!
+     *  @_nodoc
+     *  ======== updateCurrentThreadTime ========
+     *  Update the total time for the currently running thread.  This function
+     *  will be called if Task, Swi, or Hwi Load logging is enabled.
+     */
+    @DirectCall
+    Void updateCurrentThreadTime();
+
+    /*!
+     *  @_nodoc
+     *  ======== updateThreadContexts ========
+     *  Update hook contexts for all threads.  This function
+     *  will be called if Task, Swi, or Hwi Load logging is enabled.
+     */
+    @DirectCall
+    Void updateThreadContexts();
+
+    /*!
      *  ======== reset ========
      *  Reset all internal load counters
-     *  
+     *
      *  If {@link #taskEnabled taskEnabled} is set to true, this function can
-     *  only be called in task context.     
-     */ 
+     *  only be called in task context.
+     */
     @DirectCall
     Void reset();
-    
+
     /*!
      *  ======== getGlobalSwiLoad ========
      *  Return the load and time spent in Swi's
@@ -488,7 +605,7 @@ module Load
      *  This function returns the load and time spent in Swi's along with
      *  the time duration over which the measurement was done. Numbers are
      *  reported in  {@link xdc.runtime.Timestamp Timestamp} counts.
-     *       
+     *
      *  @param(stat) Load and time statistics info
      *  @b(returns) TRUE if success, FALSE if failure
      *
@@ -503,14 +620,14 @@ module Load
      *  This function computes the load and time spent in Hwi's along
      *  with the time duration over which the measurement was done. Numbers
      *  are reported in  {@link xdc.runtime.Timestamp Timestamp} counts.
-     *       
+     *
      *  @param(stat) Load and time statistics info
      *
      *  @b(returns) TRUE if success, FALSE if failure
      */
     @DirectCall
-    Bool getGlobalHwiLoad(Stat *stat); 
- 
+    Bool getGlobalHwiLoad(Stat *stat);
+
     /*!
      *  ======== getCPULoad ========
      *  Return an estimate of the global CPU load
@@ -519,18 +636,18 @@ module Load
      *  CPU), with the idle time determined based on number of trips through
      *  the idle loop multiplied by the shortest amount of time through the
      *  loop.
-     *  
-     *  This function requires the idle loop to be run during a benchmark time 
+     *
+     *  This function requires the idle loop to be run during a benchmark time
      *  window.
-     *            
-     *  Note: Time spent in kernel while switching to a Hwi/Swi/Task is 
+     *
+     *  Note: Time spent in kernel while switching to a Hwi/Swi/Task is
      *        considered non-idle time.
-     *                           
+     *
      *  @b(returns) CPU load in %
      *
      */
     @DirectCall
-    UInt32 getCPULoad(); 
+    UInt32 getCPULoad();
 
     /*!
      *  ======== calculateLoad ========
@@ -542,8 +659,8 @@ module Load
      *  @a(returns) Load value of a Load_Stat structure in %.
      */
     @DirectCall
-    UInt32 calculateLoad(Stat *stat); 
-    
+    UInt32 calculateLoad(Stat *stat);
+
     /*!
      *  ======== setMinIdle ========
      *  Set lower bound on idle loop time used to compute CPU load
@@ -551,62 +668,60 @@ module Load
      *  @see #minIdle
      */
     @DirectCall
-    UInt32 setMinIdle(UInt32 newMinIdleTime); 
+    UInt32 setMinIdle(UInt32 newMinIdleTime);
 
     /*! @_nodoc
      *  ======== addTask ========
      *  Add a task to the list for benchmarking
      *
-     *  Returns TRUE if task is successfully added to the list.
-     *  
-     *  If {@link #taskEnabled} is set to true, this function can only be 
+     *  If {@link #taskEnabled} is set to true, this function can only be
      *  called in task context.
-     *                 
+     *
      *  @param(task) Handle of the Task to be added to the list.
      *  @param(env) Handle of context structure to be used by the Task
-     *  @b(returns) TRUE if success, FALSE if failure
-     *  
      */
     @DirectCall
-    Bool addTask(Task.Handle task, HookContext *env);
+    Void addTask(Task.Handle task, HookContext *env);
 
     /*! @_nodoc
      *  ======== removeTask ========
      *  Remove a task from the list for benchmarking
      *
-     *  Returns TRUE if task is successfully removed from the list.
-     *  
      *  If {@link #taskEnabled} is set to true, this funciton can only be
-     *  called in task context.               
-     *       
-     *  @param(taskHandle) Handle of the Task to be removed from the list.
-     *  @b(returns) TRUE if success, FALSE if failure
+     *  called in task context.
      *
+     *  @param(taskHandle) Handle of the Task to be removed from the list.
      */
     @DirectCall
     Bool removeTask(Task.Handle task);
-    
+
     /*!
      *  @_nodoc
      *  ======== idleFxn ========
      *  Idle function used to periodically update the Task time values
-     *
      */
     @DirectCall
     Void idleFxn();
-    
+
+    /*!
+     *  @_nodoc
+     *  ======== idleFxnPwr ========
+     *  Idle function used when Power idling is enabled.
+     */
+    @DirectCall
+    Void idleFxnPwr();
+
     /* -------- Hook Functions -------- */
 
     /*!
      *  @_nodoc
      *  ======== taskCreateHook ========
-     *  Create hook function used to initialize all task's hook context 
+     *  Create hook function used to initialize all task's hook context
      *  to NULL during creation time. Also adds the task's hook context
      *  when {@link #autoAddTasks} is set to true.
-     *                
+     *
      *  @param(task) Handle of the Task to initialize.
      *  @param(eb) Error block.
-     *
      */
     @DirectCall
     Void taskCreateHook(Task.Handle task, Error.Block *eb);
@@ -616,9 +731,8 @@ module Load
      *  ======== taskDeleteHook ========
      *  Delete hook function used to remove the task's hook context 
      *  when {@link #autoAddTasks} is set to true.
-     *           
-     *  @param(task) Handle of the Task to delete.
      *
+     *  @param(task) Handle of the Task to delete.
      */
     @DirectCall
     Void taskDeleteHook(Task.Handle task);
@@ -627,10 +741,9 @@ module Load
      *  @_nodoc
      *  ======== taskSwitchHook ========
      *  Switch hook function used to perform benchmarks
-     *       
+     *
      *  @param(curTask) Handle of currently executing Task.
      *  @param(nextTask) Handle of the next Task to run
-     *
      */
     @DirectCall
     Void taskSwitchHook(Task.Handle curTask, Task.Handle nextTask);
@@ -639,9 +752,8 @@ module Load
      *  @_nodoc
      *  ======== swiBeginHook ========
      *  Swi begin hook function used to perform benchmarks
-     *       
-     *  @param(swi) Handle of Swi to begin execution.
      *
+     *  @param(swi) Handle of Swi to begin execution.
      */
     @DirectCall
     Void swiBeginHook(Swi.Handle swi);
@@ -650,9 +762,8 @@ module Load
      *  @_nodoc
      *  ======== swiEndHook ========
      *  Swi end hook function used to perform benchmarks
-     *       
-     *  @param(swi) Handle of Swi to end execution.
      *
+     *  @param(swi) Handle of Swi to end execution.
      */
     @DirectCall
     Void swiEndHook(Swi.Handle swi);
@@ -661,10 +772,9 @@ module Load
      *  @_nodoc
      *  ======== hwiBeginHook ========
      *  Hwi begin hook function used to perform benchmarks
-     *       
-     *  @param hwi Handle of Hwi to begin execution.
      *
-     */ 
+     *  @param hwi Handle of Hwi to begin execution.
+     */
     @DirectCall
     Void hwiBeginHook(IHwi.Handle hwi);
 
@@ -672,68 +782,77 @@ module Load
      *  @_nodoc
      *  ======== hwiEndHook ========
      *  Hwi end hook function used to perform benchmarks
-     *       
-     *  @param hwi Handle of Hwi to end execution.
      *
+     *  @param hwi Handle of Hwi to end execution.
      */
     @DirectCall
     Void hwiEndHook(IHwi.Handle hwi);
-    
+
     /*!
      *  @_nodoc
      *  ======== taskRegHook ========
-     *  Registration function for the module's hook 
-     *  
+     *  Registration function for the module's hook
+     *
      *  Moved out of the internal section for ROM purposes. This function
      *  is not referenced directly, so it must be a "public" function so
      *  that the linker does not drop it when creating a ROM image.
      *
      *  @param(id) The id of the hook for use in load.
-     *       
      */
     @DirectCall
     Void taskRegHook(Int id);
-    
-internal:   /* not for client use */ 
+
+internal:   /* not for client use */
 
     /* -------- Internal Module Types -------- */
 
-    /*! 
+    /*!
      *  @_nodoc
-     *  Hook Context 
+     *  Hook Context
      */
     struct HookContext {
-        Queue.Elem qElem;        /*! Queue element */        
+        Queue.Elem qElem;        /*! Queue element */
         UInt32 totalTimeElapsed; /*! Total amount of time elapsed */
-        UInt32 totalTime;        /*! time spent in thread */ 
+        UInt32 totalTime;        /*! time spent in thread */
         UInt32 nextTotalTime;    /*! working counter of time spent in thread */
         UInt32 timeOfLastUpdate; /*! time when update was last called */
         Ptr threadHandle;        /*! handle to thread whose context this is */
     };
-        
+
     /* -------- Internal Module Parameters -------- */
-    
+
     /*! @_nodoc
      *  Automatically add all tasks
      */
     config Bool autoAddTasks = true;
-    
+
+    /*! @_nodoc
+     *  Is power management enabled?
+     */
+    metaonly config Bool powerEnabled;
+
     /* -------- Internal Module Functions -------- */
-    
+
     /*!
      *  @_nodoc
      *  ======== logLoads ========
-     *  Logs load values for all monitored threads. 
-     *  Statistics messages from the kernel must be enabled 
-     *  (via Load.common$.diags_USER4) in order to see the output.    
+     *  Logs load values for all monitored threads.
+     *  Statistics messages from the kernel must be enabled
+     *  (via Load.common$.diags_USER4) in order to see the output.
      *
      *  If {@link #taskEnabled} is set to TRUE, this function can only be
      *  called in task context.
      */
     Void logLoads();
 
-    
-    struct Module_State {     
+    /*!
+     *  @_nodoc
+     *  ======== logCPULoad ========
+     *  Log CPU load only.
+     */
+    Void logCPULoad();
+
+    struct Module_State {
         Queue.Object taskList;   /* List to hold registered task instances */
 
         Int taskHId;             /* Task Hook Context Id for this module */
@@ -745,18 +864,28 @@ internal:   /* not for client use */
 
         UInt32 swiStartTime;     /* Start time of the current Swi */
         HookContext swiEnv;      /* Singleton hook context for swi's */
+        HookContext taskEnv[];   /* Hook contexts for static tasks */
         UInt32 swiCnt;           /* number of Swi's currently executing */
-        
+
         UInt32 hwiStartTime;     /* Start time of the current Hwi */
         HookContext hwiEnv;      /* Singleton hook context for hwi's */
         UInt32 hwiCnt;           /* number of Hwi's currently executing */
-        
+
         UInt32 timeSlotCnt;      /* count of number of time windows printed */
-        
+
         UInt32 minLoop;          /* shortest time thru the idle loop */
         UInt32 minIdle;          /* minLoop is never set below this value */
         UInt32 t0;               /* start time of previous call to idle fxn */
         UInt32 idleCnt;          /* number of times through idle loop */
         UInt32 cpuLoad;          /* CPU load in previous time window */
+
+        UInt32 taskEnvLen;       /* Length of static taskEnv array */
+        UInt32 taskNum;          /* Number of initialized static tasks */
+
+        /* Fields for CPU load calculation with Power idling */
+        Bool   powerEnabled;
+        UInt32 idleStartTime;
+        UInt32 busyStartTime;
+        UInt32 busyTime;
     };
 }

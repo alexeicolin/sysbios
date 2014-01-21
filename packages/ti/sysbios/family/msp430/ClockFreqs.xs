@@ -55,8 +55,14 @@ function module$use()
             if ((Program.cpu.attrs.peripherals["clock"] != null) &&
                 (Program.cpu.attrs.peripherals["clock"].$module.$name ==
                 "ti.catalog.msp430.peripherals.clock.CS_A")) {
-                ClockFreqs.ACLK  = 32768;
-                ClockFreqs.SMCLK = 8000000;
+                if (Boot.useLFXT == true) {
+                    ClockFreqs.ACLK  = 32768;
+                    ClockFreqs.SMCLK = 8000000;
+                }
+                else {
+                    ClockFreqs.ACLK  = 39063;
+                    ClockFreqs.SMCLK = 8000000;
+                }
             }
             else {
                 ClockFreqs.ACLK  = 32768;

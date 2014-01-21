@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -281,60 +281,6 @@ module Cache inherits ti.sysbios.interfaces.ICache
      */
     @DirectCall
     Void disableBP();
-
-    /*!
-     *  @_nodoc
-     *  ======== enablePmc ========
-     *  Enable 3 PMC event counters and map them to L2 cache refill event,
-     *  L2 cache access event and cycle event.
-     *
-     *  For debug purposes only.
-     */
-    @DirectCall
-    Void enablePmc();
-
-    /*!
-     *  @_nodoc
-     *  ======== resetPmc ========
-     *  Stop and reset all PMC event counters being used. Restart the 
-     *  counters again.
-     *
-     *  For debug purposes only.
-     */
-    @DirectCall
-    Void resetPmc();
-
-    /*!
-     *  @_nodoc
-     *  ======== getPmcMiss ========
-     *  Read the PMC event counter register corresponding to L2 cache 
-     *  refill event.
-     *
-     *  For debug purposes only.
-     */
-    @DirectCall
-    UInt getPmcMiss();
-
-    /*!
-     *  @_nodoc
-     *  ======== getPmcAxs ========
-     *  Read the PMC event counter register corresponding to L2 cache 
-     *  access event.
-     *
-     *  For debug purposes only.
-     */
-    @DirectCall
-    UInt getPmcAxs();
-
-    /*!
-     *  @_nodoc
-     *  ======== getPmcCycle ========
-     *  Read the PMC event counter register corresponding to cycle event.
-     *
-     *  For debug purposes only.
-     */
-    @DirectCall
-    UInt getPmcCycle();
 
 internal:
 

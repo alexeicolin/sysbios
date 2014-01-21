@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -78,7 +78,7 @@
 static inline UInt ti_sysbios_family_arm_m3_Hwi_disable()
 {
     UInt key;
-    __asm__ __volatile__ (
+    asm volatile (
             "mrs %0, basepri\n\t"
             "msr basepri, %1"
             : "=&r" (key)
@@ -93,7 +93,7 @@ static inline UInt ti_sysbios_family_arm_m3_Hwi_disable()
 static inline UInt ti_sysbios_family_arm_m3_Hwi_enable()
 {
     UInt key;
-    __asm__ __volatile__ (
+    asm volatile (
             "movw r12, #0\n\t"
             "mrs %0, basepri\n\t"
             "msr basepri, r12"
@@ -108,7 +108,7 @@ static inline UInt ti_sysbios_family_arm_m3_Hwi_enable()
  */
 static inline Void ti_sysbios_family_arm_m3_Hwi_restore(UInt key)
 {
-    __asm__ __volatile__ (
+    asm volatile (
             "msr basepri, %0"
             :: "r" (key)
             );

@@ -37,30 +37,18 @@
 var BiosBuild = xdc.loadCapsule("ti/sysbios/Build.xs");
 
 var objList = [
-    "ReentSupport"
-];
-
-/* build for M3 and M4 GNU targets */
-var trgFilter = {
-    field: "$name",
-    list: [ "gnu.targets.arm.M3",
-            "gnu.targets.arm.M4",
-            "gnu.targets.arm.M4F"
-          ]
-};
-
-/* generate makefiles */
-BiosBuild.buildLibs(objList, undefined, trgFilter, arguments);
-
-var objList = [
     "ReentSupport",
     "SemiHostSupport"
 ];
 
-/* build for A8 and A15 GNU targets */
+/* build for all ARM GNU targets */
 var trgFilter = {
     field: "$name",
-    list: [ "gnu.targets.arm.A8F",
+    list: [ "gnu.targets.arm.M3",
+            "gnu.targets.arm.M4",
+            "gnu.targets.arm.M4F",
+            "gnu.targets.arm.A8F",
+            "gnu.targets.arm.A9F",
             "gnu.targets.arm.A15F"
           ]
 };

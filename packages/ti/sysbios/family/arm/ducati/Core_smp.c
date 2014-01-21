@@ -59,7 +59,7 @@
 /*
  *  ======== Timer_Module_startup ========
  */
-Int Core_Module_startup(status)
+Int Core_Module_startup(Int status)
 {
     /* grab Hwi/Swi/Task schedulers */
     /* Task and Swi scheduler is locked by default */

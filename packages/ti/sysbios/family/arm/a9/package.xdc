@@ -36,7 +36,6 @@
 requires ti.sysbios.interfaces;
 
 /*!
- *  @_nodoc
  *  ======== ti.sysbios.family.arm.a9 ========
  *  Contains specifications for the a9 family-specific SYS/BIOS functions.
  */
@@ -45,4 +44,5 @@ package ti.sysbios.family.arm.a9 [2,0,0,0] {
     module Mmu;
     module Timer;
     module TimerSupport;
+    module TimestampProvider;
 }

@@ -45,7 +45,7 @@
 /*
  *  ======== SVC_Handler ========
  */
-Void SVC_Handler()
+Void __attribute__((naked)) SVC_Handler()
 {
     __asm__ __volatile__ (
             "movs pc, lr"

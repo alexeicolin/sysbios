@@ -100,7 +100,7 @@
 static inline UInt ti_sysbios_hal_Core_hwiDisable()
 {
     UInt key;
-    __asm__ __volatile__ (
+    asm volatile (
             "mrs %0, basepri\n\t"
             "msr basepri, %1"
             : "=&r" (key)
@@ -115,7 +115,7 @@ static inline UInt ti_sysbios_hal_Core_hwiDisable()
 static inline UInt ti_sysbios_hal_Core_hwiEnable()
 {
     UInt key;
-    __asm__ __volatile__ (
+    asm volatile (
             "movw r12, #0\n\t"
             "mrs %0, basepri\n\t"
             "msr basepri, r12"
@@ -131,7 +131,7 @@ static inline UInt ti_sysbios_hal_Core_hwiEnable()
  */
 static inline Void ti_sysbios_hal_Core_hwiRestore(UInt key)
 {
-    __asm__ __volatile__ (
+    asm volatile (
             "msr basepri, %0"
             :: "r" (key)
             );

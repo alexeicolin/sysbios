@@ -388,6 +388,34 @@ function module$meta$init()
     this.ti_sysbios_family_arm_a8_intcps_Hwi.moduleName = "ti.sysbios.family.arm.a8.intcps.Hwi";
     this.ti_sysbios_family_arm_a8_intcps_Hwi.iconFileName = "icons/hwi.ico";
 
+    this.ti_sysbios_family_arm_a9_Cache.elemName = "Cache";
+    this.ti_sysbios_family_arm_a9_Cache.moduleName = "ti.sysbios.family.arm.a9.Cache";
+    this.ti_sysbios_family_arm_a9_Cache.iconFileName = "icons/mem.ico";
+
+    this.ti_sysbios_family_arm_a9_Timer.elemName = "A9 Private Timer";
+    this.ti_sysbios_family_arm_a9_Timer.moduleName = "ti.sysbios.family.arm.a9.Timer";
+    this.ti_sysbios_family_arm_a9_Timer.iconFileName = "icons/rtc.ico";
+
+    this.ti_sysbios_family_arm_a15_Cache.elemName = "Cache";
+    this.ti_sysbios_family_arm_a15_Cache.moduleName = "ti.sysbios.family.arm.a15.Cache";
+    this.ti_sysbios_family_arm_a15_Cache.iconFileName = "icons/mem.ico";
+
+    this.ti_sysbios_family_arm_a15_Mmu.elemName = "A15 MMU";
+    this.ti_sysbios_family_arm_a15_Mmu.moduleName = "ti.sysbios.family.arm.a15.Mmu";
+    this.ti_sysbios_family_arm_a15_Mmu.iconFileName = "icons/mem.ico";
+
+    this.ti_sysbios_family_arm_a15_TimestampProvider.elemName = "TimestampProvider";
+    this.ti_sysbios_family_arm_a15_TimestampProvider.moduleName = "ti.sysbios.family.arm.a15.TimestampProvider";
+    this.ti_sysbios_family_arm_a15_TimestampProvider.iconFileName = "icons/clk.ico";
+
+    this.ti_sysbios_family_arm_gic_Hwi.elemName = "Hwi";
+    this.ti_sysbios_family_arm_gic_Hwi.moduleName = "ti.sysbios.family.arm.gic.Hwi";
+    this.ti_sysbios_family_arm_gic_Hwi.iconFileName = "icons/hwi.ico";
+
+    this.ti_sysbios_family_arm_systimer_Timer.elemName = "Timer";
+    this.ti_sysbios_family_arm_systimer_Timer.moduleName = "ti.sysbios.family.arm.systimer.Timer";
+    this.ti_sysbios_family_arm_systimer_Timer.iconFileName = "icons/rtc.ico";
+
     this.ti_sysbios_family_arm_exc_Exception.elemName = "Exception";
     this.ti_sysbios_family_arm_exc_Exception.moduleName = "ti.sysbios.family.arm.exc.Exception";
     this.ti_sysbios_family_arm_exc_Exception.iconFileName = "icons/hwi.ico";
@@ -672,6 +700,33 @@ function module$meta$init()
         this.ti_sysbios_family_arm_a8_TimestampProvider
     ];
 
+    this.a9Group.elemName = "A9";
+    this.a9Group.moduleName = null;
+    this.a9Group.iconFileName = "icons/swi.ico";
+    this.a9Group.elemArray = [
+        this.ti_sysbios_family_arm_a9_Cache,
+        this.ti_sysbios_family_arm_a8_Mmu,
+        this.ti_sysbios_family_arm_gic_Hwi,
+        this.ti_sysbios_family_arm_exc_Exception,
+        this.ti_sysbios_family_arm_a9_Timer,
+        this.ti_sysbios_timers_dmtimer_Timer,
+        this.ti_sysbios_timers_gptimer_Timer,
+        this.ti_sysbios_family_arm_a15_TimestampProvider
+    ];
+
+    this.a15Group.elemName = "A15";
+    this.a15Group.moduleName = null;
+    this.a15Group.iconFileName = "icons/swi.ico";
+    this.a15Group.elemArray = [
+        this.ti_sysbios_family_arm_a15_Cache,
+        this.ti_sysbios_family_arm_a15_Mmu,
+        this.ti_sysbios_family_arm_gic_Hwi,
+        this.ti_sysbios_family_arm_systimer_Timer,
+        this.ti_sysbios_family_arm_exc_Exception,
+        this.ti_sysbios_timers_dmtimer_Timer,
+        this.ti_sysbios_family_arm_a15_TimestampProvider
+    ];
+
     this.r4Group.elemName = "R4 (TMS570)";
     this.r4Group.moduleName = null;
     this.r4Group.iconFileName = "icons/swi.ico";
@@ -722,6 +777,8 @@ function module$meta$init()
         this.arm9davinciGroup,
         this.arm9da830Group,
         this.a8Group,
+        this.a9Group,
+        this.a15Group,
         this.m3Group,
         this.lm3Group,
         this.ducatiGroup,

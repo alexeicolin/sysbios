@@ -59,7 +59,8 @@ Pkg.otherFiles = [
     "instrumented.cfg", "nonInstrumented.cfg",
     "smpInstrumented.cfg", "smpNonInstrumented.cfg",
     "BIOS.xml", "Diagnostics.xml",
-    "Welcome.html", "Overview.xml", "Overview.svg"
+    "Welcome.html", "Overview.xml", "Overview.svg",
+    "DescMsg.xdt"
 ];
 
 var testArray = [

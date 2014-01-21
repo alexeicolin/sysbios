@@ -4,7 +4,7 @@ var filterGeneric = [
 ];
 
 var filterGenericARM = [
-    {deviceFamily:"ARM", deviceId: "~.*(Cortex A|TM4C|TM4E|LM3|F28M3|LM4|RM4|TMS570LS|ARM7|ARM11|Generic|EVMDMRX45X|CC2538|TMS470M|DM350|DM357|DM368).*", toolChain:"TI"},
+    {deviceFamily:"ARM", deviceId: "~.*(Cortex A|TM4C|TM4E|TM4L|LM3|F28M3|LM4|RM4|TMS570LS|ARM7|ARM11|Generic|EVMDMRX45X|CC2538|TMS470M|DM350|DM357|DM368).*", toolChain:"TI"},
 ];
 
 var filterA8 = [
@@ -29,19 +29,24 @@ var filterMSP430 = [
 
 var filterStellaris = [
     {deviceFamily:"ARM", deviceId:".*LM3.*", toolChain:"TI"},
-    {deviceFamily:"ARM", deviceId:".*LM4.*", toolChain:"TI"},
-    {deviceFamily:"ARM", deviceId:".*TM4C.*", toolChain:"TI"},
-    {deviceFamily:"ARM", deviceId:".*TM4E.*", toolChain:"TI"},
 ];
 
 var filterStellarisM3GNU = [
     {deviceFamily:"ARM", deviceId:".*LM3.*", toolChain:"GNU"},
 ];
 
-var filterStellarisM4GNU = [
+var filterTivaM4GNU = [
+    {deviceFamily:"ARM", deviceId:".*TM4L.*", toolChain:"GNU"},
     {deviceFamily:"ARM", deviceId:".*LM4.*", toolChain:"GNU"},
     {deviceFamily:"ARM", deviceId:".*TM4C.*", toolChain:"GNU"},
     {deviceFamily:"ARM", deviceId:".*TM4E.*", toolChain:"GNU"},
+];
+
+var filterTiva = [
+    {deviceFamily:"ARM", deviceId:".*TM4L.*", toolChain:"TI"},
+    {deviceFamily:"ARM", deviceId:".*LM4.*", toolChain:"TI"},
+    {deviceFamily:"ARM", deviceId:".*TM4C.*", toolChain:"TI"},
+    {deviceFamily:"ARM", deviceId:".*TM4E.*", toolChain:"TI"},
 ];
 
 var filterConcertoM3 = [
@@ -127,6 +132,14 @@ var options = [
         linkerBuildOptions: ""
     },
     {
+        variant: "tivaM4",
+        filter: filterTiva,
+        cfgPrefix: "",
+        platform: "ti.platforms.tiva:$DeviceId$",
+        compilerBuildOptions: "",
+        linkerBuildOptions: ""
+    },
+    {
         variant: "c28",
         filter: filterConcertoC28,
         cfgPrefix: "c28/",
@@ -143,6 +156,46 @@ var options = [
         linkerCommandFile: "ti/platforms/concertoM3/include/$DeviceId$.cmd",
         compilerBuildOptions: "",
         linkerBuildOptions: ""
+    },
+    {
+        variant: "m3GNU",
+        filter: filterStellarisM3GNU,
+        cfgPrefix: "",
+        target: "gnu.targets.arm.M3",
+        platform: "ti.platforms.tiva:$DeviceId$",
+        linkerCommandFile: "ti/platforms/tiva/include_gnu/$DeviceId$.lds",
+        compilerBuildOptions: "-mthumb -march=armv7-m",
+        linkerBuildOptions: "-nostartfiles -static --gc-sections -lgcc -lc -lm -lnosys -L${XDC_CG_ROOT}/packages/gnu/targets/arm/libs/install-native/arm-none-eabi/lib/armv7-m"
+    },
+    {
+        variant: "m4GNU",
+        filter: filterTivaM4GNU,
+        cfgPrefix: "",
+        target: "gnu.targets.arm.M4F",
+        platform: "ti.platforms.tiva:$DeviceId$",
+        linkerCommandFile: "ti/platforms/tiva/include_gnu/$DeviceId$.lds",
+        compilerBuildOptions: "-mthumb -march=armv7e-m -mfloat-abi=hard -mfpu=fpv4-sp-d16",
+        linkerBuildOptions: "-nostartfiles -static --gc-sections -lgcc -lc -lm -lnosys -L${XDC_CG_ROOT}/packages/gnu/targets/arm/libs/install-native/arm-none-eabi/lib/armv7e-m/fpu"
+    },
+    {
+        variant: "m3GNUSemiHost",
+        filter: filterStellarisM3GNU,
+        cfgPrefix: "",
+        target: "gnu.targets.arm.M3",
+        platform: "ti.platforms.tiva:$DeviceId$",
+        linkerCommandFile: "ti/platforms/tiva/include_gnu/$DeviceId$.lds",
+        compilerBuildOptions: "-mthumb -march=armv7-m",
+        linkerBuildOptions: "-nostartfiles -static --gc-sections -lgcc -lc -lm -lrdimon -L${XDC_CG_ROOT}/packages/gnu/targets/arm/libs/install-native/arm-none-eabi/lib/armv7-m"
+    },
+    {
+        variant: "m4GNUSemiHost",
+        filter: filterTivaM4GNU,
+        cfgPrefix: "",
+        target: "gnu.targets.arm.M4F",
+        platform: "ti.platforms.tiva:$DeviceId$",
+        linkerCommandFile: "ti/platforms/tiva/include_gnu/$DeviceId$.lds",
+        compilerBuildOptions: "-mthumb -march=armv7e-m -mfloat-abi=hard -mfpu=fpv4-sp-d16",
+        linkerBuildOptions: "-nostartfiles -static --gc-sections -lgcc -lc -lm -lrdimon -L${XDC_CG_ROOT}/packages/gnu/targets/arm/libs/install-native/arm-none-eabi/lib/armv7e-m/fpu"
     }
 ] 
 
@@ -547,6 +600,7 @@ function module$meta$init()
                 }
             }
             else if ((options[i].variant == "a8") ||
+                     (options[i].variant == "tivaM4") ||
                      (options[i].variant == "stellarisM3")) {
                 /* TI ARM targets */
                 if (genericExamples[j].groupsTI.length != 0) {
@@ -614,6 +668,7 @@ function module$meta$init()
                 curGroup = benchmarkExamples[j].groupsGNU;
             }
             else if ((options[i].variant == "a8") ||
+                     (options[i].variant == "tivaM4") ||
                      (options[i].variant == "stellarisM3")) {
                 /* TI ARM targets */
                 curGroup = benchmarkExamples[j].groupsTI;

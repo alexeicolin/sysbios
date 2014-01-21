@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
- * All rights reserved.
+ * Copyright (c) 2013 Texas Instruments Incorporated - http://www.ti.com
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,16 +28,12 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*****************************************************************************/
-/* BOOT.C   v7.0.0A08274 - Initialize the C60 C runtime environment                */
-/* Copyright (c) 1993-2008  Texas Instruments Incorporated                   */
-/*****************************************************************************/
 #include <c6x.h>
 
 #include <xdc/runtime/Startup.h>
 #include <ti/sysbios/BIOS.h>
 
-#ifndef __TI_ELFABI__
+#ifndef __TI_EABI__
 
 #define CINIT   ((void*)&__cinit__)
 extern far int  __cinit__;
@@ -65,7 +60,7 @@ extern char __bss__[];
 register volatile unsigned int __SP;
 register volatile unsigned int __DP;
 #else
-#ifndef __TI_ELFABI__
+#ifndef __TI_EABI__
 __asm("\t.global __STACK_SIZE");
 #else
 __asm("\t.global __TI_STACK_END");
@@ -80,7 +75,7 @@ char _stack[8];
 /*---------------------------------------------------------------------------*/
 /* Rename c_int00 so that the linkage name remains _c_int00 in ELF           */
 /*---------------------------------------------------------------------------*/
-#ifdef __TI_ELFABI__
+#ifdef __TI_EABI__
 #define c_int00 _c_int00
 #endif
 
@@ -108,7 +103,7 @@ extern void __interrupt c_int00()
    /* THE STACK POINTER POINTS 1 WORD PAST THE TOP OF THE STACK, SO SUBTRACT */
    /* 1 WORD FROM THE SIZE. ALSO THE SP MUST BE ALIGNED ON AN 8-BYTE BOUNDARY*/
    /*------------------------------------------------------------------------*/
-#ifndef __TI_ELFABI__
+#ifndef __TI_EABI__
 
    __asm("\t   MVKL\t\t   __stack + __STACK_SIZE - 4, SP");
    __asm("\t   MVKH\t\t   __stack + __STACK_SIZE - 4, SP");
@@ -120,12 +115,16 @@ extern void __interrupt c_int00()
 
 #endif
 
-   __asm("\t   AND\t\t   ~7,SP,SP");               
+#ifndef _TMS320C6600
+   __asm("\t   AND\t\t   ~7,SP,SP");
+#else
+   __asm("\t   AND\t\t   ~15,SP,SP");
+#endif
 
    /*------------------------------------------------------------------------*/
    /* SET UP THE GLOBAL PAGE POINTER IN B14.                                 */
    /*------------------------------------------------------------------------*/
-#ifndef __TI_ELFABI__
+#ifndef __TI_EABI__
 
    __asm("\t   MVKL\t\t   $bss,DP");
    __asm("\t   MVKH\t\t   $bss,DP");
@@ -155,7 +154,7 @@ extern void __interrupt c_int00()
    /*------------------------------------------------------------------------*/
    /* CALL THE AUTOINITIALIZATION ROUTINE.                                   */
    /*------------------------------------------------------------------------*/
-#ifndef __TI_ELFABI__
+#ifndef __TI_EABI__
    _auto_init(CINIT);
 #else
    _auto_init_elf();

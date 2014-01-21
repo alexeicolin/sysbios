@@ -72,7 +72,7 @@ module TimestampProvider inherits ti.sysbios.interfaces.ITimestamp
      *  ======== useClockTimer ========
      *  Use the same timer as Clock
      *
-     *  Set this parameter when you want TimestampProvider is use the same
+     *  Set this parameter when you want TimestampProvider to use the same
      *  timer as the BIOS {@link ti.sysbios.knl.Clock Clock} module.
      *
      *  This parameter overrides the {@link #timerId timeId} setting.

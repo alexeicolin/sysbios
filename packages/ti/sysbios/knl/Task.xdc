@@ -639,6 +639,11 @@ module Task
         msg: "A_sleepTaskDisabled: Cannot call Task_sleep() while the Task scheduler is disabled."
     };
 
+    /*! Asserted in Task_getIdleTaskHandle */
+    config Assert.Id A_invalidCoreId = {
+        msg: "A_invalidCoreId: Cannot pass a non-zero CoreId in a non-SMP application."
+    };
+
     /*!
      *  Number of Task priorities supported. Default is 16.
      *
@@ -1245,7 +1250,6 @@ module Task
     Void yield();
 
     /*!
-     *  @_nodoc
      *  ======== getIdleTask ========
      *  returns a handle to the idle task object (for core 0)
      */
@@ -1253,9 +1257,14 @@ module Task
     Handle getIdleTask();
 
     /*!
-     *  @_nodoc
      *  ======== getIdleTaskHandle ========
      *  returns a handle to the idle task object for the specified coreId
+     *  (should be used only in applications built with
+     *  {@link ti.sysbios.BIOS#smpEnabled} set to true)
+     *
+     *  @a(Note)
+     *  If this function is called in a non-SMP application, coreId should
+     *  always be 0.
      */
     @DirectCall
     Handle getIdleTaskHandle(UInt coreId);

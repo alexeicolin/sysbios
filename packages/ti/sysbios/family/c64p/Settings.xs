@@ -188,6 +188,11 @@ settings.device["TMS320TCI6608"]  = settings.device["TMS320C6670"];
 settings.device["TMS320TCI6614"]  = settings.device["TMS320C6670"];
 settings.device["TMS320TCI6616"]  = settings.device["TMS320C6670"];
 settings.device["TMS320TCI6618"]  = settings.device["TMS320C6670"];
+settings.device["TMS320TCI6630K2L"]  = settings.device["TMS320C6670"];
+settings.device["TMS320C66AK2H06"]  = settings.device["TMS320C6670"];
+settings.device["TMS320C66AK2H12"]  = settings.device["TMS320C6670"];
+settings.device["TMS320C66AK2E02"]  = settings.device["TMS320C6670"];
+settings.device["TMS320C66AK2E05"]  = settings.device["TMS320C6670"];
 settings.device["TMS320C6654"]    = settings.device["TMS320C6670"];
 settings.device["TMS320C6655"]    = settings.device["TMS320C6670"];
 settings.device["TMS320C6657"]    = settings.device["TMS320C6670"];
@@ -332,6 +337,14 @@ function getDefaultCacheDelegate()
     else {
         return (settings.device[Program.cpu.deviceName].cacheDelegate);
     }
+}
+
+/*
+ *  ======== getDefaultPowerDelegate ========
+ */
+function getDefaultPowerDelegate()
+{
+    return ("ti.sysbios.hal.PowerNull");
 }
 
 /*

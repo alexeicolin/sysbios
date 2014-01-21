@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -232,6 +232,20 @@ if (xdc.om.$name == "cfg") {
             UMC_P0_ADJ:     0x0,
             UMC_P1_ADJ:     0x0,
         },
+        "TMS320C66AK2E02": {
+            PMC_R0_SIZE:    0x0,
+            PMC_R1_SIZE:    0x3,    // 32KB
+            PMC_R0_ADJ:     0x0,
+            PMC_R1_ADJ:     0x0,
+            DMC_R0_SIZE:    0x0,
+            DMC_R1_SIZE:    0x3,    // 32KB
+            DMC_R0_ADJ:     0x0,
+            DMC_R1_ADJ:     0x0,
+            UMC_P0_SIZE:    0x9,    // 512KB
+            UMC_P1_SIZE:    0x0,
+            UMC_P0_ADJ:     0x0,
+            UMC_P1_ADJ:     0x0,
+        },
         "TMS320DA830": {
             PMC_R0_SIZE:    0x0,    
             PMC_R1_SIZE:    0x3,    // 32KB
@@ -320,6 +334,9 @@ if (xdc.om.$name == "cfg") {
     deviceTable["TMS320TCI6634"]   = deviceTable["TMS320C6670"];
     deviceTable["TMS320TCI6636"]   = deviceTable["TMS320C6670"];
     deviceTable["TMS320TCI6638"]   = deviceTable["TMS320C6670"];
+    deviceTable["TMS320TCI6630K2L"] = deviceTable["TMS320C6670"];
+    deviceTable["TMS320C66AK2H06"] = deviceTable["TMS320C6670"];
+    deviceTable["TMS320C66AK2H12"] = deviceTable["TMS320C6670"];
     deviceTable["TMS320TCI6608"]   = deviceTable["TMS320C6670"];
     deviceTable["TMS320TCI6614"]   = deviceTable["TMS320C6670"];
     deviceTable["TMS320TCI6616"]   = deviceTable["TMS320C6670"];
@@ -331,6 +348,8 @@ if (xdc.om.$name == "cfg") {
     deviceTable["TMS320C6672"]     = deviceTable["TMS320C6670"];
     deviceTable["TMS320C6674"]     = deviceTable["TMS320C6670"];
     deviceTable["TMS320C6678"]     = deviceTable["TMS320C6670"];
+
+    deviceTable["TMS320C66AK2E05"] = deviceTable["TMS320C66AK2E02"];
 
     deviceTable["TMS320C2430"]   = deviceTable["TMS320C3430"];
     deviceTable["OMAP2431"]      = deviceTable["TMS320C3430"];

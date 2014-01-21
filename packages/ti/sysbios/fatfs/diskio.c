@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,7 @@
 #include <stdio.h>
 #include <ffconf.h>
 #include <diskio.h>
+#include <xdc/std.h>
 
 static diskio_fxns drive_fxn_table[_VOLUMES] = {
     {NULL, NULL, NULL, NULL, NULL},
@@ -46,7 +47,7 @@ static diskio_fxns drive_fxn_table[_VOLUMES] = {
     {NULL, NULL, NULL, NULL, NULL}
 };
 
-extern DWORD ti_sysbios_fatfs_getFatTime();
+extern Int32 ti_sysbios_fatfs_getFatTime(void);
 
 /*
  * ======== disk_register ========
@@ -167,9 +168,9 @@ DRESULT disk_ioctl(BYTE drive, BYTE cmd, void * buf)
 /*
  * ======== get_fattime ========
  */
-DWORD get_fattime()
+DWORD get_fattime(void)
 {
     /* call TI dummy implementation or user defined hook function */
-    return ti_sysbios_fatfs_getFatTime();
+    return (ti_sysbios_fatfs_getFatTime());
 }
 

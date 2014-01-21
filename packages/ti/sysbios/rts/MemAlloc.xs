@@ -34,7 +34,6 @@
  */
 
 var BIOS = null;
-var ReentSupport = null;
 
 /*
  *  ======== module$use ========
@@ -45,6 +44,16 @@ function module$use()
 
     if (Program.build.target.$name.match(/gnu/) &&
        (BIOS.taskEnabled == true)) {
-        ReentSupport = xdc.useModule('ti.sysbios.rts.gnu.ReentSupport');
+        xdc.useModule('ti.sysbios.rts.gnu.ReentSupport');
+    }
+    else if (Program.build.target.$name.match(/iar/)
+        && (BIOS.taskEnabled == true)) {
+
+        var lnkOpts = Program.build.target.lnkOpts.prefix;
+        if (lnkOpts.match(/--threaded_lib/)) {
+            var thrSup = xdc.useModule('ti.sysbios.rts.iar.MultithreadSupport');
+            thrSup.enableMultithreadSupport = true;
+        }
+
     }
 }

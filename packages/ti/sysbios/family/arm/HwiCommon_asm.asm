@@ -1,5 +1,5 @@
 ;
-;  Copyright (c) 2012, Texas Instruments Incorporated
+;  Copyright (c) 2013, Texas Instruments Incorporated
 ;  All rights reserved.
 ; 
 ;  Redistribution and use in source and binary forms, with or without
@@ -51,6 +51,7 @@
         .asg ti_sysbios_family_arm_HwiCommon_isrStack, _ti_sysbios_family_arm_HwiCommon_isrStack
         .asg ti_sysbios_family_xxx_Hwi_switchToTaskStack, _ti_sysbios_family_xxx_Hwi_switchToTaskStack
         .asg ti_sysbios_family_xxx_Hwi_switchToIsrStack, _ti_sysbios_family_xxx_Hwi_switchToIsrStack
+        .asg ti_sysbios_family_xxx_Hwi_switchAndRunFunc, _ti_sysbios_family_xxx_Hwi_switchAndRunFunc
         .asg ti_sysbios_family_arm_HwiCommon_Module__state__V, _ti_sysbios_family_arm_HwiCommon_Module__state__V
     .endif
 
@@ -73,6 +74,7 @@
         .global _ti_sysbios_family_arm_HwiCommon_isrStack
         .global _ti_sysbios_family_xxx_Hwi_switchToTaskStack
         .global _ti_sysbios_family_xxx_Hwi_switchToIsrStack
+        .global _ti_sysbios_family_xxx_Hwi_switchAndRunFunc
 
 _ti_sysbios_family_arm_HwiCommon_Module__state__V .tag ti_sysbios_family_arm_HwiCommon_Module_State
 
@@ -128,6 +130,28 @@ _ti_sysbios_family_xxx_Hwi_switchToTaskStack:
         ldr     sp, [r1]        ; interrupted task's SP
         str     r0, [r1]        ; signal return to TaskStack
         bx      lr
+        .endasmfunc
+
+;
+;  ======== ti_sysbios_family_xxx_Hwi_switchAndRunFunc ========
+;  ti_sysbios_family_xxx_Hwi_switchAndRunFunc(Void (*func)());
+;
+;  Switch to ISR stack, call the function Func() and then switch
+;  back to Task stack.
+;
+        .armfunc _ti_sysbios_family_xxx_Hwi_switchAndRunFunc
+_ti_sysbios_family_xxx_Hwi_switchAndRunFunc:
+        .asmfunc
+        push    {r4, lr}
+        mov     r4, r0
+        bl      _ti_sysbios_family_xxx_Hwi_switchToIsrStack
+                                ; Switch to ISR stack
+        push    {r0-r1}         ; save r0 = oldTaskSP
+        blx     r4              ; Call func
+        pop     {r0-r1}         ; restore r0 = oldTaskSP
+        bl      _ti_sysbios_family_xxx_Hwi_switchToTaskStack
+                                ; switch back to Task stack
+        pop     {r4, pc}
         .endasmfunc
 
 taskSP:

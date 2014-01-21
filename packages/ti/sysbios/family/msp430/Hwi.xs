@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+<<<<<<< HEAD
+ * Copyright (c) 2013, Texas Instruments Incorporated
+=======
+ * Copyright (c) 2012-2013, Texas Instruments Incorporated
+>>>>>>> ggentree_user3_avala-u06_a0783947
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -105,7 +109,7 @@ function module$static$init(mod, params)
     mod.isrStack = null;
 
     /* push Hwi objects (which are fully static now) to FLASH */
-    /* NOTE: if we add IRP tracking support in the future, this push should be 
+    /* NOTE: if we add IRP tracking support in the future, this push should be
        made conditional upon Hwi.dispatcherIrpTrackingSupport == false */
     // Hwi.common$.instanceSection = Program.platform.codeMemory;
 }
@@ -119,7 +123,7 @@ function instance$static$init(obj, intNum, fxn, params)
 
     if (fxn == null) {
         var name = this.instance.name != null ? this.instance.name : this;
-        Hwi.$logError("The function for Hwi " + name 
+        Hwi.$logError("The function for Hwi " + name
                       + ", interrupt number " + intNum
                       + ", is not defined", this);
     }
@@ -229,7 +233,7 @@ function plugMeta(intNum, fxn)
  *  Initialize the 'Basic' Task instance view.
  */
 function viewInitBasic(view, obj)
-{    
+{
     var Hwi = xdc.useModule('ti.sysbios.family.msp430.Hwi');
     var Program = xdc.useModule('xdc.rov.Program');
     var halHwi = xdc.useModule('ti.sysbios.hal.Hwi');
@@ -238,7 +242,7 @@ function viewInitBasic(view, obj)
     view.halHwiHandle =  halHwi.viewGetHandle(obj.$addr);
     view.label = Program.getShortName(obj.$label);
     view.intNum = obj.intNum;
-    
+
     view.fxn = hwiModCfg.interrupt[obj.intNum].fxn;
     view.arg = hwiModCfg.interrupt[obj.intNum].arg;
     view.irp = obj.irp;
@@ -255,7 +259,12 @@ function viewGetStackInfo()
 
     /* Fetch the Hwi stack */
     try {
-        var size = Program.getSymbolValue("__STACK_SIZE");
+        if (Program.build.target.$name.match(/iar/)) {
+            var size = Program.getSymbolValue("_STACK_SIZE");
+        }
+        else {
+            var size = Program.getSymbolValue("__STACK_SIZE");
+        }
         var stackBase = Program.getSymbolValue("_stack");
         var stackData = Program.fetchArray({type: 'xdc.rov.support.ScalarStructs.S_UChar', isScalar: true}, stackBase, size);
     }
@@ -266,7 +275,7 @@ function viewGetStackInfo()
 
     var index = 0;
 
-    /* 
+    /*
      * The stack is filled with 0xbe.
      */
     while (stackData[index] == 0xbe) {
@@ -286,7 +295,7 @@ function viewGetStackInfo()
 function viewInitModule(view, mod)
 {
     var Program = xdc.useModule('xdc.rov.Program');
-
+    var halHwiModCfg = Program.getModuleConfig('ti.sysbios.hal.Hwi');
     var hwiModCfg = Program.getModuleConfig('ti.sysbios.family.msp430.Hwi');
 
     view.options[0] = "Hwi.autoNestingSupport = ";
@@ -300,22 +309,28 @@ function viewInitModule(view, mod)
     view.options[3] += hwiModCfg.dispatcherIrpTrackingSupport ? "true" : "false";
 
     var stackInfo = viewGetStackInfo();
-    
+
     if (stackInfo.hwiStackSize == 0) {
         view.$status["hwiStackPeak"] =
         view.$status["hwiStackSize"] =
-        view.$status["hwiStackBase"] = "Error fetching Hwi stack info!"; 
+        view.$status["hwiStackBase"] = "Error fetching Hwi stack info!";
     }
     else {
-        view.hwiStackPeak = stackInfo.hwiStackPeak;
-        view.hwiStackSize = stackInfo.hwiStackSize;
-        view.hwiStackBase = "0x"+ stackInfo.hwiStackBase.toString(16);
+        if (halHwiModCfg.initStackFlag) {
+            view.hwiStackPeak = String(stackInfo.hwiStackPeak);
+            view.hwiStackSize = stackInfo.hwiStackSize;
+            view.hwiStackBase = "0x"+ stackInfo.hwiStackBase.toString(16);
 
-        if (view.hwiStackPeak == view.hwiStackSize) {
-            view.$status["hwiStackPeak"] = "Overrun!  "; 
-            /*                                      ^^  */
-            /* (extra spaces to overcome right justify) */
+            if (stackInfo.hwiStackPeak == stackInfo.hwiStackSize) {
+                view.$status["hwiStackPeak"] = "Overrun!  ";
+                /*                                  ^^  */
+                /* (extra spaces to overcome right justify) */
+            }
+        }
+        else {
+            view.hwiStackPeak = "n/a - set Hwi.initStackFlag";
+            view.hwiStackSize = stackInfo.hwiStackSize;
+            view.hwiStackBase = "0x"+ stackInfo.hwiStackBase.toString(16);
         }
     }
 }
-

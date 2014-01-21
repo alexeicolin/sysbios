@@ -68,7 +68,7 @@ Void tsk0Fxn(UArg arg0, UArg arg1)
     Swi_inc(swi0);              /* swi0 trigger = 2 */
     Swi_restore(key);           /* swi0 runs */
 
-    Swi_or(swi1, 0x100);        /* swi1 runs with trigger = 0x111 */
+    Swi_or(swi1, 0x100);        /* swi1 runs with trigger = 0x103 */
 
     Swi_andn(swi1, 0x1);        /* swi1 trigger = 0x10 */
     Swi_andn(swi1, 0x2);        /* swi1 runs with trigger = 0x00 */

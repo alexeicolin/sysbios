@@ -142,15 +142,55 @@ Void Swi_run(Swi_Object *swi)
 }
 
 /*
- *  The following two target-unique Hwi APIs must be called
- *  directly in order to work properly. Thus they are not
+ *  The following target-unique Hwi API must be called
+ *  directly in order to work properly. Thus it is not
  *  published in the Hwi interface spec in order to bypass the
  *  indirect function calls that arise in the release and debug
  *  builds.
  */
 
-extern Char *ti_sysbios_family_xxx_Hwi_switchToIsrStack();
-extern Void ti_sysbios_family_xxx_Hwi_switchToTaskStack(Char *oldTaskSP);
+extern Void ti_sysbios_family_xxx_Hwi_switchAndRunFunc(Void (*func)());
+
+/*
+ *  ======== Swi_runLoop ========
+ */
+Void Swi_runLoop()
+{
+    Queue_Handle curQ, maxQ;
+    Swi_Object *swi;
+
+    /* Remember current Swi priority */
+    curQ = Swi_module->curQ;
+
+    /* refresh maxQ */
+    maxQ = (Queue_Handle)((UInt8 *)(Swi_module->readyQ) +
+           (UInt)(Intrinsics_maxbit(Swi_module->curSet)*(2*sizeof(Ptr))));
+
+    /*
+     * Run all Swis of higher priority than
+     * the current Swi priority.
+     * Will pre-empt any currently running swi.
+     */
+    do {
+        swi = (Swi_Object *)Queue_dequeue(maxQ);
+
+        /* remove from curSet if last one in this ready list */
+        if (Queue_empty(maxQ)) {
+            Swi_module->curSet &= ~swi->mask;
+        }
+
+        Swi_run(swi);
+
+        if (Swi_module->curSet == 0) {
+            break;
+        }
+
+        maxQ = (Queue_Handle)((UInt8 *)(Swi_module->readyQ) +
+               (UInt)(Intrinsics_maxbit(Swi_module->curSet)*(2*sizeof(Ptr))));
+    }
+    while (maxQ > curQ);
+}
+
 
 /*
  *  ======== Swi_schedule ========
@@ -165,11 +205,8 @@ extern Void ti_sysbios_family_xxx_Hwi_switchToTaskStack(Char *oldTaskSP);
 Void Swi_schedule()
 {
     Queue_Handle curQ, maxQ;
-    Swi_Object *swi;
     UInt hwiKey;
     UInt tskKey;
-    Char *oldTaskSP;
-    volatile Bool taskEnabled;
 
     /* Remember current Swi priority */
     curQ = Swi_module->curQ;
@@ -181,56 +218,15 @@ Void Swi_schedule()
                 (UInt)(Intrinsics_maxbit(Swi_module->curSet)*(2*sizeof(Ptr))));
 
     if (maxQ > curQ) {
-
         if (BIOS_taskEnabled) {
-            tskKey = TASK_DISABLE();    /* required for Swi's posted from Tasks */
+            tskKey = TASK_DISABLE();  /* required for Swi's posted from Tasks */
 
-            /* Switch to HWI stack if not already on it */
-            oldTaskSP = ti_sysbios_family_xxx_Hwi_switchToIsrStack();
-
-            /* must refresh local variables after stack switch */
-
-            /* refresh curQ */
-            curQ = Swi_module->curQ;
-
-            /* refresh maxQ */
-            maxQ = (Queue_Handle)((UInt8 *)(Swi_module->readyQ) +
-                        (UInt)(Intrinsics_maxbit(Swi_module->curSet)*(2*sizeof(Ptr))));
-            /* set local variable inited after stack switch */
-            taskEnabled = TRUE;
+            /* Switch stacks and call Swi_runLoop() */
+            ti_sysbios_family_xxx_Hwi_switchAndRunFunc(&Swi_runLoop);
         }
         else {
-            taskEnabled = FALSE;
-        }
-
-        /*
-         * Run all Swis of higher priority than
-         * the current Swi priority.
-         * Will pre-empt any currently running swi.
-         */
-        do {
-            swi = (Swi_Object *)Queue_dequeue(maxQ);
-
-            /* remove from curSet if last one in this ready list */
-            if (Queue_empty(maxQ)) {
-                Swi_module->curSet &= ~swi->mask;
-            }
-
-            Swi_run(swi);
-
-            if (Swi_module->curSet == 0) {
-                break;
-            }
-
-            maxQ = (Queue_Handle)((UInt8 *)(Swi_module->readyQ) +
-                        (UInt)(Intrinsics_maxbit(Swi_module->curSet)*(2*sizeof(Ptr))));
-        }
-        while (maxQ > curQ);
-
-        /* check local variable inited after stack switch */
-        if (taskEnabled) {
-            /* Switch back to Task stack if at bottom of HWI stack */
-            ti_sysbios_family_xxx_Hwi_switchToTaskStack(oldTaskSP);
+            /* Call Swi_runLoop() */
+            Swi_runLoop();
         }
 
         /* MUST(!) unlock the scheduler before enabling interrupts */

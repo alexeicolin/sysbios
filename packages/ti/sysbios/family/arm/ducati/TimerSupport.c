@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,7 @@
 
 #include "package/internal/TimerSupport.xdc.h"
 
-Int TimerSupport_Module_startup(status)
+Int TimerSupport_Module_startup(Int status)
 {
     if (Wugen_Module_startupDone()) {
         return (Startup_DONE);

@@ -555,6 +555,7 @@ function viewGetStackInfo()
 function viewInitModule(view, mod)
 {
     var Program = xdc.useModule('xdc.rov.Program');
+    var halHwiModCfg = Program.getModuleConfig('ti.sysbios.hal.Hwi');
 
     var hwiModCfg = Program.getModuleConfig('ti.sysbios.family.arm.a8.intcps.Hwi');
 
@@ -574,22 +575,28 @@ function viewInitModule(view, mod)
     view.lastSpuriousInterrupt = mod.lastSpuriousInt;
 
     var stackInfo = viewGetStackInfo();
-    
+
     if (stackInfo.hwiStackSize == 0) {
         view.$status["hwiStackPeak"] =
         view.$status["hwiStackSize"] =
-        view.$status["hwiStackBase"] = "Error fetching Hwi stack info!"; 
+        view.$status["hwiStackBase"] = "Error fetching Hwi stack info!";
     }
     else {
-        view.hwiStackPeak = stackInfo.hwiStackPeak;
-        view.hwiStackSize = stackInfo.hwiStackSize;
-        view.hwiStackBase = "0x"+ stackInfo.hwiStackBase.toString(16);
+        if (halHwiModCfg.initStackFlag) {
+            view.hwiStackPeak = String(stackInfo.hwiStackPeak);
+            view.hwiStackSize = stackInfo.hwiStackSize;
+            view.hwiStackBase = "0x"+ stackInfo.hwiStackBase.toString(16);
 
-        if (view.hwiStackPeak == view.hwiStackSize) {
-            view.$status["hwiStackPeak"] = "Overrun!  "; 
-            /*                                  ^^  */
-            /* (extra spaces to overcome right justify) */
+            if (stackInfo.hwiStackPeak == stackInfo.hwiStackSize) {
+                view.$status["hwiStackPeak"] = "Overrun!  ";
+                /*                                  ^^  */
+                /* (extra spaces to overcome right justify) */
+            }
         }
+	else {
+            view.hwiStackPeak = "n/a - set Hwi.initStackFlag";
+            view.hwiStackSize = stackInfo.hwiStackSize;
+            view.hwiStackBase = "0x"+ stackInfo.hwiStackBase.toString(16);
+	}
     }
 }
-

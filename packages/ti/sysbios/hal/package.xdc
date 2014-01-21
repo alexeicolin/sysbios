@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2012-2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,46 +41,46 @@ requires ti.sysbios.family;
  *  ======== ti.sysbios.hal ========
  *  Contains Hardware Abstraction Layer (HAL) modules for the SYS/BIOS kernel.
  *
- *  SYS/BIOS provides services for configuration and management of interrupts, 
- *  cache, and timers. Unlike other SYS/BIOS services such as threading, these 
- *  modules directly program aspects of a device's hardware and are grouped 
- *  together in the Hardware Abstraction Layer (HAL) package. These modules 
- *  provide services such as enabling and disabling interrupts, plugging of 
- *  interrupt vectors, multiplexing of multiple interrupts to a single vector, 
+ *  SYS/BIOS provides services for configuration and management of interrupts,
+ *  cache, and timers. Unlike other SYS/BIOS services such as threading, these
+ *  modules directly program aspects of a device's hardware and are grouped
+ *  together in the Hardware Abstraction Layer (HAL) package. These modules
+ *  provide services such as enabling and disabling interrupts, plugging of
+ *  interrupt vectors, multiplexing of multiple interrupts to a single vector,
  *  and cache invalidation or writeback.
  *
  *  The HAL APIs fall into two categories:
- *  
+ *
  *  @p(blist)
  *  - Generic APIs that are available across all targets and devices.
- *  - Target/device-specific APIs that are available only for a specific device 
+ *  - Target/device-specific APIs that are available only for a specific device
  *    or ISA family
  *  @p
  *
- *  The generic APIs are designed to cover the great majority of use cases. 
- *  If you are concerned with easy portability between 
- *  different TI devices, you should use the generic APIs as much 
- *  as possible. However, if the generic APIs cannot enable use of a 
- *  device-specific hardware feature that is advantageous to the software 
+ *  The generic APIs are designed to cover the great majority of use cases.
+ *  If you are concerned with easy portability between
+ *  different TI devices, you should use the generic APIs as much
+ *  as possible. However, if the generic APIs cannot enable use of a
+ *  device-specific hardware feature that is advantageous to the software
  *  application, you may choose to use the target/device-specific APIs.
  *
- *  The {@link ti.sysbios.hal.Hwi}, {@link ti.sysbios.hal.Timer}, and 
- *  {@link ti.sysbios.hal.Cache} modules require target/device-specific API 
- *  implementations to achieve their functionality. To provide a common set 
- *  of APIs for these modules across all supported families/devices, SYS/BIOS 
- *  uses the RTSC proxy-delegate module mechanism. That is, each of these 
- *  modules serves as a proxy for a corresponding 
- *  target/device-specific module implementation. 
- * 
- *  During the configuration step of the application build, the  
- *  modules in the ti.sysbios.hal package locate and bind themselves to 
- *  appropriate delegate module implementations based on the current target 
- *  and platform specified in your config.bld file. The delegate binding 
+ *  The {@link ti.sysbios.hal.Hwi}, {@link ti.sysbios.hal.Timer}, and
+ *  {@link ti.sysbios.hal.Cache} modules require target/device-specific API
+ *  implementations to achieve their functionality. To provide a common set
+ *  of APIs for these modules across all supported families/devices, SYS/BIOS
+ *  uses the RTSC proxy-delegate module mechanism. That is, each of these
+ *  modules serves as a proxy for a corresponding
+ *  target/device-specific module implementation.
+ *
+ *  During the configuration step of the application build, the
+ *  modules in the ti.sysbios.hal package locate and bind themselves to
+ *  appropriate delegate module implementations based on the current target
+ *  and platform specified in your config.bld file. The delegate binding
  *  process is done internally.
  *
  *  For example, if your config.bld file specifies that one of your build
- *  targets is the C64P family, the {@link ti.sysbios.hal.Hwi} knows to 
- *  bind itself to the {@link ti.sysbios.family.c64p.Hwi} implementation. 
+ *  targets is the C64P family, the {@link ti.sysbios.hal.Hwi} knows to
+ *  bind itself to the {@link ti.sysbios.family.c64p.Hwi} implementation.
  */
 package ti.sysbios.hal [2,0,0,0] {
     module Hwi;
@@ -90,4 +90,6 @@ package ti.sysbios.hal [2,0,0,0] {
     module CacheNull;
     module Core;
     module CoreNull;
+    module Power;
+    module PowerNull;
 }

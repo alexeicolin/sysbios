@@ -1254,6 +1254,14 @@ internal:   /* not for client use */
     Void schedule();
 
     /*
+     *  ======== runLoop ========
+     *  Calls Swi_run in a loop
+     *
+     *  Called by Swi_schedule() via a local volatile function pointer.
+     */
+    Void runLoop();
+
+    /*
      *  ======== run ========
      *  Set up and run Swi
      *

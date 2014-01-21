@@ -49,3 +49,11 @@ function getLibs(prog)
     /* use shared getLibs() */
     return (Build.getLibs(this));
 }
+
+/*
+ *  ======== Package.getSects ========
+ */
+function getSects()
+{
+    return ("ti/sysbios/rts/linkcmd.xdt");
+}

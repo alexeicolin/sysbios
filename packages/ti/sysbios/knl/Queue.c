@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -170,7 +170,7 @@ Void Queue_put(Queue_Object *obj, Queue_Elem *elem)
  */
 Void Queue_remove(Queue_Elem *qelem) 
 {
-#if defined(__ICC430__)
+#if defined(__IAR_SYSTEMS_ICC__)
     Ptr temp;
     temp = qelem->next;
     qelem->prev->next = temp;

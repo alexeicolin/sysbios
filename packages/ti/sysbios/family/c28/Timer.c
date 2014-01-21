@@ -136,7 +136,7 @@ Void Timer_setNextTick(Timer_Object *obj, UInt32 newPeriodCounts,
  *  The timer is "running" at reset (the stop bit, TSS, is 0), but since the
  *  period is 0, this doesn't mean anything.
  */
-Int Timer_Module_startup(status)
+Int Timer_Module_startup(Int status)
 {
     Int i;
     Timer_Object *obj;

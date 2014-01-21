@@ -275,6 +275,15 @@ Bool Semaphore_pend(Semaphore_Object *sem, UInt timeout)
         return ((Bool)(elem.pendState));
     }
     else {
+        /*
+         * Assert catches Semaphore_pend calls from Hwi and Swi
+         * with non-zero timeout.
+         */
+        Assert_isTrue((timeout == BIOS_NO_WAIT) ||
+                ((BIOS_getThreadType() == BIOS_ThreadType_Task) ||
+                (BIOS_getThreadType() == BIOS_ThreadType_Main)),
+                Semaphore_A_badContext);
+
         --sem->count;
 
         if (Semaphore_supportsEvents && (sem->event != NULL)) {

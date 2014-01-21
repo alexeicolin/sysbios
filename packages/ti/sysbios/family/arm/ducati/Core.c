@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,7 +55,7 @@
 /*
  *  ======== Timer_Module_startup ========
  */
-Int Core_Module_startup(status)
+Int Core_Module_startup(Int status)
 {
     if (Core_id != *(UInt *)(PID0_ADDRESS)) {
         Error_raise(NULL, Core_E_mismatchedIds, Core_id, *(UInt *)(PID0_ADDRESS));

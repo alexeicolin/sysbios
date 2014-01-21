@@ -49,9 +49,11 @@
 
 extern Char *ti_sysbios_family_xxx_Hwi_switchToIsrStack();
 extern Void ti_sysbios_family_xxx_Hwi_switchToTaskStack(Char *oldTaskSP);
+extern Void ti_sysbios_family_xxx_Hwi_switchAndRunFunc(Void (*func)());
 
 #define Hwi_switchToIsrStack ti_sysbios_family_xxx_Hwi_switchToIsrStack
 #define Hwi_switchToTaskStack ti_sysbios_family_xxx_Hwi_switchToTaskStack
+#define Hwi_switchAndRunFunc ti_sysbios_family_xxx_Hwi_switchAndRunFunc
 
 #define GLOBAL_MASK 0x4
 #define NEW_FIQ_AGR 0x2
@@ -306,24 +308,18 @@ Void Hwi_startup()
  *  Returns:
  *        old taskSP value for use with switchToTaskStack()
  */
-Char *ti_sysbios_family_xxx_Hwi_switchToIsrStack()
+Char * __attribute__((naked)) ti_sysbios_family_xxx_Hwi_switchToIsrStack()
 {
-    Char **taskSP = (Char **) &(Hwi_module->taskSP);
-    Char *isrStack;
-
-    if ((*taskSP) != 0) {
-        return (*taskSP);
-    }
-
-    isrStack = Hwi_module->isrStack;
-
-    __asm__ __volatile__ ("str sp, [%0]\n\t" /* save SP into taskSP */
-                          "mov sp, %1"       /* switch to isr Stack */
-                          :: "r" (taskSP), "r" (isrStack)
-                          : "sp", "memory"
-                          );
-
-    return 0;
+    __asm__ __volatile__ (
+            "movw r1, #:lower16:ti_sysbios_family_arm_a8_intcps_Hwi_Module__state__V\n\t"
+            "movt r1, #:upper16:ti_sysbios_family_arm_a8_intcps_Hwi_Module__state__V\n\t"
+            "ldr r0, [r1]\n\t"                /* Old taskSP */
+            "cmp r0, #0\n\t"                  /* On ISR stack already ? */
+            "bxne lr\n\t"                     /* Return if yes */
+            "str r13, [r1]\n\t"               /* save SP into taskSP */
+            "ldr r13, [r1, #4]\n\t"           /* switch to isr Stack */
+            "bx lr"
+                 );
 }
 
 /*
@@ -337,17 +333,46 @@ Char *ti_sysbios_family_xxx_Hwi_switchToIsrStack()
  *  back to the task stack address saved in the Hwi module
  *  object's taskSP variable.
  */
-Void ti_sysbios_family_xxx_Hwi_switchToTaskStack(Char *oldTaskSP)
+Void __attribute__ ((naked)) ti_sysbios_family_xxx_Hwi_switchToTaskStack(Char *oldTaskSP)
 {
-    Char **taskSP = (Char **) &(Hwi_module->taskSP);
+    __asm__ __volatile__ (
+            "cmp r0, #0\n\t"              /* Lowest order ISR? */
+            "bxne lr\n\t"                 /* Return if not */
+            "movw r1, #:lower16:ti_sysbios_family_arm_a8_intcps_Hwi_Module__state__V\n\t"
+            "movt r1, #:upper16:ti_sysbios_family_arm_a8_intcps_Hwi_Module__state__V\n\t"
+                                          /* if yes, restore */
+            "ldr r13, [r1]\n\t"           /* Interrupted task's SP */
+            "str r0, [r1]\n\t"            /* Signal return to TaskStack */
+            "bx lr"
+                 );
+}
 
-    if (oldTaskSP == 0) {
-        __asm__ __volatile__ ("ldr sp, [%0]\n\t" /*Interrupted task's SP*/
-                              "str %1, [%0]"     /*Signal return to Task Stack*/
-                              :: "r" (taskSP), "r" (oldTaskSP)
-                              : "sp", "memory"
-                             );
-    }
+/*
+ *  ======== ti_sysbios_family_xxx_Hwi_switchAndRunFunc ========
+ *  ti_sysbios_family_xxx_Hwi_switchAndRunFunc(Void (*func)());
+ *
+ *  Switch to ISR stack, call the function Func() and then switch
+ *  back to Task stack.
+ *
+ *  Note: Stack switch only occurs if "switchStack" is true.
+ */
+Void __attribute__ ((naked)) ti_sysbios_family_xxx_Hwi_switchAndRunFunc(
+        Void (*func)())
+{
+    __asm__ __volatile__ (
+            "push {r4, lr}\n\t"
+            "mov r4, r0\n\t"
+            "movw r1, #:lower16:ti_sysbios_family_xxx_Hwi_switchToIsrStack\n\t"
+            "movt r1, #:upper16:ti_sysbios_family_xxx_Hwi_switchToIsrStack\n\t"
+            "blx r1\n\t"                      /* Switch to ISR stack */
+            "push {r0-r1}\n\t"                /* save r0 = oldTaskSP */
+            "blx r4\n\t"                      /* Call func */
+            "pop {r0-r1}\n\t"                 /* restore r0 = oldTaskSP */
+            "movw r1, #:lower16:ti_sysbios_family_xxx_Hwi_switchToTaskStack\n\t"
+            "movt r1, #:upper16:ti_sysbios_family_xxx_Hwi_switchToTaskStack\n\t"
+            "blx r1\n\t"                      /* switch back to Task stack */
+            "pop {r4, pc}"
+                 );
 }
 #endif
 
@@ -667,22 +692,18 @@ Void Hwi_post(UInt intNum)
 {
     if ( intNum < 32 ) {
         Hwi_intc.ISR_SET0 = (1 << intNum);
-        Hwi_intc.ISR_SET0 = 0;
     }
     else if ( intNum < 64 ) {
         intNum %= 32;    // normalize to 0 - 31
         Hwi_intc.ISR_SET1 = (1 << intNum);
-        Hwi_intc.ISR_SET1 = 0;
     }
     else if ( intNum < 96 ) {
         intNum %= 32;    // normalize to 0 - 31
         Hwi_intc.ISR_SET2 = (1 << intNum);
-        Hwi_intc.ISR_SET2 = 0;
     }
     else if ( intNum < 128 ) {
         intNum %= 32;    // normalize to 0 - 31
         Hwi_intc.ISR_SET3 = (1 << intNum);
-        Hwi_intc.ISR_SET3 = 0;
     }
 }
 
@@ -764,6 +785,33 @@ Void Hwi_clearInterrupt(UInt intNum)
      * should remove a stale interrupt from the sort.
      */
     Hwi_intc.CONTROL = NEW_IRQ_AGR;
+}
+
+/*
+ *  ======== Hwi_clearPostedInterrupt ========
+ */
+Void Hwi_clearPostedInterrupt(UInt intNum)
+{
+    /* clear the corresponding ISR bit */
+
+    if ( intNum < 32 ) {
+        Hwi_intc.ISR_CLEAR0 = (1 << intNum);
+    }
+    else if ( intNum < 64 ) {
+        intNum %= 32;    // normalize to 0 - 31
+        Hwi_intc.ISR_CLEAR1 = (1 << intNum);
+    }
+    else if ( intNum < 96 ) {
+        intNum %= 32;    // normalize to 0 - 31
+        Hwi_intc.ISR_CLEAR2 = (1 << intNum);
+    }
+    else if ( intNum < 128 ) {
+        intNum %= 32;    // normalize to 0 - 31
+        Hwi_intc.ISR_CLEAR3 = (1 << intNum);
+    }
+
+    /* remove it from the pending interrupt stack */
+    Hwi_clearInterrupt(intNum);
 }
 
 /*

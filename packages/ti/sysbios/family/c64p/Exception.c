@@ -70,9 +70,10 @@
 #define MPFSR_SXE       MPPA_SX
 #define MPFSR_SWE       MPPA_SW
 #define MPFSR_SRE       MPPA_SR
+#define MPFSR_LOCAL     MPPA_LOCAL
 #define MPFSR_SECE      0x00000080
-#define MPFSR_FIDMASK   0x0000FF00
-#define MPFSR_FIDSHIFT  8
+#define MPFSR_FIDMASK   0x0000FE00
+#define MPFSR_FIDSHIFT  9
 
 #define evtToRegNum(event) ((event) >> 5)
 #define evtToBitNum(event) ((event) & 0x1f)
@@ -252,10 +253,10 @@ Void Exception_handler(Bool abortFlag)
 
     if (abortFlag) {
         if (Exception_enablePrint) {
-            Error_raise(0, Exception_E_exceptionMin, excp->NRP, excp->B15);
+            Error_raise(0, Exception_E_exceptionMax, excp->NRP, excp->B15);
         }
         else {
-            Error_raise(0, Exception_E_exceptionMax, excp->NRP, excp->B15);
+            Error_raise(0, Exception_E_exceptionMin, excp->NRP, excp->B15);
         }
     }
 }
@@ -320,6 +321,9 @@ Void Exception_internalHandler(Void)
  */
 Void Exception_decodeMpfsr(UInt mpfsr)
 {
+    if (mpfsr & MPFSR_LOCAL) {
+        System_printf("Security violation, Local L1/L2 cache memory Fault\n");
+    }
     if (mpfsr & MPFSR_SECE) {
         System_printf("Security violation, Fault ID=0x%x\n",
             (mpfsr & MPFSR_FIDMASK) >> MPFSR_FIDSHIFT);

@@ -71,7 +71,9 @@ import xdc.runtime.Error;
  *  @p
  */
 
-module Power 
+@Template("./Power.xdt")
+
+module Power inherits ti.sysbios.interfaces.IPower
 {
     /*!
      *  ======== SleepPrepFuncPtr ========
@@ -115,7 +117,7 @@ module Power
      *  ======== idle ========
      *  Idle CPU when threads blocked waiting for an interrupt?
      */
-    config Bool idle = true;
+    override config Bool idle = true;
 
     /*!
      *  ======== idleMode ========

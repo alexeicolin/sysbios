@@ -139,7 +139,7 @@ __extern void _restore_interrupts(unsigned int key);
 static inline UInt ti_sysbios_hal_Hwi_disable()
 {
     UInt key;
-    __asm__ __volatile__ (
+    asm volatile (
             "mrs %0, basepri\n\t"
             "msr basepri, %1"
             : "=&r" (key)
@@ -154,7 +154,7 @@ static inline UInt ti_sysbios_hal_Hwi_disable()
 static inline UInt ti_sysbios_hal_Hwi_enable()
 {
     UInt key;
-    __asm__ __volatile__ (
+    asm volatile (
             "movw r12, #0\n\t"
             "mrs %0, basepri\n\t"
             "msr basepri, r12"
@@ -169,7 +169,7 @@ static inline UInt ti_sysbios_hal_Hwi_enable()
  */
 static inline Void ti_sysbios_hal_Hwi_restore(UInt key)
 {
-    __asm__ __volatile__ (
+    asm volatile (
             "msr basepri, %0"
             :: "r" (key)
             );
@@ -183,7 +183,7 @@ static inline Void ti_sysbios_hal_Hwi_restore(UInt key)
 #if defined(xdc_target__isaCompatible_430) \
     || defined(xdc_target__isaCompatible_430X)
 
-#if defined(__ICC430__)
+#if defined(__IAR_SYSTEMS_ICC__)
 #include <intrinsics.h>
 #endif
 
@@ -192,7 +192,7 @@ static inline Void ti_sysbios_hal_Hwi_restore(UInt key)
 /*
  *  ======== Hwi_disable ========
  */
-#if defined(__ICC430__)
+#if defined(__IAR_SYSTEMS_ICC__)
 #pragma inline=forced
 UInt ti_sysbios_hal_Hwi_disable()
 #else
@@ -209,7 +209,7 @@ inline UInt ti_sysbios_hal_Hwi_disable()
 /*
  *  ======== Hwi_enable ========
  */
-#if defined(__ICC430__)
+#if defined(__IAR_SYSTEMS_ICC__)
 #pragma inline=forced
 UInt ti_sysbios_hal_Hwi_enable()
 #else
@@ -225,7 +225,7 @@ inline UInt ti_sysbios_hal_Hwi_enable()
 /*
  *  ======== Hwi_restore ========
  */
-#if defined(__ICC430__)
+#if defined(__IAR_SYSTEMS_ICC__)
 #pragma inline=forced
 Void ti_sysbios_hal_Hwi_restore(UInt key)
 #else

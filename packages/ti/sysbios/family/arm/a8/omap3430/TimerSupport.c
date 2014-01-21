@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,7 +43,7 @@
 
 #define TIMER2_SUSPEND_BIT      12      /* timer 2 suspend starting bit */
 
-Int TimerSupport_Module_startup(status)
+Int TimerSupport_Module_startup(Int status)
 {
     return (Startup_DONE);
 }

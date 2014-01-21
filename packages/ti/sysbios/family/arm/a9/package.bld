@@ -39,8 +39,6 @@ var BiosBuild = xdc.loadCapsule("ti/sysbios/Build.xs");
 var objList = [
     "Cache.c",
     "Cache_asm_gnu",
-    "Mmu",
-    "Mmu_asm_gnu",
     "Timer",
     "TimerSupport"
 ];
@@ -54,14 +52,13 @@ var trgFilter = {
 BiosBuild.buildLibs(objList, undefined, trgFilter, arguments);
 
 Pkg.otherFiles = [ "package.bld", 
-                   "Mmu.xdt", 
                    "Cache.xml",
-                   "Mmu.xml",
+                   "Timer.xml",
                    "Timer_link.xdt",
+                   "Cache_link.xdt",
                    "linkcmd.xdt"
                  ];
 
 /* include source files in the release package */
 Pkg.attrs.exportSrc = true;
 Pkg.attrs.exportCfg = true;
-

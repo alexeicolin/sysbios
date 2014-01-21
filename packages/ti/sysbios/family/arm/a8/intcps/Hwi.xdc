@@ -124,7 +124,7 @@ module Hwi inherits ti.sysbios.interfaces.IHwi
         String      options[4];
         UInt        spuriousInterrupts;
         UInt        lastSpuriousInterrupt;
-        SizeT       hwiStackPeak;
+        String      hwiStackPeak;
         SizeT       hwiStackSize;
         Ptr         hwiStackBase;
     };
@@ -353,6 +353,31 @@ module Hwi inherits ti.sysbios.interfaces.IHwi
      */
     @Macro
     override Void restore(UInt key);
+
+    /*!
+     *  ======== post ========
+     *  Generate an interrupt for test purposes.
+     *
+     *  The INTCPS ISR_SETx registers are used
+     *  to trigger a software generated interrupt.
+     *
+     *  To clear a software generated interrupt, the user
+     *  must call {@link #clearPostedInterrupt Hwi_clearPostedInterrupt(intNum)}.
+     *
+     *  @param(intNum)      ID of interrupt to generate
+     */
+    @DirectCall
+    override Void post(UInt intNum);
+
+    /*!
+     *  ======== clearPostedInterrupt ========
+     *  Clear a specific software generated interrupt
+     *  triggered by {@link #post Hwi_post(intNum)};
+     *
+     *  @param(intNum)  interrupt number to clear
+     */
+    @DirectCall
+    Void clearPostedInterrupt(UInt intNum);
 
     /*!
      *  ======== inUseMeta ========
@@ -612,6 +637,9 @@ internal:   /* not for client use */
     };
 
     struct Module_State {
+        Char        *taskSP;        // temporary storage of interrupted
+                                    // Task's SP during ISR execution
+        Char        *isrStack;      // Points to isrStack address
         Bits32      mir0Mask;       // Initial MIR0 mask
         Bits32      mir1Mask;       // Initial MIR1 mask
         Bits32      mir2Mask;       // Initial MIR2 mask
@@ -619,10 +647,6 @@ internal:   /* not for client use */
         UInt        spuriousInts;   // Count of spurious interrupts
         UInt        lastSpuriousInt;// Most recent spurious interrupt
         UInt        irp;            // temporary irp storage for IRQ handler
-        Char        *taskSP;        // temporary storage of interrupted
-                                    // Task's SP during ISR execution
-
-        Char        *isrStack;      // Points to isrStack address
         Ptr         isrStackBase;   // _stack
         Ptr         isrStackSize;   // _STACK_SIZE
         Char        fiqStack[];     // buffer used for FIQ stack

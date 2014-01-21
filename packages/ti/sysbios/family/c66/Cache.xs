@@ -285,7 +285,7 @@ function module$use()
          * we need to use the 'CPU' property (see ECL410545).
          */
         var vers = Packages.xdc.services.intern.gen.Glob.vers().substr(9, 3);
-        if (vers >= "z00" && "CPU" in Program.platform.$module) {
+        if (vers >= "z00") {
             var regs = Program.platform.$module.CPU;
         }
         else {
@@ -536,20 +536,18 @@ function viewInitMarRegisters(view)
     for (var i = 16; i < numMarRegisters; i++) {
         var marview =
             Program.newViewStruct('ti.sysbios.family.c66.Cache',
-                                  'EnableMARs');
+                                  'MARs');
 
-        if (marRegisters[i].elem) {
-            marview.number = i;
-            marview.addr   = utils.toHex(marRegisters[i].$addr);
-            marview.startAddrRange =
-                utils.toHex(convertToUInt32(Number(i << 24)));
-            marview.endAddrRange   =
-                utils.toHex(convertToUInt32(Number((i << 24) + 0xFFFFFF)));
-            marview.cacheable = marRegisters[i].elem & modCfg.PC;
-            marview.prefetchable = marRegisters[i].elem & modCfg.PFX;
-            marview.marRegisterValue = "0x" + marRegisters[i].elem.toString(16);
-            
-            view.elements.$add(marview);
-        }
+        marview.number = i;
+        marview.addr   = utils.toHex(marRegisters[i].$addr);
+        marview.startAddrRange =
+            utils.toHex(convertToUInt32(Number(i << 24)));
+        marview.endAddrRange   =
+            utils.toHex(convertToUInt32(Number((i << 24) + 0xFFFFFF)));
+        marview.cacheable = marRegisters[i].elem & modCfg.PC;
+        marview.prefetchable = marRegisters[i].elem & modCfg.PFX;
+        marview.marRegisterValue = "0x" + marRegisters[i].elem.toString(16);
+
+        view.elements.$add(marview);
     }
 }

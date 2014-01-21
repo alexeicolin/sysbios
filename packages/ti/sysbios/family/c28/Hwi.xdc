@@ -239,7 +239,7 @@ module Hwi inherits ti.sysbios.interfaces.IHwi
     /*! @_nodoc */
     metaonly struct ModuleView {
         String      options[4];
-        SizeT       hwiStackPeak;
+        String      hwiStackPeak;
         SizeT       hwiStackSize;
         Ptr         hwiStackBase;
         String      globalEnable;

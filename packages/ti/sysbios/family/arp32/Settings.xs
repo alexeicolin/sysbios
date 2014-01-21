@@ -110,6 +110,14 @@ function getDefaultCacheDelegate()
 }
 
 /*
+ *  ======== getDefaultPowerDelegate ========
+ */
+function getDefaultPowerDelegate()
+{
+    return ("ti.sysbios.hal.PowerNull");
+}
+
+/*
  *  ======== getDefaultBootModule ========
  */
 function getDefaultBootModule()

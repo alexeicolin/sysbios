@@ -173,7 +173,18 @@ metaonly module BiosProductView inherits xdc.tools.product.IProductView
 
     config ProductElemDesc ti_sysbios_family_arm_a8_intcps_Hwi;
 
+    config ProductElemDesc ti_sysbios_family_arm_a9_Cache;
+    config ProductElemDesc ti_sysbios_family_arm_a9_Timer;
+
+    config ProductElemDesc ti_sysbios_family_arm_a15_Cache;
+    config ProductElemDesc ti_sysbios_family_arm_a15_Mmu;
+    config ProductElemDesc ti_sysbios_family_arm_a15_TimestampProvider;
+
     config ProductElemDesc ti_sysbios_family_arm_exc_Exception;
+
+    config ProductElemDesc ti_sysbios_family_arm_gic_Hwi;
+
+    config ProductElemDesc ti_sysbios_family_arm_systimer_Timer;
 
     config ProductElemDesc ti_sysbios_family_arm_m3_Hwi;
     config ProductElemDesc ti_sysbios_family_arm_m3_Timer;
@@ -219,6 +230,8 @@ metaonly module BiosProductView inherits xdc.tools.product.IProductView
     config ProductElemDesc arm9da830Group;
     config ProductElemDesc arm9Group;
     config ProductElemDesc a8Group;
+    config ProductElemDesc a9Group;
+    config ProductElemDesc a15Group;
     config ProductElemDesc m3Group;
     config ProductElemDesc lm3Group;
     config ProductElemDesc ducatiGroup;

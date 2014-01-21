@@ -33,6 +33,7 @@
  *  ======== Timer.xs ========
  */
 
+var halTimer = null;
 var Timer = null;
 var Hwi = null;
 var BIOS = null;
@@ -41,8 +42,10 @@ if (xdc.om.$name == "cfg") {
     var deviceTable = {
         "OMAP4430": {
             privTimerRegBaseAddress  : 0x48240600,
-        },
+        }
     };
+
+    deviceTable["AM437X"] = deviceTable["OMAP4430"];
 }
 
 /*
@@ -131,10 +134,11 @@ function module$meta$init()
      */
     Timer.common$.fxntab = false;
 
-    var device = deviceSupportCheck();
-
-    Timer.intNumDef[0] = 29;
+    Timer.intNumDef = 29;
     Timer.privTimerRegBaseAddress = deviceTable[device].privTimerRegBaseAddress;
+
+    var GetSet = xdc.module("xdc.services.getset.GetSet");
+    GetSet.onSet(this, "availMask", _setTimerAvailMask);
 }
 
 /*
@@ -145,12 +149,14 @@ function module$use()
     Hwi = xdc.useModule('ti.sysbios.family.arm.gic.Hwi');
     BIOS = xdc.useModule('ti.sysbios.BIOS');
 
+    var device = deviceSupportCheck();
+
     /*
      *  This is to force ti_sysbios_hal_Timer_startup() to be called from
      *  BIOS_start(). hal/Timer_startup will call the proxy_Timer_startup.
      *  This is required for the Timer to startup.
      */
-    xdc.useModule("ti.sysbios.hal.Timer");
+    halTimer = xdc.useModule("ti.sysbios.hal.Timer");
 }
 
 /*
@@ -165,10 +171,15 @@ function module$static$init(mod, params)
             + "). Should be <= " + mod.availMask + ".", Timer, "anyMask");
     }
 
-    mod.handles.length = Timer.NUM_TIMER_DEVICES;
+    mod.handle = null;
 
-    for (var i = 0; i < Timer.NUM_TIMER_DEVICES; i++) {
-        mod.handles[i] = null;
+    /*
+     * if this timer module is not the hal.Timer delegate,
+     * plug Timer.startup into BIOS.startupFxns array
+     */
+    if (halTimer.TimerProxy.delegate$.$name !=
+        "ti.sysbios.family.arm.a9.Timer") {
+        BIOS.addUserStartupFunction(Timer.startup);
     }
 }
 
@@ -191,31 +202,24 @@ function instance$static$init(obj, id, tickFxn, params)
     }
 
     if (id == Timer.ANY) {
-        for (var i = 0; i < Timer.NUM_TIMER_DEVICES; i++) {
-            if ((Timer.anyMask & (1 << i)) && (modObj.availMask & (1 << i))) {
-                modObj.availMask &= ~(1 << i);
-                obj.id = i;
-                break;
-            }
+        if (Timer.anyMask && modObj.availMask) {
+            modObj.availMask = 0;
+        }
+        else {
+            Timer.$logFatal("Timer device unavailable.", this);
         }
     }
-    else if (modObj.availMask & (1 << id)) {
-        modObj.availMask &= ~(1 << id);
-        obj.id = id;
+    else if (modObj.availMask) {
+        modObj.availMask = 0;
     }
-
-    /*
-     * If a timer has not been assigned because either the requested timer was
-     * unavailable or 'any timer' was requested and none were available...
-     */
-    if (obj.id == undefined) {
+    else {
         Timer.$logFatal("Timer device unavailable.", this);
     }
 
     obj.runMode       = params.runMode;
     obj.startMode     = params.startMode;
     obj.periodType    = params.periodType;
-    obj.intNum        = Timer.intNumDef[obj.id];
+    obj.intNum        = Timer.intNumDef;
     obj.arg           = params.arg;
     obj.tickFxn       = tickFxn;
     obj.extFreq.lo    = params.extFreq.lo;
@@ -244,7 +248,7 @@ function instance$static$init(obj, id, tickFxn, params)
         obj.hwi = null;
     }
 
-    modObj.handles[obj.id] = this;
+    modObj.handle = this;
 }
 
 /*
@@ -281,7 +285,6 @@ function viewInitBasic(view, obj)
 
     view.halTimerHandle = halTimer.viewGetHandle(obj.$addr);
     view.label          = Program.getShortName(obj.$label);
-    view.id             = obj.id;
     view.startMode      = getEnumString(obj.startMode);
     view.runMode        = getEnumString(obj.runMode);
     view.period         = "0x" + Number(obj.period).toString(16);
@@ -306,7 +309,6 @@ function viewInitDevice(view, obj)
     var counterValue, loadValue;
     var modCfg = Program.getModuleConfig('ti.sysbios.family.arm.a9.Timer');
 
-    view.id             = obj.id;
     view.deviceAddr     = "0x" +
         Number(modCfg.privTimerRegBaseAddress).toString(16);
     view.intNum         = obj.intNum;
@@ -339,4 +341,19 @@ function viewInitDevice(view, obj)
     view.currCount      = "0x" + Number(loadValue - counterValue).toString(16);
     view.remainingCount = "0x" + Number(counterValue).toString(16);
     view.prescale       = "0x" + Number((prescale & 0xFF00) >>> 8).toString(16);
+}
+
+/*
+ *  ======== _setTimerAvailMask ========
+ *  The "real-time" setter setTimerAvailMask function
+ *
+ *  This function is called whenever availMask changes.
+ */
+function _setTimerAvailMask(field, val)
+{
+    if ((val != 0) && (val != 1)) {
+        this.$logFatal("Invalid availMask " + val + ". This module manages " +
+                "a single timer and valid availMask values are 0 or 1.",
+                DMTimer);
+    }
 }

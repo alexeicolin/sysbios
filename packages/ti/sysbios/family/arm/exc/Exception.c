@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -82,22 +82,26 @@ Void Exception_excHandler(UInt *excStack, UInt pc)
     }
 
     /* copy registers from stack to excContext */
-    excContextp->r0  = (Ptr)excStack[4];        /* r0 */
-    excContextp->r1  = (Ptr)excStack[5];        /* r1 */   
-    excContextp->r2  = (Ptr)excStack[6];        /* r2 */   
-    excContextp->r3  = (Ptr)excStack[7];        /* r3 */   
-    excContextp->r4  = (Ptr)excStack[8];        /* r4 */   
-    excContextp->r5  = (Ptr)excStack[9];        /* r5 */   
-    excContextp->r6  = (Ptr)excStack[10];       /* r6 */   
-    excContextp->r7  = (Ptr)excStack[11];       /* r7 */   
-    excContextp->r8  = (Ptr)excStack[12];       /* r8 */   
-    excContextp->r9  = (Ptr)excStack[13];       /* r9 */     
-    excContextp->r10 = (Ptr)excStack[14];       /* r10 */     
-    excContextp->r11 = (Ptr)excStack[15];       /* r11 */     
-    excContextp->r12 = (Ptr)excStack[16];       /* r12 */    
-    excContextp->sp  = (Ptr)excStack[1];        /* sp */     
-    excContextp->lr  = (Ptr)excStack[2];        /* lr */    
-    excContextp->pc  = (Ptr)pc;         /* pc */
+    excContextp->r0  = (Ptr)excStack[8];        /* r0 */
+    excContextp->r1  = (Ptr)excStack[9];        /* r1 */
+    excContextp->r2  = (Ptr)excStack[10];       /* r2 */
+    excContextp->r3  = (Ptr)excStack[11];       /* r3 */
+    excContextp->r4  = (Ptr)excStack[12];       /* r4 */
+    excContextp->r5  = (Ptr)excStack[13];       /* r5 */
+    excContextp->r6  = (Ptr)excStack[14];       /* r6 */
+    excContextp->r7  = (Ptr)excStack[15];       /* r7 */
+    excContextp->r8  = (Ptr)excStack[16];       /* r8 */
+    excContextp->r9  = (Ptr)excStack[17];       /* r9 */
+    excContextp->r10 = (Ptr)excStack[18];       /* r10 */
+    excContextp->r11 = (Ptr)excStack[19];       /* r11 */
+    excContextp->r12 = (Ptr)excStack[20];       /* r12 */
+    excContextp->ifar = (Ptr)excStack[4];       /* IFAR */
+    excContextp->dfar = (Ptr)excStack[5];       /* DFAR */
+    excContextp->ifsr = (Ptr)excStack[6];       /* IFSR */
+    excContextp->dfsr = (Ptr)excStack[7];       /* DFSR */
+    excContextp->sp  = (Ptr)excStack[1];        /* sp */
+    excContextp->lr  = (Ptr)excStack[2];        /* lr */
+    excContextp->pc  = (Ptr)pc;                 /* pc */
     excContextp->psr = (Ptr)excStack[0];        /* psr */
 
     excContextp->type = (Exception_Type)(excStack[3] &0x1f);    /* psr */
@@ -164,19 +168,19 @@ Void Exception_excHandler(UInt *excStack, UInt pc)
     /* raise a corresponding Error */
     switch(excContextp->type) {
 
-        case Exception_Type_Supervisor: 
+        case Exception_Type_Supervisor:
             Error_raise(0, Exception_E_swi, pc, excStack[2]);
             break;
 
-        case Exception_Type_PreAbort: 
+        case Exception_Type_PreAbort:
             Error_raise(0, Exception_E_prefetchAbort, pc, excStack[2]);
             break;
 
-        case Exception_Type_DataAbort: 
+        case Exception_Type_DataAbort:
             Error_raise(0, Exception_E_dataAbort, pc, excStack[2]);
             break;
 
-        case Exception_Type_UndefInst: 
+        case Exception_Type_UndefInst:
             Error_raise(0, Exception_E_undefinedInstruction, pc, excStack[2]);
             break;
     }
@@ -225,6 +229,8 @@ Void Exception_excDumpContext(UInt pc)
     System_printf ("R6 = 0x%08x  LR(R14) = 0x%08x\n", excp->r6, excp->lr);
     System_printf ("R7 = 0x%08x  PC(R15) = 0x%08x\n", excp->r7, excp->pc);
     System_printf ("PSR = 0x%08x\n", excp->psr);
-} 
+    System_printf ("DFSR = 0x%08x  IFSR = 0x%08x\n", excp->dfsr, excp->ifsr);
+    System_printf ("DFAR = 0x%08x  IFAR = 0x%08x\n", excp->dfar, excp->ifar);
+}
 
 

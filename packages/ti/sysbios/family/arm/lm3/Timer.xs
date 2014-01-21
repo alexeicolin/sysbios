@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -87,6 +87,14 @@ function module$use()
      *  This is required for the Timer to startup.
      */
     halTimer = xdc.useModule("ti.sysbios.hal.Timer");
+
+    if (Timer.enableFunc == null) {
+        Timer.enableFunc = '&ti_sysbios_family_arm_lm3_Timer_enableStellaris';
+    }
+
+    if (Timer.disableFunc == null) {
+        Timer.disableFunc = '&ti_sysbios_family_arm_lm3_Timer_disableStellaris';
+    }
 }
 
 /*

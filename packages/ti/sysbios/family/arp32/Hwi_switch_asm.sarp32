@@ -3,8 +3,8 @@
 ;
 ;
 
-        .cdecls C,NOLIST,"package/internal/Hwi.xdc.h" 
-        
+        .cdecls C,NOLIST,"package/internal/Hwi.xdc.h"
+
         .global ti_sysbios_family_arp32_Hwi_Module__state__V
 
 ti_sysbios_family_arp32_Hwi_Module__state__V .tag ti_sysbios_family_arp32_Hwi_Module_State
@@ -16,7 +16,7 @@ ti_sysbios_family_arp32_Hwi_Module__state__V .tag ti_sysbios_family_arp32_Hwi_Mo
 ;
 ;  If not already on the isr stack, switch to it.
 ;
-;  Checks the Hwi module object's taskSP. 
+;  Checks the Hwi module object's taskSP.
 ;  If 0, then set taskSP to current SP then switch to ISR stack.
 ;
 ;  Returns:
@@ -28,11 +28,11 @@ ti_sysbios_family_arp32_Hwi_Module__state__V .tag ti_sysbios_family_arp32_Hwi_Mo
         .clink
 ti_sysbios_family_xxx_Hwi_switchToIsrStack:
         .asmfunc
-        mvk  ti_sysbios_family_arp32_Hwi_Module__state__V, R1 
-        mvkh ti_sysbios_family_arp32_Hwi_Module__state__V, R1 
+        mvk  ti_sysbios_family_arp32_Hwi_Module__state__V, R1
+        mvkh ti_sysbios_family_arp32_Hwi_Module__state__V, R1
         ldw *+R1(ti_sysbios_family_arp32_Hwi_Module_State.taskSP), R2
         nop
-                            ; R2 has old taskSP 
+                            ; R2 has old taskSP
         mv R2, R0           ; put old taskSP in R0 for return
         cmpu 0x0, R2        ; is taskSP == 0?
         bne _exit1          ; exit if taskSP != 0
@@ -44,7 +44,7 @@ ti_sysbios_family_xxx_Hwi_switchToIsrStack:
         mvc SP, R3          ; write SP back to module state
         stw R3, *+R1(ti_sysbios_family_arp32_Hwi_Module_State.taskSP)
         nop
-        
+
         ldw *+R1(ti_sysbios_family_arp32_Hwi_Module_State.isrStack), R3
         nop                 ; R3 has isr SP
         sub 4, R3, R3       ; make room for return address
@@ -64,11 +64,10 @@ _exit1:
 ;
 ;  If oldTaskSP is zero, then this is the thread that switched
 ;  to the ISR stack first and therefore it is safe to switch
-;  back to the task stack address saved in the Hwi module 
+;  back to the task stack address saved in the Hwi module
 ;  object's taskSP variable.
 ;
 ;
-
         .global ti_sysbios_family_xxx_Hwi_switchToTaskStack
 
         .sect ".text:ti_sysbios_family_xxx_Hwi_switchToTaskStack"
@@ -76,7 +75,7 @@ _exit1:
 ti_sysbios_family_xxx_Hwi_switchToTaskStack:
         .asmfunc
         mvk  ti_sysbios_family_arp32_Hwi_Module__state__V, R1
-        mvkh ti_sysbios_family_arp32_Hwi_Module__state__V, R1 
+        mvkh ti_sysbios_family_arp32_Hwi_Module__state__V, R1
         cmpu 0x0, R2        ; check if old taskSP was zero
         bne _exit2          ; exit if non-zero
         nop
@@ -94,10 +93,95 @@ _exit2:
         nop
         .endasmfunc
 
+;
+;  ======== ti_sysbios_family_arp32_Hwi_switchAndRunFunc ========
+;  ti_sysbios_family_arp32_Hwi_switchAndRunFunc(Void (*func)());
+;
+;  Switch to ISR stack, call the function Func() and then switch
+;  back to Task stack.
+;
+;
+        .global ti_sysbios_family_xxx_Hwi_switchAndRunFunc
 
+        .sect ".text:ti_sysbios_family_xxx_Hwi_switchAndRunFunc"
+        .clink
+ti_sysbios_family_xxx_Hwi_switchAndRunFunc:
+        .asmfunc
+        sub 4, SP           ; push
+        stw R5, *+SP[1]     ; save R5 on stack
+        mv  R2, R5          ; move func pointer to R5 so it is
+                            ; preserved accross funcation calls
+        call ti_sysbios_family_xxx_Hwi_switchToIsrStack
+        nop                 ; nop to fill delay slot
 
+        sub 4, SP           ; push
+        stw R0, *+SP[1]     ; push old TaskSP on stack
+        call R5             ; Call func
+        nop                 ; nop to fill delay slot
 
+        ldw *+SP[1], R2     ; get old TaskSP off stack
+        add 4, SP           ; pop
+        call ti_sysbios_family_xxx_Hwi_switchToTaskStack
+        nop                 ; nop to fill delay slot
 
+        ldw *+SP[1], R5     ; restore R5 from stack
+        add 4, SP           ; pop
+        ret
+        nop                 ; nop to fill delay slot
+        .endasmfunc
 
+;
+;  ======== ti_sysbios_family_arp32_Hwi_switchAndDispatch ========
+;
+        .global ti_sysbios_family_arp32_Hwi_switchAndDispatch__I
+        .sect ".text:_ti_sysbios_family_arp32_Hwi_switchAndDispatch__I"
+        .clink
+ti_sysbios_family_arp32_Hwi_switchAndDispatch__I
+        .asmfunc
+        mvk  ti_sysbios_family_arp32_Hwi_Module__state__V, R1
+        mvkh ti_sysbios_family_arp32_Hwi_Module__state__V, R1
+        ldw *+R1(ti_sysbios_family_arp32_Hwi_Module_State.taskSP), R0
+        nop
 
+        cmpu 0x0, R0        ; is taskSP == 0?
+        bne _dispatch       ; go to _dispatch if taskSP != 0
+        nop
+
+        mvc SP, R4          ; write SP back to module state
+        stw R4, *+R1(ti_sysbios_family_arp32_Hwi_Module_State.taskSP)
+        nop
+
+        ldw *+R1(ti_sysbios_family_arp32_Hwi_Module_State.isrStack), R4
+        nop                 ; R4 has isr SP
+
+        mvc R4, SP          ; switch stack (set SP to isrstack)
+
+_dispatch:
+        sub 4, SP           ; create room on stack
+        stw R0, *+SP[1]     ; push old TaskSP on stack
+        nop
+
+        call    ti_sysbios_family_arp32_Hwi_dispatchCore__I
+        nop
+
+        ldw *+SP[1], R0     ; get old TaskSP off stack
+        add 4, SP           ; pop
+
+        cmpu 0x0, R0        ; is taskSP == 0?
+        bne _exit           ; got to _exit if taskSP != 0
+        nop
+
+        mvk  ti_sysbios_family_arp32_Hwi_Module__state__V, R1
+        mvkh ti_sysbios_family_arp32_Hwi_Module__state__V, R1
+        ldw *+R1(ti_sysbios_family_arp32_Hwi_Module_State.taskSP), R0
+
+        mvk 0x0, R3
+        stw R3, *+R1(ti_sysbios_family_arp32_Hwi_Module_State.taskSP)
+        mvc R0, SP          ; set SP to taskSP
+
+_exit:
+        ret
+        nop
+
+        .endasmfunc
 

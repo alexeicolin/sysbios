@@ -35,6 +35,7 @@
 
 var BIOS = null;
 var Task = null;
+var Semaphore = null;
 var ReentSupport = null;
 
 /*
@@ -45,6 +46,7 @@ function module$use()
     ReentSupport = this;
     
     BIOS = xdc.useModule("ti.sysbios.BIOS");
+    Semaphore = xdc.useModule("ti.sysbios.knl.Semaphore");
 
     if (BIOS.taskEnabled == true) {
         Task = xdc.useModule("ti.sysbios.knl.Task");
@@ -57,6 +59,8 @@ function module$use()
  */
 function module$static$init(mod, params)
 {
+    var semParams;
+
     if ((BIOS.taskEnabled == true) &&
         (ReentSupport.enableReentSupport == true)) {
         Task.addHookSet({
@@ -67,6 +71,13 @@ function module$static$init(mod, params)
             exitFxn: null,
             deleteFxn: ReentSupport.taskDeleteHook
         });
+
+        /*
+         * Create a binary semaphore. Used to protect libc
+         * lock acquire/release APIs.
+         */
+        semParams = new Semaphore.Params();
+        mod.lock = Semaphore.create(1, semParams);
     }
 
     mod.taskHId = 0;

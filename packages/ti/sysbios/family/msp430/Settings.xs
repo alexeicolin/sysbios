@@ -43,6 +43,7 @@ var settings = {
             taskSupportDelegate : "ti.sysbios.family.msp430.TaskSupport",
             intrinsicsSupportDelegate : "ti.sysbios.family.msp430.IntrinsicsSupport",
             cacheDelegate : null,
+            powerDelegate : "ti.sysbios.family.msp430.Power",
             coreDelegate : null,
             clockTickPeriod : 1000,
             targets : [ "ti.targets.msp430.MSP430", "ti.targets.msp430.MSP430X", "ti.targets.msp430.MSP430X_small",
@@ -177,6 +178,14 @@ function getDefaultIntrinsicsSupportDelegate()
 function getDefaultCacheDelegate()
 {
     return ("ti.sysbios.hal.CacheNull");
+}
+
+/*
+ *  ======== getDefaultPowerDelegate ========
+ */
+function getDefaultPowerDelegate()
+{
+    return ("ti.sysbios.family.msp430.Power");
 }
 
 /*

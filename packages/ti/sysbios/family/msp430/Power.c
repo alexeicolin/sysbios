@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2012-2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,15 +65,6 @@ UInt Power_getModeChangeFlag()
 }
 
 /*
- *  ======== Power_idleCPU ========
- */
-Void Power_idleCPU()
-{
-    __bis_SR_register(Power_module->idleMode);
-    Power_module->newMode = FALSE;
-}
-
-/*
  *  ======== Power_sleepCPU ========
  */
 Void Power_sleepCPU(Power_SleepMode sleepMode)
@@ -110,6 +101,8 @@ Void Power_defaultSleepPrepFunction()
 
 /*
  *  ======== Power_blockedTaskFunction ========
+ *  TODO: Put this in .xdt with call to Load idle function
+ *  id Load is used?
  */
 Void Power_blockedTaskFunction()
 {

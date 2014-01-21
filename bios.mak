@@ -13,13 +13,16 @@ docdir ?= /docs/bios
 packagesdir ?= /packages
 
 # Set up dependencies
-#XDC_INSTALL_DIR ?= $(TREES)/xdcprod/xdcprod-p24/product/$(BUILD_HOST_OS)/xdctools_3_23_00_24_eng
-XDC_INSTALL_DIR ?= $(XDCTOOLS_ROOT)
+XDC_INSTALL_DIR ?= $(TREES)/xdcprod/xdcprod-r87/product/$(BUILD_HOST_OS)/xdctools_3_25_04_87_eng
+
+# Do you want to build SMP-enabled libraries (if supported for your target)?
+# Set to either 0 (disabled) or 1 (enabled)
+#
+BIOS_SMPENABLED=1
 
 #
 # Set location of various cgtools
-# These variables can be set here or on the command line.  The ?= makes
-# the command line to take precedence over the setting in this file.
+# These variables can be set here or on the command line.
 #
 ti.targets.C28_large ?=
 ti.targets.C28_float ?=
@@ -47,11 +50,17 @@ ti.targets.arp32.elf.ARP32 ?=
 ti.targets.arp32.elf.ARP32_far ?=
 
 gnu.targets.arm.M3 ?=
-gnu.targets.arm.M4 ?= /usr
+gnu.targets.arm.M4 ?=
 gnu.targets.arm.M4F ?=
 
 gnu.targets.arm.A8F ?=
 gnu.targets.arm.A15F ?=
+
+iar.targets.msp430.MSP430X_small ?=
+
+iar.targets.arm.M3 ?=
+iar.targets.arm.M4 ?=
+iar.targets.arm.M4F ?=
 
 #
 # Set XDCARGS to some of the variables above.  XDCARGS are passed
@@ -68,9 +77,7 @@ gnu.targets.arm.A15F ?=
 #     http://rtsc.eclipse.org/docs-tip/Command_-_xdc#Environment_Variables
 #
 XDCARGS= \
-    gnu.targets.arm.M4=\"$(gnu.targets.arm.M4)\" \
-
-#XDCARGS= \
+    BIOS_SMPENABLED=\"$(BIOS_SMPENABLED)\" \
     ti.targets.C28_large=\"$(ti.targets.C28_large)\" \
     ti.targets.C28_float=\"$(ti.targets.C28_float)\" \
     ti.targets.C64P=\"$(ti.targets.C64P)\" \
@@ -94,7 +101,13 @@ XDCARGS= \
     gnu.targets.arm.M3=\"$(gnu.targets.arm.M3)\" \
     gnu.targets.arm.M4=\"$(gnu.targets.arm.M4)\" \
     gnu.targets.arm.M4F=\"$(gnu.targets.arm.M4F)\" \
-    gnu.targets.arm.A15F=\"$(gnu.targets.arm.A15F)\"
+    gnu.targets.arm.A8F=\"$(gnu.targets.arm.A8F)\"\
+    gnu.targets.arm.A9F=\"$(gnu.targets.arm.A9F)\"\
+    gnu.targets.arm.A15F=\"$(gnu.targets.arm.A15F)\"\
+    iar.targets.msp430.MSP430X_small=\"$(iar.targets.msp430.MSP430X_small)\" \
+    iar.targets.arm.M3=\"$(iar.targets.arm.M3)\" \
+    iar.targets.arm.M4=\"$(iar.targets.arm.M4)\" \
+    iar.targets.arm.M4F=\"$(iar.targets.arm.M4F)\"
 
 #
 # Set XDCPATH to contain necessary repositories.
@@ -121,7 +134,11 @@ XDC = $(XDC_INSTALL_DIR)/xdc XDCARGS="$(XDCARGS)" XDCBUILDCFG=./bios.bld
 
 all:
 	@ echo building bios packages ...
-	@ $(XDC) -Pr ./packages
+	@ $(XDC) .interfaces -Pr ./packages
+	@ $(XDC) all -P ./packages/ti/sysbios
+	@ $(XDC) all -P ./packages/ti/sysbios/fatfs
+	@ $(XDC) all -P ./packages/ti/sysbios/family/c674/pmi
+	@ $(XDC) all -P ./packages/ti/sysbios/family/c674/pscl
 
 clean:
 	@ echo cleaning bios packages ...

@@ -1,6 +1,6 @@
 %%{
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,15 +43,32 @@
 extern Void `String(Hwi.resetFunc).substr(1)`();
 
 %if (Program.build.target.$name.match(/gnu/)) {
+%   if (Hwi.isTiva == true) {
+Ptr _intvecs_base_address;
+const UInt32 ti_sysbios_family_arm_m3_Hwi_resetVectors[] __attribute__ ((section (".intvecs"))) = {
+%   }
+%   else {
 const UInt32 ti_sysbios_family_arm_m3_Hwi_resetVectors[] __attribute__ ((section (".resetVecs"))) = {
+%   }
+    (UInt32)(&__TI_STACK_BASE),
+%}
+%else if (Program.build.target.$name.match(/iar/)) {
+#pragma segment="CSTACK"
+typedef union {UInt32 __uint32; void * __ptr;} intvec_elem;
+
+#pragma location = ".intvec"
+const intvec_elem ti_sysbios_family_arm_m3_Hwi_resetVectors[] =
+{
+  { .__ptr = __section_end( "CSTACK" ) },
+
 %}
 %else {
 #pragma DATA_SECTION(ti_sysbios_family_arm_m3_Hwi_resetVectors, ".resetVecs");
 
 /* const because it is meant to be placed in ROM */
 const UInt32 ti_sysbios_family_arm_m3_Hwi_resetVectors[] = {
-%}
     (UInt32)(&__TI_STACK_BASE),
+%}
     (UInt32)(`String(Hwi.resetFunc)`),
     (UInt32)(`String(Hwi.nmiFunc)`),            /* NMI */
     (UInt32)(`String(Hwi.hardFaultFunc)`),      /* Hard Fault */
@@ -84,9 +101,22 @@ const UInt32 ti_sysbios_family_arm_m3_Hwi_resetVectors[] = {
 
 %if (Hwi.vectorTableAddress != Hwi.resetVectorAddress) {
 % if (Program.build.target.$name.match(/gnu/)) {
+%     if (Hwi.isTiva == true) {
+Ptr _vtable_base_address;
+/* place holder for RAM vector table */
+UInt32 ti_sysbios_family_arm_m3_Hwi_ramVectors[`Hwi.NUM_INTERRUPTS`] __attribute__((section(".vtable")));
+%     }
+%     else {
 /* place holder for RAM vector table */
 UInt32 ti_sysbios_family_arm_m3_Hwi_ramVectors[`Hwi.NUM_INTERRUPTS`] __attribute__((section(".vecs")));
+%     }
 % }
+%else if (Program.build.target.$name.match(/iar/)) {
+
+/* place holder for RAM vector table */
+#pragma location=`Hwi.vectorTableAddress`
+__root __no_init UInt32 ti_sysbios_family_arm_m3_Hwi_ramVectors[`Hwi.NUM_INTERRUPTS`];
+%}
 % else {
 #pragma DATA_SECTION(ti_sysbios_family_arm_m3_Hwi_ramVectors, ".vecs");
 

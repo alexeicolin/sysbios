@@ -41,12 +41,16 @@ import xdc.runtime.Error;
 import xdc.runtime.Assert;
 
 import ti.sysbios.knl.Task;
+import ti.sysbios.knl.Semaphore;
 
 /*!
  *  ======== ReentSupport ========
- *  This Reentrancy Support module uses Hook Functions, Hook Context
- *  and an overloaded implementation of the library's __getreent()
- *  function to make C runtime library calls re-entrant.
+ *  Newlib RTS library re-entrancy support module
+ *
+ *  The Reentrancy Support module implements locking APIs for the
+ *  Newlib libraries and provides an overloaded implementation of
+ *  the library's __getreent() function to make the C runtime library
+ *  calls re-entrant and thread safe.
  *
  *  The C runtime library (newlib libc/libm) functions internally
  *  call __getreent() to get the address of the currently executing
@@ -62,6 +66,11 @@ import ti.sysbios.knl.Task;
  *  When a thread is deleted, the DeleteHook is called and will free
  *  any memory that was allocated to store the reentrancy structure
  *  associated with the thread.
+ *
+ *  The C runtime library calls locking APIs to ensure thread
+ *  safety. The locking APIs are defined in the sys/lock.h header
+ *  that is distributed with XDC tools. This module provides an
+ *  implementation for these locking APIs.
  *
  *  Reentrancy support is enabled by default if tasking is enabled
  *  and can be disabled by adding the following code to the application's
@@ -170,6 +179,7 @@ internal:   /* not for client use */
     /* -------- Internal Module Types -------- */
 
     struct Module_State {     
-        Int taskHId;             /* Task Hook Context Id for this module */
+        Int               taskHId;   /* Task Hook Context Id for this module */
+        Semaphore.Handle  lock;      /* Static binary semaphore handle */
     };
 }

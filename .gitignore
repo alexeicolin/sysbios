@@ -198,3 +198,15 @@ packages/ti/sysbios/xdcruntime/GateThreadSupport.h
 packages/ti/sysbios/xdcruntime/SemProcessSupport.h
 packages/ti/sysbios/xdcruntime/SemThreadSupport.h
 packages/ti/sysbios/xdcruntime/ThreadSupport.h
+
+packages/ti/sysbios/family/arm/a9/am437x/TimerSupport.h
+packages/ti/sysbios/family/arm/m3/Power.h
+packages/ti/sysbios/family/arm/tm4l/Power.h
+packages/ti/sysbios/family/arm/tm4l/Timer.h
+packages/ti/sysbios/family/arm/tm4l/TimestampProvider.h
+packages/ti/sysbios/family/arm/v7a/Pmu.h
+packages/ti/sysbios/family/arm/v7a/Timer.h
+packages/ti/sysbios/hal/Power.h
+packages/ti/sysbios/hal/PowerNull.h
+packages/ti/sysbios/interfaces/IPower.h
+packages/ti/sysbios/rts/iar/MultithreadSupport.h

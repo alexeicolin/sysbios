@@ -1,0 +1,109 @@
+<html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>GCC Cortex-A9 with hard FP Timing Benchmarks</title>
+    <style type="text/css" media="screen">table { border-collapse: collapse; font-family: "Ariel", sans-serif } 
+ 		  td    { background: white; border: ridge black } 
+  		  tr.hdr { font-weight: bolder }</style>
+  </head>
+  <body>
+    <h2>GCC Cortex-A9 with hard FP Timing Benchmarks</h2>
+    <h3>ti.platforms.sdp4430 (compiler version: 4.7.3)</h3>
+  </body>
+  <body xmlns="">
+    <table>
+      <tr class="hdr">
+        <td>Benchmark</td>
+        <td>Cycles</td>
+      </tr>
+      <tr>
+        <td>Interrupt latency</td>
+        <td>551</td>
+      </tr>
+      <tr>
+        <td>Hwi_restore()</td>
+        <td>6</td>
+      </tr>
+      <tr>
+        <td>Hwi_disable()</td>
+        <td>8</td>
+      </tr>
+      <tr>
+        <td>Hwi dispatcher prolog</td>
+        <td>202</td>
+      </tr>
+      <tr>
+        <td>Hwi dispatcher epilog</td>
+        <td>182</td>
+      </tr>
+      <tr>
+        <td>Hwi dispatcher()</td>
+        <td>385</td>
+      </tr>
+      <tr>
+        <td>Hardware Interrupt to Blocked Task</td>
+        <td>647</td>
+      </tr>
+      <tr>
+        <td>Hardware Interrupt to Software Interrupt</td>
+        <td>356</td>
+      </tr>
+      <tr>
+        <td>Swi_enable()</td>
+        <td>69</td>
+      </tr>
+      <tr>
+        <td>Swi_disable()</td>
+        <td>16</td>
+      </tr>
+      <tr>
+        <td>Post Software Interrupt Again</td>
+        <td>26</td>
+      </tr>
+      <tr>
+        <td>Post Software Interrupt without Context Switch</td>
+        <td>80</td>
+      </tr>
+      <tr>
+        <td>Post Software Interrupt with Context Switch</td>
+        <td>150</td>
+      </tr>
+      <tr>
+        <td>Create a New Task without Context Switch</td>
+        <td>1283</td>
+      </tr>
+      <tr>
+        <td>Set a Task Priority without a Context Switch</td>
+        <td>133</td>
+      </tr>
+      <tr>
+        <td>Task_yield</td>
+        <td>251</td>
+      </tr>
+      <tr>
+        <td>Post Semaphore, No Waiting Task</td>
+        <td>39</td>
+      </tr>
+      <tr>
+        <td>Post Semaphore No Task Switch</td>
+        <td>199</td>
+      </tr>
+      <tr>
+        <td>Post Semaphore with Task Switch</td>
+        <td>314</td>
+      </tr>
+      <tr>
+        <td>Pend on Semaphore, No Context Switch</td>
+        <td>34</td>
+      </tr>
+      <tr>
+        <td>Pend on Semaphore with Task Switch</td>
+        <td>290</td>
+      </tr>
+      <tr>
+        <td>Clock_getTicks</td>
+        <td>7</td>
+      </tr>
+    </table>
+    <div/>
+  </body>
+</html>

@@ -34,6 +34,8 @@
  *
  */
 
+var BIOS = null;
+var Clock = null;
 var TimestampProvider = null;
 
 /*
@@ -57,11 +59,38 @@ function module$use()
 {
     xdc.useModule('xdc.runtime.Startup');
 
+    BIOS = xdc.module('ti.sysbios.BIOS');
+
     var Diags = xdc.useModule('xdc.runtime.Diags');
 
     for (var dl in TimestampProvider.common$) {
         if (dl.match(/^diags_/) && dl != 'diags_ASSERT') {
             TimestampProvider.common$[dl] = Diags.ALWAYS_OFF;
+        }
+    }
+
+    if (TimestampProvider.autoRefreshEnable) {
+        var period;
+
+        if (BIOS.clockEnabled == true) {
+            Clock = xdc.module('ti.sysbios.knl.Clock');
+            period = (0xF0000000 * 1000) / BIOS.getCpuFrequency();
+            period = (period * 1000) / Clock.tickPeriod;
+            if (period == 0) {
+                period = 1;
+            }
+
+            var clkParams = new Clock.Params;
+            clkParams.period = period;
+            clkParams.startFlag = true;
+            Clock.create(TimestampProvider.autoRefreshFxn, period, clkParams);
+        }
+        else {
+            this.$logWarning("Setting TimestampProvider.autoRefreshEnable to " +
+                   "true has no affect since the SYS/BIOS Clock module is " +
+                   "disabled. Please enable SYS/BIOS Clock module or set " +
+                   "TimestampProvider.autoRefreshEnable to false and build " +
+                   "again.", this);
         }
     }
 }

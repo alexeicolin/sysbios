@@ -225,6 +225,10 @@ module Clock
      *  {@link #tick Clock_tick()} periodically. Make sure {@link #tickPeriod
      *  Clock.tickPeriod} is set to the period that Clock_tick() is called.
      *
+     *  Like most other module configuration parameters, the Clock.tickPeriod
+     *  config parameter value is accessible in runtime C code as
+     *  "Clock_tickPeriod".
+     *
      *  @field(TickSource_NULL) The Clock module is disabled.
      *  In this case, it is an error for the application to ever call
      *  Clock_tick().
@@ -413,6 +417,10 @@ module Clock
      *  Default value is family dependent. For example, Linux systems often
      *  only support a minimum period of 10000 us and multiples of 10000 us.
      *  TI platforms have a default of 1000 us.
+     *
+     *  Like most other module configuration parameters, the Clock.tickPeriod
+     *  config parameter value is accessible in runtime C code as
+     *  "Clock_tickPeriod".
      */
     config UInt32 tickPeriod;
 
@@ -589,7 +597,7 @@ module Clock
     /*!
      *  @_nodoc
      *  ======== getTickPeriod ========
-     *  Get the Clock tick period
+     *  Get the Clock tick period in timer counts
      *
      *  The period is in units returned by the underlying Timer.
      *

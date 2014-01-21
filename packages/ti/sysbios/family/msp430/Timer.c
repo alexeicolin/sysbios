@@ -525,8 +525,8 @@ Void Timer_periodicStub(UArg arg)
     /* save previous threshold value */
     obj->prevThreshold = timer->cc_compare_0;
 
-    /* set compare threshold for next periodic interrupt */
-    timer->cc_compare_0 += obj->period;
+    /* set next interrupt threshold; interrupt now if set too late */
+    Timer_setNextTick(obj, obj->period, obj->period);
 
     /* call the tick function */
     obj->tickFxn(obj->arg);
@@ -548,8 +548,8 @@ Void Timer_periodicNestStub(UArg arg)
     /* save previous threshold value */
     obj->prevThreshold = timer->cc_compare_0;
 
-    /* set compare threshold for next periodic interrupt */
-    timer->cc_compare_0 += obj->period;
+    /* set next interrupt threshold; interrupt now if set too late */
+    Timer_setNextTick(obj, obj->period, obj->period);
 
     /* allow nesting of other interrupts ... */
     timer->cctl_0 &= ~TIMER_COMPARE_INTR_ENABLE;

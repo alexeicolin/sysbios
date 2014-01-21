@@ -60,7 +60,7 @@
 
 #define ATTRIBUTE
 
-#elif defined(__ICC430__)
+#elif defined(__IAR_SYSTEMS_ICC__)
 
 #define ATTRIBUTE
 
@@ -75,10 +75,6 @@
 
 #include <xdc/runtime/Memory.h>
 #include <xdc/runtime/Error.h>
-
-#if !defined(__ICC430__)
-#include <stdlib.h>
-#endif
 
 #include <string.h>
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2012-2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,6 +55,6 @@
 
 @ModuleStartup          /* To get Clock Timer Handle */
 
-module TimestampProvider inherits xdc.runtime.ITimestampProvider
+module TimestampProvider inherits ti.sysbios.interfaces.ITimestamp
 {
 }

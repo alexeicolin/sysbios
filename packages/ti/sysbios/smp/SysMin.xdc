@@ -169,7 +169,7 @@ module SysMin inherits xdc.runtime.ISystemSupport {
      */
     config OutputFxn outputFxn = null;
 
-    /*
+    /*!
      *  ======== abort ========
      *  Backend for `{@link xdc.runtime.System#abort()}`
      *
@@ -185,7 +185,7 @@ module SysMin inherits xdc.runtime.ISystemSupport {
      *
      *  @see xdc.runtime.ISystemSupport#abort
      */
-    /*override Void abort(String str);*/
+    override Void abort(CString str);
 
     /*!
      *  ======== exit ========

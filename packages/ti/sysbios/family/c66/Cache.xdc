@@ -145,7 +145,7 @@ module Cache inherits ti.sysbios.interfaces.ICache
                         structName: 'ModuleView'
                     }
                 ],
-                ['EnableMARs',
+                ['MARs',
                     {
                         type: xdc.rov.ViewInfo.MODULE_DATA,
                         viewInitFxn: 'viewInitMarRegisters',

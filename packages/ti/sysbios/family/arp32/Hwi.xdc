@@ -149,7 +149,7 @@ module Hwi inherits ti.sysbios.interfaces.IHwi
      */
     metaonly struct ModuleView {
         String      options[4];
-        SizeT       hwiStackPeak;
+        String      hwiStackPeak;
         SizeT       hwiStackSize;
         Ptr         hwiStackBase;
     };
@@ -432,7 +432,11 @@ internal:   /* not for client use */
     /* Interrupt Dispatcher */
     Void dispatchC(Int vectorNum);
 
-    Void dispatchCore();
+    /* Interrupt dispatcher core */
+    Void dispatchCore(Int vectorNum);
+
+    /* assembly language code that switches SP and calls dispatchCore */
+    Void switchAndDispatch(Int vectNum);
 
     /* unPlugged interrupt handler */
     Void unPluggedInterrupt();

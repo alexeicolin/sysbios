@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,7 +44,7 @@ import xdc.runtime.Error;
 /*!
  *  ======== Hwi ========
  *  Hardware Interrupt Support Module.
- *  
+ *
  *  This Hwi module provides ARM family-specific implementations of the
  *  APIs defined in {@link ti.sysbios.interfaces.IHwi IHwi}.
  *
@@ -53,7 +53,7 @@ import xdc.runtime.Error;
  *  @a(NOTE)
  *  In this Hwi module implementation, the instance config parameter value
  *  {@link #MaskingOption_LOWER} is equivalent to {@link #MaskingOption_SELF}.
- *  Statically configuring a Hwi object's {@link #Params.maskSetting} to 
+ *  Statically configuring a Hwi object's {@link #Params.maskSetting} to
  *  {@link #MaskingOption_LOWER} will result in the generation of a benign
  *  build warning. Dynamic usages of {@link #MaskingOption_LOWER} will be
  *  silently converted to {@link #MaskingOption_SELF}.
@@ -84,18 +84,18 @@ module Hwi inherits ti.sysbios.interfaces.IHwi
         Ptr         halHwiHandle;
         String      label;
         Int         intNum;
-        String      fxn; 
-        UArg        arg; 
-        Ptr         irp; 
+        String      fxn;
+        UArg        arg;
+        Ptr         irp;
     };
-    
+
     /*!
      *  ======== ModuleView ========
      *  @_nodoc
      */
     metaonly struct ModuleView {
         String      options[4];
-        SizeT       hwiStackPeak;
+        String      hwiStackPeak;
         SizeT       hwiStackSize;
         Ptr         hwiStackBase;
     };
@@ -105,7 +105,7 @@ module Hwi inherits ti.sysbios.interfaces.IHwi
      *  @_nodoc
      */
     @Facet
-    metaonly config ViewInfo.Instance rovViewInfo = 
+    metaonly config ViewInfo.Instance rovViewInfo =
         ViewInfo.create({
             viewMap: [
                 ['Basic',    {type: ViewInfo.INSTANCE, viewInitFxn: 'viewInitBasic',    structName: 'BasicView'}],
@@ -128,36 +128,36 @@ module Hwi inherits ti.sysbios.interfaces.IHwi
 
     /*! Level 1 Interrupt Controller. Symbol "Hwi_l1Intc" is physical device */
     struct L1Intc {
-        UInt32 ITR;             /*! 0x00 Interrupt Input Register */ 
-        UInt32 MIR;             /*! 0x04 Mask Interrupt Register */ 
-        UInt32 res[2];          /*! 0x08 - 0x0F */ 
-        UInt32 SIR_IRQ;         /*! 0x10 Source IRQ Register */ 
-        UInt32 SIR_FIQ;         /*! 0x14 Source FIQ Register */ 
-        UInt32 CONTROL;         /*! 0x18 Control Register */ 
-        UInt32 ILR[32];         /*! 0x1C thru 0x9B (32 defined) */ 
-        UInt32 SISR;            /*! 0x9C Interrupt Set Register */ 
-        UInt32 GMR;             /*! 0xA0 Global Mask Register */ 
+        UInt32 ITR;             /*! 0x00 Interrupt Input Register */
+        UInt32 MIR;             /*! 0x04 Mask Interrupt Register */
+        UInt32 res[2];          /*! 0x08 - 0x0F */
+        UInt32 SIR_IRQ;         /*! 0x10 Source IRQ Register */
+        UInt32 SIR_FIQ;         /*! 0x14 Source FIQ Register */
+        UInt32 CONTROL;         /*! 0x18 Control Register */
+        UInt32 ILR[32];         /*! 0x1C thru 0x9B (32 defined) */
+        UInt32 SISR;            /*! 0x9C Interrupt Set Register */
+        UInt32 GMR;             /*! 0xA0 Global Mask Register */
     };
 
     /*! Level 2 Interrupt Controller. Symbol "Hwi_l2Intc" is physical device */
     struct L2Intc {
-        UInt32 ITR1;            /*! 0x00 Interrupt Register */ 
-        UInt32 MIR1;            /*! 0x04 Mask Interrupt Register */ 
-        UInt32 res1[2];         /*! 0x08 - 0x0F */ 
-        UInt32 SIR_IRQ;         /*! 0x10 Source IRQ Register */ 
-        UInt32 SIR_FIQ;         /*! 0x14 Source FIQ Register */ 
-        UInt32 CONTROL;         /*! 0x18 Control Register */ 
-        UInt32 ILR1[32];        /*! 0x1C thru 0x9B (32 defined) */ 
-        UInt32 SISR1;           /*! 0x9C Interrupt Set Register */ 
-        UInt32 STATUS;          /*! 0xA0 Status Register */ 
-        UInt32 OCP_CFG;         /*! 0xA4 OCP Config Register */ 
-        UInt32 INTH_REV;        /*! 0xA8 Module Revision register */ 
-        UInt32 res2[21];        /*! 0xAC - 0xFF */ 
-        UInt32 ITR2;            /*! 0x100 Interrupt Register */ 
-        UInt32 MIR2;            /*! 0x104 Mask Interrupt Register */ 
-        UInt32 res3[5];         /*! 0x108 - 0x11B */ 
-        UInt32 ILR2[32];        /*! 0x11C thru 0x19B (32 defined) */ 
-        UInt32 SISR2;           /*! 0x19C Interrupt Set Register */ 
+        UInt32 ITR1;            /*! 0x00 Interrupt Register */
+        UInt32 MIR1;            /*! 0x04 Mask Interrupt Register */
+        UInt32 res1[2];         /*! 0x08 - 0x0F */
+        UInt32 SIR_IRQ;         /*! 0x10 Source IRQ Register */
+        UInt32 SIR_FIQ;         /*! 0x14 Source FIQ Register */
+        UInt32 CONTROL;         /*! 0x18 Control Register */
+        UInt32 ILR1[32];        /*! 0x1C thru 0x9B (32 defined) */
+        UInt32 SISR1;           /*! 0x9C Interrupt Set Register */
+        UInt32 STATUS;          /*! 0xA0 Status Register */
+        UInt32 OCP_CFG;         /*! 0xA4 OCP Config Register */
+        UInt32 INTH_REV;        /*! 0xA8 Module Revision register */
+        UInt32 res2[21];        /*! 0xAC - 0xFF */
+        UInt32 ITR2;            /*! 0x100 Interrupt Register */
+        UInt32 MIR2;            /*! 0x104 Mask Interrupt Register */
+        UInt32 res3[5];         /*! 0x108 - 0x11B */
+        UInt32 ILR2[32];        /*! 0x11C thru 0x19B (32 defined) */
+        UInt32 SISR2;           /*! 0x19C Interrupt Set Register */
     };
 
     extern volatile L1Intc l1Intc;
@@ -190,20 +190,20 @@ module Hwi inherits ti.sysbios.interfaces.IHwi
     /*! FIQ interrupt handler. Default is internal FIQ dispatcher */
     metaonly config VectorFuncPtr fiqFunc;
 
-    /*! 
+    /*!
      *  FIQ stack pointer. Default = null.
      *  (Indicates that stack is to be created using
      *  staticPlace()
      */
     config Ptr fiqStack = null;
 
-    /*! 
+    /*!
      * FIQ stack size in MAUs.
      * Default is 1024 bytes.
      */
     metaonly config SizeT fiqStackSize = 1024;
 
-    /*! 
+    /*!
      *  Memory section used for FIQ stack
      *  Default is null.
      */
@@ -266,7 +266,7 @@ module Hwi inherits ti.sysbios.interfaces.IHwi
      *  ======== inUseMeta ========
      *  @_nodoc
      *  Check for Hwi already in use.
-     *  For internal SYS/BIOS use only. 
+     *  For internal SYS/BIOS use only.
      *  Should be called prior to any internal Hwi.create().
      *
      *  @param(intNum)  interrupt number
@@ -372,7 +372,7 @@ module Hwi inherits ti.sysbios.interfaces.IHwi
 
     /*!
      *  ======== restoreMIR0 ========
-     *  Restore maskable interrupts to the state they were in 
+     *  Restore maskable interrupts to the state they were in
      *  when either disableMIR0() or enableMIR0() was called.
      *
      *  Simply writes mask to the L1 MIR register.
@@ -428,7 +428,7 @@ module Hwi inherits ti.sysbios.interfaces.IHwi
 
 instance:
 
-    /*! 
+    /*!
      *  Interrupt sense (EDGE, LEVEL, TRM. Default is TRM.
      *  TRM setting means that the interrupt sense is configured
      *  per the settings provided in the Technical Reference Manual.
@@ -450,9 +450,9 @@ instance:
 
 internal:   /* not for client use */
 
-    /* 
-     * Swi and Task module function pointers. 
-     * Used to decouple Hwi from Swi and Task when 
+    /*
+     * Swi and Task module function pointers.
+     * Used to decouple Hwi from Swi and Task when
      * dispatcherSwiSupport or
      * dispatcherTaskSupport is false.
      */
@@ -495,7 +495,7 @@ internal:   /* not for client use */
         Irp         irp;            // current IRP
         Ptr         hookEnv[];
     };
- 
+
     struct Module_State {
         Bits32      mir0Mask;       // Initial MIR0 mask
         Bits32      mir1Mask;       // Initial MIR1 mask
@@ -510,7 +510,7 @@ internal:   /* not for client use */
         Ptr         isrStackSize;   // _STACK_SIZE
         Char        fiqStack[];     // buffer used for FIQ stack
         SizeT       fiqStackSize;
-        Handle      dispatchTable[NUM_INTERRUPTS]; 
+        Handle      dispatchTable[NUM_INTERRUPTS];
                                     // dispatch table
     };
 }

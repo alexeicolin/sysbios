@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Texas Instruments Incorporated
+ * Copyright (c) 2012-2013, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,13 +46,21 @@ function module$use()
     Idle = xdc.useModule('ti.sysbios.knl.Idle');
     Task = xdc.module('ti.sysbios.knl.Task');
 
-    /* set fxntab default */
+    /*
+     *  Set fxntab default.  Not sure this is applicable,
+     *  since Power has no instance objects, so maybe this
+     *  line should be removed.
+     */
     Power.common$.fxntab = false;
 
     if (Power.sleepPrepFunction === undefined) {
         Power.sleepPrepFunction = Power.defaultSleepPrepFunction;
     }
 
+    var halPower = xdc.module('ti.sysbios.hal.Power');
+    if (halPower.$used == false) {
+        //print("ti.sysbios.hal.Power NOT USED"); // DEBUG
+    }
     /* if enabled to idle the CPU: plug the idling function */
     if (Power.idle == true) {
 
@@ -63,25 +71,15 @@ function module$use()
             if (Task.allBlockedFunc == null) {
                 Task.allBlockedFunc = Power.blockedTaskFunction;
             }
-
-            /* else, throw error: collision for the all blocked function */
-            else {
+            else if (!Idle.$used) {
+                // TODO: Can this ever happen, since we called
+                // xdc.useModule('ti.sysbios.knl.Idle') earlier?
+                /* else, throw error: collision for the all blocked function */
                 throw new Error ("Unable to plug CPU idling function; Task_allBlockedFunc is already reassigned!");
             }
 
             Hwi = xdc.module('ti.sysbios.family.msp430.Hwi');
             Hwi.alwaysWake = true;
-        }
-
-        /* else if Idle is used, plug the idling function to the Idle loop */
-        else if (Idle.$used) {
-            Idle.addFunc(Power.idleCPU);
-        }
-
-        /* else, throw error saying can't do the idling */
-        else {
-            /* throw error: unable to plug the idling function */
-            throw new Error ("Unable to plug CPU idling function!");
         }
     }
 }
@@ -103,5 +101,22 @@ function module$static$init(mod, params)
         /* throw error: idling not enabled, can't allow changes to mode */
         throw new Error ("Idling not enabled, cannot allow dynamic changes to idle mode!");
 
+    }
+
+    /* if enabled to idle the CPU: plug the idling function */
+    if (Power.idle == true) {
+
+        /* if Task used without Idle, plug the all blocked function */
+        if ((Task.$used) && (Task.enableIdleTask == false)) {
+        }
+        /* else if Idle is used, plug the idling function to the Idle loop */
+        else if (Idle.$used) {
+            Idle.addFunc(Power.idleCPU);
+        }
+        /* else, throw error saying can't do the idling */
+        else {
+            /* throw error: unable to plug the idling function */
+            throw new Error ("Unable to plug CPU idling function!");
+        }
     }
 }

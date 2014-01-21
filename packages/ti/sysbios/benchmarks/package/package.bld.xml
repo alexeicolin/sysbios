@@ -116,6 +116,22 @@
         <srcFile name="package/cfg/release/mem_pe430X.c"/>
         <srcFile name="package/cfg/release/dynamicTsk_pe430X.c"/>
         <srcFile name="package/cfg/release/dynamicSem_pe430X.c"/>
+        <srcFile name="package/cfg/release/latencyMSP_pr430XS.c"/>
+        <srcFile name="package/cfg/release/benchloop_pr430XS.c"/>
+        <srcFile name="package/cfg/release/default_pr430XS.c"/>
+        <srcFile name="package/cfg/release/basic_pr430XS.c"/>
+        <srcFile name="package/cfg/release/hwi_pr430XS.c"/>
+        <srcFile name="package/cfg/release/clk_pr430XS.c"/>
+        <srcFile name="package/cfg/release/clkObj_pr430XS.c"/>
+        <srcFile name="package/cfg/release/swi_pr430XS.c"/>
+        <srcFile name="package/cfg/release/swiObj_pr430XS.c"/>
+        <srcFile name="package/cfg/release/tsk_pr430XS.c"/>
+        <srcFile name="package/cfg/release/tskObj_pr430XS.c"/>
+        <srcFile name="package/cfg/release/sem_pr430XS.c"/>
+        <srcFile name="package/cfg/release/semObj_pr430XS.c"/>
+        <srcFile name="package/cfg/release/mem_pr430XS.c"/>
+        <srcFile name="package/cfg/release/dynamicTsk_pr430XS.c"/>
+        <srcFile name="package/cfg/release/dynamicSem_pr430XS.c"/>
         <srcFile name="package/cfg/release/latency_pe9.c"/>
         <srcFile name="package/cfg/release/benchloop_pe9.c"/>
         <srcFile name="package/cfg/release/default_pe9.c"/>
@@ -244,6 +260,22 @@
         <srcFile name="package/cfg/release/mem_pa8fg.c"/>
         <srcFile name="package/cfg/release/dynamicTsk_pa8fg.c"/>
         <srcFile name="package/cfg/release/dynamicSem_pa8fg.c"/>
+        <srcFile name="package/cfg/release/latencyA9_pa9fg.c"/>
+        <srcFile name="package/cfg/release/benchloop_pa9fg.c"/>
+        <srcFile name="package/cfg/release/default_pa9fg.c"/>
+        <srcFile name="package/cfg/release/basic_pa9fg.c"/>
+        <srcFile name="package/cfg/release/hwi_pa9fg.c"/>
+        <srcFile name="package/cfg/release/clk_pa9fg.c"/>
+        <srcFile name="package/cfg/release/clkObj_pa9fg.c"/>
+        <srcFile name="package/cfg/release/swi_pa9fg.c"/>
+        <srcFile name="package/cfg/release/swiObj_pa9fg.c"/>
+        <srcFile name="package/cfg/release/tsk_pa9fg.c"/>
+        <srcFile name="package/cfg/release/tskObj_pa9fg.c"/>
+        <srcFile name="package/cfg/release/sem_pa9fg.c"/>
+        <srcFile name="package/cfg/release/semObj_pa9fg.c"/>
+        <srcFile name="package/cfg/release/mem_pa9fg.c"/>
+        <srcFile name="package/cfg/release/dynamicTsk_pa9fg.c"/>
+        <srcFile name="package/cfg/release/dynamicSem_pa9fg.c"/>
         <srcFile name="package/cfg/release/latencyA15_pa15fg.c"/>
         <srcFile name="package/cfg/release/benchloop_pa15fg.c"/>
         <srcFile name="package/cfg/release/default_pa15fg.c"/>
@@ -292,12 +324,61 @@
         <srcFile name="package/cfg/release/mem_pearp32F.c"/>
         <srcFile name="package/cfg/release/dynamicTsk_pearp32F.c"/>
         <srcFile name="package/cfg/release/dynamicSem_pearp32F.c"/>
+        <srcFile name="package/cfg/release/latencyM3_prm3.c"/>
+        <srcFile name="package/cfg/release/benchloop_prm3.c"/>
+        <srcFile name="package/cfg/release/default_prm3.c"/>
+        <srcFile name="package/cfg/release/basic_prm3.c"/>
+        <srcFile name="package/cfg/release/hwi_prm3.c"/>
+        <srcFile name="package/cfg/release/clk_prm3.c"/>
+        <srcFile name="package/cfg/release/clkObj_prm3.c"/>
+        <srcFile name="package/cfg/release/swi_prm3.c"/>
+        <srcFile name="package/cfg/release/swiObj_prm3.c"/>
+        <srcFile name="package/cfg/release/tsk_prm3.c"/>
+        <srcFile name="package/cfg/release/tskObj_prm3.c"/>
+        <srcFile name="package/cfg/release/sem_prm3.c"/>
+        <srcFile name="package/cfg/release/semObj_prm3.c"/>
+        <srcFile name="package/cfg/release/mem_prm3.c"/>
+        <srcFile name="package/cfg/release/dynamicTsk_prm3.c"/>
+        <srcFile name="package/cfg/release/dynamicSem_prm3.c"/>
+        <srcFile name="package/cfg/release/latencyM3_prm4.c"/>
+        <srcFile name="package/cfg/release/benchloop_prm4.c"/>
+        <srcFile name="package/cfg/release/default_prm4.c"/>
+        <srcFile name="package/cfg/release/basic_prm4.c"/>
+        <srcFile name="package/cfg/release/hwi_prm4.c"/>
+        <srcFile name="package/cfg/release/clk_prm4.c"/>
+        <srcFile name="package/cfg/release/clkObj_prm4.c"/>
+        <srcFile name="package/cfg/release/swi_prm4.c"/>
+        <srcFile name="package/cfg/release/swiObj_prm4.c"/>
+        <srcFile name="package/cfg/release/tsk_prm4.c"/>
+        <srcFile name="package/cfg/release/tskObj_prm4.c"/>
+        <srcFile name="package/cfg/release/sem_prm4.c"/>
+        <srcFile name="package/cfg/release/semObj_prm4.c"/>
+        <srcFile name="package/cfg/release/mem_prm4.c"/>
+        <srcFile name="package/cfg/release/dynamicTsk_prm4.c"/>
+        <srcFile name="package/cfg/release/dynamicSem_prm4.c"/>
+        <srcFile name="package/cfg/release/latencyM3_prm4f.c"/>
+        <srcFile name="package/cfg/release/benchloop_prm4f.c"/>
+        <srcFile name="package/cfg/release/default_prm4f.c"/>
+        <srcFile name="package/cfg/release/basic_prm4f.c"/>
+        <srcFile name="package/cfg/release/hwi_prm4f.c"/>
+        <srcFile name="package/cfg/release/clk_prm4f.c"/>
+        <srcFile name="package/cfg/release/clkObj_prm4f.c"/>
+        <srcFile name="package/cfg/release/swi_prm4f.c"/>
+        <srcFile name="package/cfg/release/swiObj_prm4f.c"/>
+        <srcFile name="package/cfg/release/tsk_prm4f.c"/>
+        <srcFile name="package/cfg/release/tskObj_prm4f.c"/>
+        <srcFile name="package/cfg/release/sem_prm4f.c"/>
+        <srcFile name="package/cfg/release/semObj_prm4f.c"/>
+        <srcFile name="package/cfg/release/mem_prm4f.c"/>
+        <srcFile name="package/cfg/release/dynamicTsk_prm4f.c"/>
+        <srcFile name="package/cfg/release/dynamicSem_prm4f.c"/>
         <srcFile name="latency.c"/>
         <srcFile name="benchloop.c"/>
         <srcFile name="size.c"/>
         <srcFile name="latencyMSP.c"/>
         <srcFile name="latencyM3.c"/>
         <srcFile name="latencyA8.c"/>
+        <srcFile name="latencyA9.c"/>
         <srcFile name="latencyA15.c"/>
     </sources>
     <configscripts>
@@ -320,6 +401,7 @@
         <srcFile name="latencyMSP.cfg"/>
         <srcFile name="latencyM3.cfg"/>
         <srcFile name="latencyA8.cfg"/>
+        <srcFile name="latencyA9.cfg"/>
         <srcFile name="latencyA15.cfg"/>
     </configscripts>
     <makefiles>
@@ -661,6 +743,54 @@
         <srcFile name="package/cfg/release/dynamicSem_pe430X.mak" src="package.bld"/>
         <srcFile name="package/cfg/release/dynamicSem_pe430X.oe430X.dep" src="package/cfg/release/dynamicSem_pe430X.c"/>
         <srcFile name="package/cfg/release/dynamicSem_pe430X.dep" src="package/cfg/release/dynamicSem_pe430X.cfg"/>
+        <srcFile name="package/cfg/release/latencyMSP_pr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/latencyMSP_pr430XS.or430XS.dep" src="package/cfg/release/latencyMSP_pr430XS.c"/>
+        <srcFile name="package/cfg/release/latencyMSP_pr430XS.dep" src="package/cfg/release/latencyMSP_pr430XS.cfg"/>
+        <srcFile name="package/cfg/release/benchloop_pr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/benchloop_pr430XS.or430XS.dep" src="package/cfg/release/benchloop_pr430XS.c"/>
+        <srcFile name="package/cfg/release/benchloop_pr430XS.dep" src="package/cfg/release/benchloop_pr430XS.cfg"/>
+        <srcFile name="package/cfg/release/default_pr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/default_pr430XS.or430XS.dep" src="package/cfg/release/default_pr430XS.c"/>
+        <srcFile name="package/cfg/release/default_pr430XS.dep" src="package/cfg/release/default_pr430XS.cfg"/>
+        <srcFile name="package/cfg/release/basic_pr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/basic_pr430XS.or430XS.dep" src="package/cfg/release/basic_pr430XS.c"/>
+        <srcFile name="package/cfg/release/basic_pr430XS.dep" src="package/cfg/release/basic_pr430XS.cfg"/>
+        <srcFile name="package/cfg/release/hwi_pr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/hwi_pr430XS.or430XS.dep" src="package/cfg/release/hwi_pr430XS.c"/>
+        <srcFile name="package/cfg/release/hwi_pr430XS.dep" src="package/cfg/release/hwi_pr430XS.cfg"/>
+        <srcFile name="package/cfg/release/clk_pr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clk_pr430XS.or430XS.dep" src="package/cfg/release/clk_pr430XS.c"/>
+        <srcFile name="package/cfg/release/clk_pr430XS.dep" src="package/cfg/release/clk_pr430XS.cfg"/>
+        <srcFile name="package/cfg/release/clkObj_pr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clkObj_pr430XS.or430XS.dep" src="package/cfg/release/clkObj_pr430XS.c"/>
+        <srcFile name="package/cfg/release/clkObj_pr430XS.dep" src="package/cfg/release/clkObj_pr430XS.cfg"/>
+        <srcFile name="package/cfg/release/swi_pr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swi_pr430XS.or430XS.dep" src="package/cfg/release/swi_pr430XS.c"/>
+        <srcFile name="package/cfg/release/swi_pr430XS.dep" src="package/cfg/release/swi_pr430XS.cfg"/>
+        <srcFile name="package/cfg/release/swiObj_pr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swiObj_pr430XS.or430XS.dep" src="package/cfg/release/swiObj_pr430XS.c"/>
+        <srcFile name="package/cfg/release/swiObj_pr430XS.dep" src="package/cfg/release/swiObj_pr430XS.cfg"/>
+        <srcFile name="package/cfg/release/tsk_pr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tsk_pr430XS.or430XS.dep" src="package/cfg/release/tsk_pr430XS.c"/>
+        <srcFile name="package/cfg/release/tsk_pr430XS.dep" src="package/cfg/release/tsk_pr430XS.cfg"/>
+        <srcFile name="package/cfg/release/tskObj_pr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tskObj_pr430XS.or430XS.dep" src="package/cfg/release/tskObj_pr430XS.c"/>
+        <srcFile name="package/cfg/release/tskObj_pr430XS.dep" src="package/cfg/release/tskObj_pr430XS.cfg"/>
+        <srcFile name="package/cfg/release/sem_pr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/sem_pr430XS.or430XS.dep" src="package/cfg/release/sem_pr430XS.c"/>
+        <srcFile name="package/cfg/release/sem_pr430XS.dep" src="package/cfg/release/sem_pr430XS.cfg"/>
+        <srcFile name="package/cfg/release/semObj_pr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/semObj_pr430XS.or430XS.dep" src="package/cfg/release/semObj_pr430XS.c"/>
+        <srcFile name="package/cfg/release/semObj_pr430XS.dep" src="package/cfg/release/semObj_pr430XS.cfg"/>
+        <srcFile name="package/cfg/release/mem_pr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/mem_pr430XS.or430XS.dep" src="package/cfg/release/mem_pr430XS.c"/>
+        <srcFile name="package/cfg/release/mem_pr430XS.dep" src="package/cfg/release/mem_pr430XS.cfg"/>
+        <srcFile name="package/cfg/release/dynamicTsk_pr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicTsk_pr430XS.or430XS.dep" src="package/cfg/release/dynamicTsk_pr430XS.c"/>
+        <srcFile name="package/cfg/release/dynamicTsk_pr430XS.dep" src="package/cfg/release/dynamicTsk_pr430XS.cfg"/>
+        <srcFile name="package/cfg/release/dynamicSem_pr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicSem_pr430XS.or430XS.dep" src="package/cfg/release/dynamicSem_pr430XS.c"/>
+        <srcFile name="package/cfg/release/dynamicSem_pr430XS.dep" src="package/cfg/release/dynamicSem_pr430XS.cfg"/>
         <srcFile name="package/cfg/release/latency_pe9.mak" src="package.bld"/>
         <srcFile name="package/cfg/release/latency_pe9.oe9.dep" src="package/cfg/release/latency_pe9.c"/>
         <srcFile name="package/cfg/release/latency_pe9.dep" src="package/cfg/release/latency_pe9.cfg"/>
@@ -1045,6 +1175,54 @@
         <srcFile name="package/cfg/release/dynamicSem_pa8fg.mak" src="package.bld"/>
         <srcFile name="package/cfg/release/dynamicSem_pa8fg.oa8fg.dep" src="package/cfg/release/dynamicSem_pa8fg.c"/>
         <srcFile name="package/cfg/release/dynamicSem_pa8fg.dep" src="package/cfg/release/dynamicSem_pa8fg.cfg"/>
+        <srcFile name="package/cfg/release/latencyA9_pa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/latencyA9_pa9fg.oa9fg.dep" src="package/cfg/release/latencyA9_pa9fg.c"/>
+        <srcFile name="package/cfg/release/latencyA9_pa9fg.dep" src="package/cfg/release/latencyA9_pa9fg.cfg"/>
+        <srcFile name="package/cfg/release/benchloop_pa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/benchloop_pa9fg.oa9fg.dep" src="package/cfg/release/benchloop_pa9fg.c"/>
+        <srcFile name="package/cfg/release/benchloop_pa9fg.dep" src="package/cfg/release/benchloop_pa9fg.cfg"/>
+        <srcFile name="package/cfg/release/default_pa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/default_pa9fg.oa9fg.dep" src="package/cfg/release/default_pa9fg.c"/>
+        <srcFile name="package/cfg/release/default_pa9fg.dep" src="package/cfg/release/default_pa9fg.cfg"/>
+        <srcFile name="package/cfg/release/basic_pa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/basic_pa9fg.oa9fg.dep" src="package/cfg/release/basic_pa9fg.c"/>
+        <srcFile name="package/cfg/release/basic_pa9fg.dep" src="package/cfg/release/basic_pa9fg.cfg"/>
+        <srcFile name="package/cfg/release/hwi_pa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/hwi_pa9fg.oa9fg.dep" src="package/cfg/release/hwi_pa9fg.c"/>
+        <srcFile name="package/cfg/release/hwi_pa9fg.dep" src="package/cfg/release/hwi_pa9fg.cfg"/>
+        <srcFile name="package/cfg/release/clk_pa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clk_pa9fg.oa9fg.dep" src="package/cfg/release/clk_pa9fg.c"/>
+        <srcFile name="package/cfg/release/clk_pa9fg.dep" src="package/cfg/release/clk_pa9fg.cfg"/>
+        <srcFile name="package/cfg/release/clkObj_pa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clkObj_pa9fg.oa9fg.dep" src="package/cfg/release/clkObj_pa9fg.c"/>
+        <srcFile name="package/cfg/release/clkObj_pa9fg.dep" src="package/cfg/release/clkObj_pa9fg.cfg"/>
+        <srcFile name="package/cfg/release/swi_pa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swi_pa9fg.oa9fg.dep" src="package/cfg/release/swi_pa9fg.c"/>
+        <srcFile name="package/cfg/release/swi_pa9fg.dep" src="package/cfg/release/swi_pa9fg.cfg"/>
+        <srcFile name="package/cfg/release/swiObj_pa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swiObj_pa9fg.oa9fg.dep" src="package/cfg/release/swiObj_pa9fg.c"/>
+        <srcFile name="package/cfg/release/swiObj_pa9fg.dep" src="package/cfg/release/swiObj_pa9fg.cfg"/>
+        <srcFile name="package/cfg/release/tsk_pa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tsk_pa9fg.oa9fg.dep" src="package/cfg/release/tsk_pa9fg.c"/>
+        <srcFile name="package/cfg/release/tsk_pa9fg.dep" src="package/cfg/release/tsk_pa9fg.cfg"/>
+        <srcFile name="package/cfg/release/tskObj_pa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tskObj_pa9fg.oa9fg.dep" src="package/cfg/release/tskObj_pa9fg.c"/>
+        <srcFile name="package/cfg/release/tskObj_pa9fg.dep" src="package/cfg/release/tskObj_pa9fg.cfg"/>
+        <srcFile name="package/cfg/release/sem_pa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/sem_pa9fg.oa9fg.dep" src="package/cfg/release/sem_pa9fg.c"/>
+        <srcFile name="package/cfg/release/sem_pa9fg.dep" src="package/cfg/release/sem_pa9fg.cfg"/>
+        <srcFile name="package/cfg/release/semObj_pa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/semObj_pa9fg.oa9fg.dep" src="package/cfg/release/semObj_pa9fg.c"/>
+        <srcFile name="package/cfg/release/semObj_pa9fg.dep" src="package/cfg/release/semObj_pa9fg.cfg"/>
+        <srcFile name="package/cfg/release/mem_pa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/mem_pa9fg.oa9fg.dep" src="package/cfg/release/mem_pa9fg.c"/>
+        <srcFile name="package/cfg/release/mem_pa9fg.dep" src="package/cfg/release/mem_pa9fg.cfg"/>
+        <srcFile name="package/cfg/release/dynamicTsk_pa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicTsk_pa9fg.oa9fg.dep" src="package/cfg/release/dynamicTsk_pa9fg.c"/>
+        <srcFile name="package/cfg/release/dynamicTsk_pa9fg.dep" src="package/cfg/release/dynamicTsk_pa9fg.cfg"/>
+        <srcFile name="package/cfg/release/dynamicSem_pa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicSem_pa9fg.oa9fg.dep" src="package/cfg/release/dynamicSem_pa9fg.c"/>
+        <srcFile name="package/cfg/release/dynamicSem_pa9fg.dep" src="package/cfg/release/dynamicSem_pa9fg.cfg"/>
         <srcFile name="package/cfg/release/latencyA15_pa15fg.mak" src="package.bld"/>
         <srcFile name="package/cfg/release/latencyA15_pa15fg.oa15fg.dep" src="package/cfg/release/latencyA15_pa15fg.c"/>
         <srcFile name="package/cfg/release/latencyA15_pa15fg.dep" src="package/cfg/release/latencyA15_pa15fg.cfg"/>
@@ -1189,6 +1367,150 @@
         <srcFile name="package/cfg/release/dynamicSem_pearp32F.mak" src="package.bld"/>
         <srcFile name="package/cfg/release/dynamicSem_pearp32F.oearp32F.dep" src="package/cfg/release/dynamicSem_pearp32F.c"/>
         <srcFile name="package/cfg/release/dynamicSem_pearp32F.dep" src="package/cfg/release/dynamicSem_pearp32F.cfg"/>
+        <srcFile name="package/cfg/release/latencyM3_prm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/latencyM3_prm3.orm3.dep" src="package/cfg/release/latencyM3_prm3.c"/>
+        <srcFile name="package/cfg/release/latencyM3_prm3.dep" src="package/cfg/release/latencyM3_prm3.cfg"/>
+        <srcFile name="package/cfg/release/benchloop_prm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/benchloop_prm3.orm3.dep" src="package/cfg/release/benchloop_prm3.c"/>
+        <srcFile name="package/cfg/release/benchloop_prm3.dep" src="package/cfg/release/benchloop_prm3.cfg"/>
+        <srcFile name="package/cfg/release/default_prm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/default_prm3.orm3.dep" src="package/cfg/release/default_prm3.c"/>
+        <srcFile name="package/cfg/release/default_prm3.dep" src="package/cfg/release/default_prm3.cfg"/>
+        <srcFile name="package/cfg/release/basic_prm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/basic_prm3.orm3.dep" src="package/cfg/release/basic_prm3.c"/>
+        <srcFile name="package/cfg/release/basic_prm3.dep" src="package/cfg/release/basic_prm3.cfg"/>
+        <srcFile name="package/cfg/release/hwi_prm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/hwi_prm3.orm3.dep" src="package/cfg/release/hwi_prm3.c"/>
+        <srcFile name="package/cfg/release/hwi_prm3.dep" src="package/cfg/release/hwi_prm3.cfg"/>
+        <srcFile name="package/cfg/release/clk_prm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clk_prm3.orm3.dep" src="package/cfg/release/clk_prm3.c"/>
+        <srcFile name="package/cfg/release/clk_prm3.dep" src="package/cfg/release/clk_prm3.cfg"/>
+        <srcFile name="package/cfg/release/clkObj_prm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clkObj_prm3.orm3.dep" src="package/cfg/release/clkObj_prm3.c"/>
+        <srcFile name="package/cfg/release/clkObj_prm3.dep" src="package/cfg/release/clkObj_prm3.cfg"/>
+        <srcFile name="package/cfg/release/swi_prm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swi_prm3.orm3.dep" src="package/cfg/release/swi_prm3.c"/>
+        <srcFile name="package/cfg/release/swi_prm3.dep" src="package/cfg/release/swi_prm3.cfg"/>
+        <srcFile name="package/cfg/release/swiObj_prm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swiObj_prm3.orm3.dep" src="package/cfg/release/swiObj_prm3.c"/>
+        <srcFile name="package/cfg/release/swiObj_prm3.dep" src="package/cfg/release/swiObj_prm3.cfg"/>
+        <srcFile name="package/cfg/release/tsk_prm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tsk_prm3.orm3.dep" src="package/cfg/release/tsk_prm3.c"/>
+        <srcFile name="package/cfg/release/tsk_prm3.dep" src="package/cfg/release/tsk_prm3.cfg"/>
+        <srcFile name="package/cfg/release/tskObj_prm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tskObj_prm3.orm3.dep" src="package/cfg/release/tskObj_prm3.c"/>
+        <srcFile name="package/cfg/release/tskObj_prm3.dep" src="package/cfg/release/tskObj_prm3.cfg"/>
+        <srcFile name="package/cfg/release/sem_prm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/sem_prm3.orm3.dep" src="package/cfg/release/sem_prm3.c"/>
+        <srcFile name="package/cfg/release/sem_prm3.dep" src="package/cfg/release/sem_prm3.cfg"/>
+        <srcFile name="package/cfg/release/semObj_prm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/semObj_prm3.orm3.dep" src="package/cfg/release/semObj_prm3.c"/>
+        <srcFile name="package/cfg/release/semObj_prm3.dep" src="package/cfg/release/semObj_prm3.cfg"/>
+        <srcFile name="package/cfg/release/mem_prm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/mem_prm3.orm3.dep" src="package/cfg/release/mem_prm3.c"/>
+        <srcFile name="package/cfg/release/mem_prm3.dep" src="package/cfg/release/mem_prm3.cfg"/>
+        <srcFile name="package/cfg/release/dynamicTsk_prm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicTsk_prm3.orm3.dep" src="package/cfg/release/dynamicTsk_prm3.c"/>
+        <srcFile name="package/cfg/release/dynamicTsk_prm3.dep" src="package/cfg/release/dynamicTsk_prm3.cfg"/>
+        <srcFile name="package/cfg/release/dynamicSem_prm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicSem_prm3.orm3.dep" src="package/cfg/release/dynamicSem_prm3.c"/>
+        <srcFile name="package/cfg/release/dynamicSem_prm3.dep" src="package/cfg/release/dynamicSem_prm3.cfg"/>
+        <srcFile name="package/cfg/release/latencyM3_prm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/latencyM3_prm4.orm4.dep" src="package/cfg/release/latencyM3_prm4.c"/>
+        <srcFile name="package/cfg/release/latencyM3_prm4.dep" src="package/cfg/release/latencyM3_prm4.cfg"/>
+        <srcFile name="package/cfg/release/benchloop_prm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/benchloop_prm4.orm4.dep" src="package/cfg/release/benchloop_prm4.c"/>
+        <srcFile name="package/cfg/release/benchloop_prm4.dep" src="package/cfg/release/benchloop_prm4.cfg"/>
+        <srcFile name="package/cfg/release/default_prm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/default_prm4.orm4.dep" src="package/cfg/release/default_prm4.c"/>
+        <srcFile name="package/cfg/release/default_prm4.dep" src="package/cfg/release/default_prm4.cfg"/>
+        <srcFile name="package/cfg/release/basic_prm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/basic_prm4.orm4.dep" src="package/cfg/release/basic_prm4.c"/>
+        <srcFile name="package/cfg/release/basic_prm4.dep" src="package/cfg/release/basic_prm4.cfg"/>
+        <srcFile name="package/cfg/release/hwi_prm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/hwi_prm4.orm4.dep" src="package/cfg/release/hwi_prm4.c"/>
+        <srcFile name="package/cfg/release/hwi_prm4.dep" src="package/cfg/release/hwi_prm4.cfg"/>
+        <srcFile name="package/cfg/release/clk_prm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clk_prm4.orm4.dep" src="package/cfg/release/clk_prm4.c"/>
+        <srcFile name="package/cfg/release/clk_prm4.dep" src="package/cfg/release/clk_prm4.cfg"/>
+        <srcFile name="package/cfg/release/clkObj_prm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clkObj_prm4.orm4.dep" src="package/cfg/release/clkObj_prm4.c"/>
+        <srcFile name="package/cfg/release/clkObj_prm4.dep" src="package/cfg/release/clkObj_prm4.cfg"/>
+        <srcFile name="package/cfg/release/swi_prm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swi_prm4.orm4.dep" src="package/cfg/release/swi_prm4.c"/>
+        <srcFile name="package/cfg/release/swi_prm4.dep" src="package/cfg/release/swi_prm4.cfg"/>
+        <srcFile name="package/cfg/release/swiObj_prm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swiObj_prm4.orm4.dep" src="package/cfg/release/swiObj_prm4.c"/>
+        <srcFile name="package/cfg/release/swiObj_prm4.dep" src="package/cfg/release/swiObj_prm4.cfg"/>
+        <srcFile name="package/cfg/release/tsk_prm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tsk_prm4.orm4.dep" src="package/cfg/release/tsk_prm4.c"/>
+        <srcFile name="package/cfg/release/tsk_prm4.dep" src="package/cfg/release/tsk_prm4.cfg"/>
+        <srcFile name="package/cfg/release/tskObj_prm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tskObj_prm4.orm4.dep" src="package/cfg/release/tskObj_prm4.c"/>
+        <srcFile name="package/cfg/release/tskObj_prm4.dep" src="package/cfg/release/tskObj_prm4.cfg"/>
+        <srcFile name="package/cfg/release/sem_prm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/sem_prm4.orm4.dep" src="package/cfg/release/sem_prm4.c"/>
+        <srcFile name="package/cfg/release/sem_prm4.dep" src="package/cfg/release/sem_prm4.cfg"/>
+        <srcFile name="package/cfg/release/semObj_prm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/semObj_prm4.orm4.dep" src="package/cfg/release/semObj_prm4.c"/>
+        <srcFile name="package/cfg/release/semObj_prm4.dep" src="package/cfg/release/semObj_prm4.cfg"/>
+        <srcFile name="package/cfg/release/mem_prm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/mem_prm4.orm4.dep" src="package/cfg/release/mem_prm4.c"/>
+        <srcFile name="package/cfg/release/mem_prm4.dep" src="package/cfg/release/mem_prm4.cfg"/>
+        <srcFile name="package/cfg/release/dynamicTsk_prm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicTsk_prm4.orm4.dep" src="package/cfg/release/dynamicTsk_prm4.c"/>
+        <srcFile name="package/cfg/release/dynamicTsk_prm4.dep" src="package/cfg/release/dynamicTsk_prm4.cfg"/>
+        <srcFile name="package/cfg/release/dynamicSem_prm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicSem_prm4.orm4.dep" src="package/cfg/release/dynamicSem_prm4.c"/>
+        <srcFile name="package/cfg/release/dynamicSem_prm4.dep" src="package/cfg/release/dynamicSem_prm4.cfg"/>
+        <srcFile name="package/cfg/release/latencyM3_prm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/latencyM3_prm4f.orm4f.dep" src="package/cfg/release/latencyM3_prm4f.c"/>
+        <srcFile name="package/cfg/release/latencyM3_prm4f.dep" src="package/cfg/release/latencyM3_prm4f.cfg"/>
+        <srcFile name="package/cfg/release/benchloop_prm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/benchloop_prm4f.orm4f.dep" src="package/cfg/release/benchloop_prm4f.c"/>
+        <srcFile name="package/cfg/release/benchloop_prm4f.dep" src="package/cfg/release/benchloop_prm4f.cfg"/>
+        <srcFile name="package/cfg/release/default_prm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/default_prm4f.orm4f.dep" src="package/cfg/release/default_prm4f.c"/>
+        <srcFile name="package/cfg/release/default_prm4f.dep" src="package/cfg/release/default_prm4f.cfg"/>
+        <srcFile name="package/cfg/release/basic_prm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/basic_prm4f.orm4f.dep" src="package/cfg/release/basic_prm4f.c"/>
+        <srcFile name="package/cfg/release/basic_prm4f.dep" src="package/cfg/release/basic_prm4f.cfg"/>
+        <srcFile name="package/cfg/release/hwi_prm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/hwi_prm4f.orm4f.dep" src="package/cfg/release/hwi_prm4f.c"/>
+        <srcFile name="package/cfg/release/hwi_prm4f.dep" src="package/cfg/release/hwi_prm4f.cfg"/>
+        <srcFile name="package/cfg/release/clk_prm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clk_prm4f.orm4f.dep" src="package/cfg/release/clk_prm4f.c"/>
+        <srcFile name="package/cfg/release/clk_prm4f.dep" src="package/cfg/release/clk_prm4f.cfg"/>
+        <srcFile name="package/cfg/release/clkObj_prm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clkObj_prm4f.orm4f.dep" src="package/cfg/release/clkObj_prm4f.c"/>
+        <srcFile name="package/cfg/release/clkObj_prm4f.dep" src="package/cfg/release/clkObj_prm4f.cfg"/>
+        <srcFile name="package/cfg/release/swi_prm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swi_prm4f.orm4f.dep" src="package/cfg/release/swi_prm4f.c"/>
+        <srcFile name="package/cfg/release/swi_prm4f.dep" src="package/cfg/release/swi_prm4f.cfg"/>
+        <srcFile name="package/cfg/release/swiObj_prm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swiObj_prm4f.orm4f.dep" src="package/cfg/release/swiObj_prm4f.c"/>
+        <srcFile name="package/cfg/release/swiObj_prm4f.dep" src="package/cfg/release/swiObj_prm4f.cfg"/>
+        <srcFile name="package/cfg/release/tsk_prm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tsk_prm4f.orm4f.dep" src="package/cfg/release/tsk_prm4f.c"/>
+        <srcFile name="package/cfg/release/tsk_prm4f.dep" src="package/cfg/release/tsk_prm4f.cfg"/>
+        <srcFile name="package/cfg/release/tskObj_prm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tskObj_prm4f.orm4f.dep" src="package/cfg/release/tskObj_prm4f.c"/>
+        <srcFile name="package/cfg/release/tskObj_prm4f.dep" src="package/cfg/release/tskObj_prm4f.cfg"/>
+        <srcFile name="package/cfg/release/sem_prm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/sem_prm4f.orm4f.dep" src="package/cfg/release/sem_prm4f.c"/>
+        <srcFile name="package/cfg/release/sem_prm4f.dep" src="package/cfg/release/sem_prm4f.cfg"/>
+        <srcFile name="package/cfg/release/semObj_prm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/semObj_prm4f.orm4f.dep" src="package/cfg/release/semObj_prm4f.c"/>
+        <srcFile name="package/cfg/release/semObj_prm4f.dep" src="package/cfg/release/semObj_prm4f.cfg"/>
+        <srcFile name="package/cfg/release/mem_prm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/mem_prm4f.orm4f.dep" src="package/cfg/release/mem_prm4f.c"/>
+        <srcFile name="package/cfg/release/mem_prm4f.dep" src="package/cfg/release/mem_prm4f.cfg"/>
+        <srcFile name="package/cfg/release/dynamicTsk_prm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicTsk_prm4f.orm4f.dep" src="package/cfg/release/dynamicTsk_prm4f.c"/>
+        <srcFile name="package/cfg/release/dynamicTsk_prm4f.dep" src="package/cfg/release/dynamicTsk_prm4f.cfg"/>
+        <srcFile name="package/cfg/release/dynamicSem_prm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicSem_prm4f.orm4f.dep" src="package/cfg/release/dynamicSem_prm4f.c"/>
+        <srcFile name="package/cfg/release/dynamicSem_prm4f.dep" src="package/cfg/release/dynamicSem_prm4f.cfg"/>
         <srcFile name="package/cfg/release/latency.xe64P.mak" src="package.bld"/>
         <srcFile name="package/cfg/release/latency/latency.oe64P.dep" src="latency.c"/>
         <srcFile name="package/cfg/release/benchloop.xe64P.mak" src="package.bld"/>
@@ -1413,6 +1735,38 @@
         <srcFile name="package/cfg/release/dynamicTsk/size.oe430X.dep" src="size.c"/>
         <srcFile name="package/cfg/release/dynamicSem.xe430X.mak" src="package.bld"/>
         <srcFile name="package/cfg/release/dynamicSem/size.oe430X.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/latencyMSP.xr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/latencyMSP/latencyMSP.or430XS.dep" src="latencyMSP.c"/>
+        <srcFile name="package/cfg/release/benchloop.xr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/benchloop/benchloop.or430XS.dep" src="benchloop.c"/>
+        <srcFile name="package/cfg/release/default.xr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/default/size.or430XS.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/basic.xr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/basic/size.or430XS.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/hwi.xr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/hwi/size.or430XS.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/clk.xr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clk/size.or430XS.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/clkObj.xr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clkObj/size.or430XS.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/swi.xr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swi/size.or430XS.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/swiObj.xr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swiObj/size.or430XS.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/tsk.xr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tsk/size.or430XS.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/tskObj.xr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tskObj/size.or430XS.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/sem.xr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/sem/size.or430XS.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/semObj.xr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/semObj/size.or430XS.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/mem.xr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/mem/size.or430XS.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/dynamicTsk.xr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicTsk/size.or430XS.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/dynamicSem.xr430XS.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicSem/size.or430XS.dep" src="size.c"/>
         <srcFile name="package/cfg/release/latency.xe9.mak" src="package.bld"/>
         <srcFile name="package/cfg/release/latency/latency.oe9.dep" src="latency.c"/>
         <srcFile name="package/cfg/release/benchloop.xe9.mak" src="package.bld"/>
@@ -1669,6 +2023,38 @@
         <srcFile name="package/cfg/release/dynamicTsk/size.oa8fg.dep" src="size.c"/>
         <srcFile name="package/cfg/release/dynamicSem.xa8fg.mak" src="package.bld"/>
         <srcFile name="package/cfg/release/dynamicSem/size.oa8fg.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/latencyA9.xa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/latencyA9/latencyA9.oa9fg.dep" src="latencyA9.c"/>
+        <srcFile name="package/cfg/release/benchloop.xa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/benchloop/benchloop.oa9fg.dep" src="benchloop.c"/>
+        <srcFile name="package/cfg/release/default.xa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/default/size.oa9fg.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/basic.xa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/basic/size.oa9fg.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/hwi.xa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/hwi/size.oa9fg.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/clk.xa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clk/size.oa9fg.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/clkObj.xa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clkObj/size.oa9fg.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/swi.xa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swi/size.oa9fg.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/swiObj.xa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swiObj/size.oa9fg.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/tsk.xa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tsk/size.oa9fg.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/tskObj.xa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tskObj/size.oa9fg.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/sem.xa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/sem/size.oa9fg.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/semObj.xa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/semObj/size.oa9fg.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/mem.xa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/mem/size.oa9fg.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/dynamicTsk.xa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicTsk/size.oa9fg.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/dynamicSem.xa9fg.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicSem/size.oa9fg.dep" src="size.c"/>
         <srcFile name="package/cfg/release/latencyA15.xa15fg.mak" src="package.bld"/>
         <srcFile name="package/cfg/release/latencyA15/latencyA15.oa15fg.dep" src="latencyA15.c"/>
         <srcFile name="package/cfg/release/benchloop.xa15fg.mak" src="package.bld"/>
@@ -1765,16 +2151,112 @@
         <srcFile name="package/cfg/release/dynamicTsk/size.oearp32F.dep" src="size.c"/>
         <srcFile name="package/cfg/release/dynamicSem.xearp32F.mak" src="package.bld"/>
         <srcFile name="package/cfg/release/dynamicSem/size.oearp32F.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/latencyM3.xrm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/latencyM3/latencyM3.orm3.dep" src="latencyM3.c"/>
+        <srcFile name="package/cfg/release/benchloop.xrm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/benchloop/benchloop.orm3.dep" src="benchloop.c"/>
+        <srcFile name="package/cfg/release/default.xrm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/default/size.orm3.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/basic.xrm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/basic/size.orm3.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/hwi.xrm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/hwi/size.orm3.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/clk.xrm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clk/size.orm3.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/clkObj.xrm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clkObj/size.orm3.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/swi.xrm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swi/size.orm3.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/swiObj.xrm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swiObj/size.orm3.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/tsk.xrm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tsk/size.orm3.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/tskObj.xrm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tskObj/size.orm3.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/sem.xrm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/sem/size.orm3.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/semObj.xrm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/semObj/size.orm3.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/mem.xrm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/mem/size.orm3.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/dynamicTsk.xrm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicTsk/size.orm3.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/dynamicSem.xrm3.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicSem/size.orm3.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/latencyM3.xrm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/latencyM3/latencyM3.orm4.dep" src="latencyM3.c"/>
+        <srcFile name="package/cfg/release/benchloop.xrm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/benchloop/benchloop.orm4.dep" src="benchloop.c"/>
+        <srcFile name="package/cfg/release/default.xrm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/default/size.orm4.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/basic.xrm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/basic/size.orm4.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/hwi.xrm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/hwi/size.orm4.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/clk.xrm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clk/size.orm4.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/clkObj.xrm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clkObj/size.orm4.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/swi.xrm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swi/size.orm4.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/swiObj.xrm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swiObj/size.orm4.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/tsk.xrm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tsk/size.orm4.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/tskObj.xrm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tskObj/size.orm4.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/sem.xrm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/sem/size.orm4.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/semObj.xrm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/semObj/size.orm4.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/mem.xrm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/mem/size.orm4.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/dynamicTsk.xrm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicTsk/size.orm4.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/dynamicSem.xrm4.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicSem/size.orm4.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/latencyM3.xrm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/latencyM3/latencyM3.orm4f.dep" src="latencyM3.c"/>
+        <srcFile name="package/cfg/release/benchloop.xrm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/benchloop/benchloop.orm4f.dep" src="benchloop.c"/>
+        <srcFile name="package/cfg/release/default.xrm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/default/size.orm4f.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/basic.xrm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/basic/size.orm4f.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/hwi.xrm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/hwi/size.orm4f.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/clk.xrm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clk/size.orm4f.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/clkObj.xrm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/clkObj/size.orm4f.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/swi.xrm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swi/size.orm4f.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/swiObj.xrm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/swiObj/size.orm4f.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/tsk.xrm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tsk/size.orm4f.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/tskObj.xrm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/tskObj/size.orm4f.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/sem.xrm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/sem/size.orm4f.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/semObj.xrm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/semObj/size.orm4f.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/mem.xrm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/mem/size.orm4f.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/dynamicTsk.xrm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicTsk/size.orm4f.dep" src="size.c"/>
+        <srcFile name="package/cfg/release/dynamicSem.xrm4f.mak" src="package.bld"/>
+        <srcFile name="package/cfg/release/dynamicSem/size.orm4f.dep" src="size.c"/>
         <srcFile name="package/rel/ti_sysbios_benchmarks.tar.gz.dep" src="package/rel/ti_sysbios_benchmarks.xdc.inc"/>
     </makefiles>
     <targets>
         <target name="ti.targets.elf.C64P"
-            version="ti.targets.elf.C64P{1,0,7.4,0"
-            rawVersion="7.4.0"
+            version="ti.targets.elf.C64P{1,0,7.4,4"
+            rawVersion="7.4.4"
             platform="ti.platforms.evmDM6437"
             isa="64P"
             suffix="e64P"
-            rootDir="/db/toolsrc/library/tools/vendors/ti/c6x/7.4.0/Linux"
+            rootDir="/db/vendors/ti/c6x/7.4.4/Linux"
             os="undefined"
             rts="ti.targets.rts6000">
             <model endian="little"
@@ -1782,12 +2264,12 @@
                 dataModel="undefined"/>
         </target>
         <target name="ti.targets.elf.C674"
-            version="ti.targets.elf.C674{1,0,7.4,0"
-            rawVersion="7.4.0"
+            version="ti.targets.elf.C674{1,0,7.4,4"
+            rawVersion="7.4.4"
             platform="ti.platforms.evmOMAPL138"
             isa="674"
             suffix="e674"
-            rootDir="/db/toolsrc/library/tools/vendors/ti/c6x/7.4.0/Linux"
+            rootDir="/db/vendors/ti/c6x/7.4.4/Linux"
             os="undefined"
             rts="ti.targets.rts6000">
             <model endian="little"
@@ -1795,12 +2277,12 @@
                 dataModel="undefined"/>
         </target>
         <target name="ti.targets.elf.C66"
-            version="ti.targets.elf.C66{1,0,7.4,0"
-            rawVersion="7.4.0"
+            version="ti.targets.elf.C66{1,0,7.4,4"
+            rawVersion="7.4.4"
             platform="ti.platforms.evm6678"
             isa="66"
             suffix="e66"
-            rootDir="/db/toolsrc/library/tools/vendors/ti/c6x/7.4.0/Linux"
+            rootDir="/db/vendors/ti/c6x/7.4.4/Linux"
             os="undefined"
             rts="ti.targets.rts6000">
             <model endian="little"
@@ -1808,12 +2290,12 @@
                 dataModel="undefined"/>
         </target>
         <target name="ti.targets.C28_large"
-            version="ti.targets.C28_large{1,0,6.2,0,1"
-            rawVersion="6.2.0B1"
+            version="ti.targets.C28_large{1,0,6.2,0"
+            rawVersion="6.2.0"
             platform="ti.platforms.ezdsp28335"
             isa="28"
             suffix="28L"
-            rootDir="/db/toolsrc/library/tools/vendors/ti/c28/6.2.0B1/Linux"
+            rootDir="/db/vendors/ti/c28/6.2.0/Linux"
             os="undefined"
             rts="ti.targets.rts2800">
             <model endian="little"
@@ -1821,12 +2303,12 @@
                 dataModel="large"/>
         </target>
         <target name="ti.targets.C28_float"
-            version="ti.targets.C28_float{1,0,6.2,0,1"
-            rawVersion="6.2.0B1"
+            version="ti.targets.C28_float{1,0,6.2,0"
+            rawVersion="6.2.0"
             platform="ti.platforms.ezdsp28335"
             isa="28FP"
             suffix="28FP"
-            rootDir="/db/toolsrc/library/tools/vendors/ti/c28/6.2.0B1/Linux"
+            rootDir="/db/vendors/ti/c28/6.2.0/Linux"
             os="undefined"
             rts="ti.targets.rts2800">
             <model endian="little"
@@ -1834,12 +2316,12 @@
                 dataModel="large"/>
         </target>
         <target name="ti.targets.msp430.elf.MSP430X_small"
-            version="ti.targets.msp430.elf.MSP430X_small{1,0,4.1,5"
-            rawVersion="4.1.5"
-            platform="ti.platforms.exp430F5438"
+            version="ti.targets.msp430.elf.MSP430X_small{1,0,4.2,1"
+            rawVersion="4.2.1"
+            platform="ti.platforms.msp430:MSP430F5438A:1"
             isa="430X"
             suffix="e430XS"
-            rootDir="/db/toolsrc/library/tools/vendors/ti/MSP430/4.1.5/Linux"
+            rootDir="/db/vendors/ti/msp430/4.2.1/Linux"
             os="undefined"
             rts="ti.targets.msp430.rts430">
             <model endian="little"
@@ -1847,25 +2329,38 @@
                 dataModel="small"/>
         </target>
         <target name="ti.targets.msp430.elf.MSP430X"
-            version="ti.targets.msp430.elf.MSP430X{1,0,4.1,5"
-            rawVersion="4.1.5"
-            platform="ti.platforms.exp430F5438"
+            version="ti.targets.msp430.elf.MSP430X{1,0,4.2,1"
+            rawVersion="4.2.1"
+            platform="ti.platforms.msp430:MSP430F5438A:1"
             isa="430X"
             suffix="e430X"
-            rootDir="/db/toolsrc/library/tools/vendors/ti/MSP430/4.1.5/Linux"
+            rootDir="/db/vendors/ti/msp430/4.2.1/Linux"
             os="undefined"
             rts="ti.targets.msp430.rts430">
             <model endian="little"
                 codeModel="large"
                 dataModel="restricted"/>
         </target>
+        <target name="iar.targets.msp430.MSP430X_small"
+            version="iar.targets.msp430.MSP430X_small{1,0,5.60,1"
+            rawVersion="5.60.1.59999"
+            platform="ti.platforms.msp430:MSP430F5438A:1"
+            isa="430X"
+            suffix="r430XS"
+            rootDir="/db/vendors/iar/msp430/5.60.1/Linux"
+            os="undefined"
+            rts="iar.targets.msp430.rts">
+            <model endian="little"
+                codeModel="large"
+                dataModel="small"/>
+        </target>
         <target name="ti.targets.arm.elf.Arm9"
-            version="ti.targets.arm.elf.Arm9{1,0,5.0,1"
-            rawVersion="5.0.1"
+            version="ti.targets.arm.elf.Arm9{1,0,5.1,1"
+            rawVersion="5.1.1"
             platform="ti.platforms.evmOMAPL138"
             isa="v5T"
             suffix="e9"
-            rootDir="/db/toolsrc/library/tools/vendors/ti/arm/5.0.1/Linux"
+            rootDir="/db/vendors/ti/arm/5.1.1/Linux"
             os="undefined"
             rts="ti.targets.arm.rtsarm">
             <model endian="little"
@@ -1873,12 +2368,12 @@
                 dataModel="undefined"/>
         </target>
         <target name="ti.targets.arm.elf.M3"
-            version="ti.targets.arm.elf.M3{1,0,5.0,1"
-            rawVersion="5.0.1"
+            version="ti.targets.arm.elf.M3{1,0,5.1,1"
+            rawVersion="5.1.1"
             platform="ti.platforms.stellaris:LM4F120H5QR:1"
             isa="v7M"
             suffix="em3"
-            rootDir="/db/toolsrc/library/tools/vendors/ti/arm/5.0.1/Linux"
+            rootDir="/db/vendors/ti/arm/5.1.1/Linux"
             os="undefined"
             rts="ti.targets.arm.rtsarm">
             <model endian="little"
@@ -1886,12 +2381,12 @@
                 dataModel="undefined"/>
         </target>
         <target name="ti.targets.arm.elf.M4"
-            version="ti.targets.arm.elf.M4{1,0,5.0,1"
-            rawVersion="5.0.1"
+            version="ti.targets.arm.elf.M4{1,0,5.1,1"
+            rawVersion="5.1.1"
             platform="ti.platforms.stellaris:LM4F120H5QR:1"
             isa="v7M4"
             suffix="em4"
-            rootDir="/db/toolsrc/library/tools/vendors/ti/arm/5.0.1/Linux"
+            rootDir="/db/vendors/ti/arm/5.1.1/Linux"
             os="undefined"
             rts="ti.targets.arm.rtsarm">
             <model endian="little"
@@ -1899,12 +2394,12 @@
                 dataModel="undefined"/>
         </target>
         <target name="ti.targets.arm.elf.M4F"
-            version="ti.targets.arm.elf.M4F{1,0,5.0,1"
-            rawVersion="5.0.1"
+            version="ti.targets.arm.elf.M4F{1,0,5.1,1"
+            rawVersion="5.1.1"
             platform="ti.platforms.stellaris:LM4F120H5QR:1"
             isa="v7M4"
             suffix="em4f"
-            rootDir="/db/toolsrc/library/tools/vendors/ti/arm/5.0.1/Linux"
+            rootDir="/db/vendors/ti/arm/5.1.1/Linux"
             os="undefined"
             rts="ti.targets.arm.rtsarm">
             <model endian="little"
@@ -1912,12 +2407,12 @@
                 dataModel="undefined"/>
         </target>
         <target name="ti.targets.arm.elf.A8Fnv"
-            version="ti.targets.arm.elf.A8Fnv{1,0,5.0,1"
-            rawVersion="5.0.1"
+            version="ti.targets.arm.elf.A8Fnv{1,0,5.1,1"
+            rawVersion="5.1.1"
             platform="ti.platforms.evmAM3359"
             isa="v7A"
             suffix="ea8fnv"
-            rootDir="/db/toolsrc/library/tools/vendors/ti/arm/5.0.1/Linux"
+            rootDir="/db/vendors/ti/arm/5.1.1/Linux"
             os="undefined"
             rts="ti.targets.arm.rtsarm">
             <model endian="little"
@@ -1927,10 +2422,10 @@
         <target name="gnu.targets.arm.M3"
             version="gnu.targets.arm.M3{1,0,4.7,3"
             rawVersion="4.7.3"
-            platform="ti.platforms.stellaris:LM4F232H5QD:1"
+            platform="ti.platforms.tiva:LM4F232H5QD:1"
             isa="v7M"
             suffix="m3g"
-            rootDir="/db/toolsrc/library/tools/vendors/linaro/gcc-arm-none-eabi-4_7-2012q4"
+            rootDir="/db/vendors/gnu/gcc-arm-none-eabi-4_7-2013q1"
             os="undefined"
             rts="gnu.targets.arm.rtsv7M">
             <model endian="little"
@@ -1940,10 +2435,10 @@
         <target name="gnu.targets.arm.M4F"
             version="gnu.targets.arm.M4F{1,0,4.7,3"
             rawVersion="4.7.3"
-            platform="ti.platforms.stellaris:LM4F232H5QD:1"
+            platform="ti.platforms.tiva:LM4F232H5QD:1"
             isa="v7M4"
             suffix="m4fg"
-            rootDir="/db/toolsrc/library/tools/vendors/linaro/gcc-arm-none-eabi-4_7-2012q4"
+            rootDir="/db/vendors/gnu/gcc-arm-none-eabi-4_7-2013q1"
             os="undefined"
             rts="gnu.targets.arm.rtsv7M">
             <model endian="little"
@@ -1956,7 +2451,20 @@
             platform="ti.platforms.evmTI814X"
             isa="v7A8"
             suffix="a8fg"
-            rootDir="/db/toolsrc/library/tools/vendors/linaro/gcc-arm-none-eabi-4_7-2012q4"
+            rootDir="/db/vendors/gnu/gcc-arm-none-eabi-4_7-2013q1"
+            os="undefined"
+            rts="gnu.targets.arm.rtsv7A">
+            <model endian="little"
+                codeModel="undefined"
+                dataModel="undefined"/>
+        </target>
+        <target name="gnu.targets.arm.A9F"
+            version="gnu.targets.arm.A9F{1,0,4.7,3"
+            rawVersion="4.7.3"
+            platform="ti.platforms.sdp4430"
+            isa="v7A9"
+            suffix="a9fg"
+            rootDir="/db/vendors/gnu/gcc-arm-none-eabi-4_7-2013q1"
             os="undefined"
             rts="gnu.targets.arm.rtsv7A">
             <model endian="little"
@@ -1966,10 +2474,10 @@
         <target name="gnu.targets.arm.A15F"
             version="gnu.targets.arm.A15F{1,0,4.7,3"
             rawVersion="4.7.3"
-            platform="ti.platforms.simVayu"
+            platform="ti.platforms.evmDRA7XX"
             isa="v7A15"
             suffix="a15fg"
-            rootDir="/db/toolsrc/library/tools/vendors/linaro/gcc-arm-none-eabi-4_7-2012q4"
+            rootDir="/db/vendors/gnu/gcc-arm-none-eabi-4_7-2013q1"
             os="undefined"
             rts="gnu.targets.arm.rtsv7A">
             <model endian="little"
@@ -1977,12 +2485,12 @@
                 dataModel="undefined"/>
         </target>
         <target name="ti.targets.arp32.elf.ARP32"
-            version="ti.targets.arp32.elf.ARP32{1,0,1.0,0"
-            rawVersion="1.0.0"
+            version="ti.targets.arp32.elf.ARP32{1,0,1.0,1"
+            rawVersion="1.0.1"
             platform="ti.platforms.evmC6A8149"
             isa="arp32"
             suffix="earp32"
-            rootDir="/db/toolsrc/library/tools/vendors/ti/arp32/1.0.0/Linux"
+            rootDir="/db/vendors/ti/arp32/1.0.1/Linux"
             os="undefined"
             rts="ti.targets.arp32.rts">
             <model endian="little"
@@ -1990,17 +2498,56 @@
                 dataModel="far_aggregates"/>
         </target>
         <target name="ti.targets.arp32.elf.ARP32_far"
-            version="ti.targets.arp32.elf.ARP32_far{1,0,1.0,0"
-            rawVersion="1.0.0"
+            version="ti.targets.arp32.elf.ARP32_far{1,0,1.0,1"
+            rawVersion="1.0.1"
             platform="ti.platforms.evmC6A8149"
             isa="arp32"
             suffix="earp32F"
-            rootDir="/db/toolsrc/library/tools/vendors/ti/arp32/1.0.0/Linux"
+            rootDir="/db/vendors/ti/arp32/1.0.1/Linux"
             os="undefined"
             rts="ti.targets.arp32.rts">
             <model endian="little"
                 codeModel="undefined"
                 dataModel="far"/>
+        </target>
+        <target name="iar.targets.arm.M3"
+            version="iar.targets.arm.M3{1,0,6.60,1"
+            rawVersion="6.60.1.00"
+            platform="ti.platforms.tiva:LM3S9B92:1"
+            isa="v7M"
+            suffix="rm3"
+            rootDir="/db/vendors/iar/arm/6.60/Linux"
+            os="undefined"
+            rts="iar.targets.arm.rts">
+            <model endian="little"
+                codeModel="thumb2"
+                dataModel="undefined"/>
+        </target>
+        <target name="iar.targets.arm.M4"
+            version="iar.targets.arm.M4{1,0,6.60,1"
+            rawVersion="6.60.1.00"
+            platform="ti.platforms.tiva:LM4F120H5QR:1"
+            isa="v7M4"
+            suffix="rm4"
+            rootDir="/db/vendors/iar/arm/6.60/Linux"
+            os="undefined"
+            rts="iar.targets.arm.rts">
+            <model endian="little"
+                codeModel="thumb2"
+                dataModel="undefined"/>
+        </target>
+        <target name="iar.targets.arm.M4F"
+            version="iar.targets.arm.M4F{1,0,6.60,1"
+            rawVersion="6.60.1.00"
+            platform="ti.platforms.tiva:LM4F120H5QR:1"
+            isa="v7M4"
+            suffix="rm4f"
+            rootDir="/db/vendors/iar/arm/6.60/Linux"
+            os="undefined"
+            rts="iar.targets.arm.rts">
+            <model endian="little"
+                codeModel="thumb2"
+                dataModel="undefined"/>
         </target>
     </targets>
     <libraries>
@@ -2809,7 +3356,7 @@
     <configuration name="release/latencyMSP"
         pname="release/latencyMSP.pe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/latencyMSP_pe430XS.cfg"
@@ -2819,7 +3366,7 @@
     <configuration name="release/benchloop"
         pname="release/benchloop.pe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/benchloop_pe430XS.cfg"
@@ -2829,7 +3376,7 @@
     <configuration name="release/default"
         pname="release/default.pe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/default_pe430XS.cfg"
@@ -2839,7 +3386,7 @@
     <configuration name="release/basic"
         pname="release/basic.pe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/basic_pe430XS.cfg"
@@ -2849,7 +3396,7 @@
     <configuration name="release/hwi"
         pname="release/hwi.pe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/hwi_pe430XS.cfg"
@@ -2859,7 +3406,7 @@
     <configuration name="release/clk"
         pname="release/clk.pe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/clk_pe430XS.cfg"
@@ -2869,7 +3416,7 @@
     <configuration name="release/clkObj"
         pname="release/clkObj.pe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/clkObj_pe430XS.cfg"
@@ -2879,7 +3426,7 @@
     <configuration name="release/swi"
         pname="release/swi.pe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/swi_pe430XS.cfg"
@@ -2889,7 +3436,7 @@
     <configuration name="release/swiObj"
         pname="release/swiObj.pe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/swiObj_pe430XS.cfg"
@@ -2899,7 +3446,7 @@
     <configuration name="release/tsk"
         pname="release/tsk.pe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/tsk_pe430XS.cfg"
@@ -2909,7 +3456,7 @@
     <configuration name="release/tskObj"
         pname="release/tskObj.pe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/tskObj_pe430XS.cfg"
@@ -2919,7 +3466,7 @@
     <configuration name="release/sem"
         pname="release/sem.pe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/sem_pe430XS.cfg"
@@ -2929,7 +3476,7 @@
     <configuration name="release/semObj"
         pname="release/semObj.pe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/semObj_pe430XS.cfg"
@@ -2939,7 +3486,7 @@
     <configuration name="release/mem"
         pname="release/mem.pe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/mem_pe430XS.cfg"
@@ -2949,7 +3496,7 @@
     <configuration name="release/dynamicTsk"
         pname="release/dynamicTsk.pe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/dynamicTsk_pe430XS.cfg"
@@ -2959,7 +3506,7 @@
     <configuration name="release/dynamicSem"
         pname="release/dynamicSem.pe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/dynamicSem_pe430XS.cfg"
@@ -2969,7 +3516,7 @@
     <configuration name="release/latencyMSP"
         pname="release/latencyMSP.pe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/latencyMSP_pe430X.cfg"
@@ -2979,7 +3526,7 @@
     <configuration name="release/benchloop"
         pname="release/benchloop.pe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/benchloop_pe430X.cfg"
@@ -2989,7 +3536,7 @@
     <configuration name="release/default"
         pname="release/default.pe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/default_pe430X.cfg"
@@ -2999,7 +3546,7 @@
     <configuration name="release/basic"
         pname="release/basic.pe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/basic_pe430X.cfg"
@@ -3009,7 +3556,7 @@
     <configuration name="release/hwi"
         pname="release/hwi.pe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/hwi_pe430X.cfg"
@@ -3019,7 +3566,7 @@
     <configuration name="release/clk"
         pname="release/clk.pe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/clk_pe430X.cfg"
@@ -3029,7 +3576,7 @@
     <configuration name="release/clkObj"
         pname="release/clkObj.pe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/clkObj_pe430X.cfg"
@@ -3039,7 +3586,7 @@
     <configuration name="release/swi"
         pname="release/swi.pe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/swi_pe430X.cfg"
@@ -3049,7 +3596,7 @@
     <configuration name="release/swiObj"
         pname="release/swiObj.pe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/swiObj_pe430X.cfg"
@@ -3059,7 +3606,7 @@
     <configuration name="release/tsk"
         pname="release/tsk.pe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/tsk_pe430X.cfg"
@@ -3069,7 +3616,7 @@
     <configuration name="release/tskObj"
         pname="release/tskObj.pe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/tskObj_pe430X.cfg"
@@ -3079,7 +3626,7 @@
     <configuration name="release/sem"
         pname="release/sem.pe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/sem_pe430X.cfg"
@@ -3089,7 +3636,7 @@
     <configuration name="release/semObj"
         pname="release/semObj.pe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/semObj_pe430X.cfg"
@@ -3099,7 +3646,7 @@
     <configuration name="release/mem"
         pname="release/mem.pe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/mem_pe430X.cfg"
@@ -3109,7 +3656,7 @@
     <configuration name="release/dynamicTsk"
         pname="release/dynamicTsk.pe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/dynamicTsk_pe430X.cfg"
@@ -3119,11 +3666,171 @@
     <configuration name="release/dynamicSem"
         pname="release/dynamicSem.pe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/dynamicSem_pe430X.cfg"
         xCfgPrefix="package/cfg/release/dynamicSem_pe430X"
+        cfgScript="dynamicSem.cfg"
+        />
+    <configuration name="release/latencyMSP"
+        pname="release/latencyMSP.pr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/latencyMSP_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/latencyMSP_pr430XS"
+        cfgScript="latencyMSP.cfg"
+        />
+    <configuration name="release/benchloop"
+        pname="release/benchloop.pr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/benchloop_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/benchloop_pr430XS"
+        cfgScript="benchloop.cfg"
+        />
+    <configuration name="release/default"
+        pname="release/default.pr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/default_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/default_pr430XS"
+        cfgScript="default.cfg"
+        />
+    <configuration name="release/basic"
+        pname="release/basic.pr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/basic_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/basic_pr430XS"
+        cfgScript="basic.cfg"
+        />
+    <configuration name="release/hwi"
+        pname="release/hwi.pr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/hwi_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/hwi_pr430XS"
+        cfgScript="hwi.cfg"
+        />
+    <configuration name="release/clk"
+        pname="release/clk.pr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/clk_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/clk_pr430XS"
+        cfgScript="clk.cfg"
+        />
+    <configuration name="release/clkObj"
+        pname="release/clkObj.pr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/clkObj_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/clkObj_pr430XS"
+        cfgScript="clkObj.cfg"
+        />
+    <configuration name="release/swi"
+        pname="release/swi.pr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/swi_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/swi_pr430XS"
+        cfgScript="swi.cfg"
+        />
+    <configuration name="release/swiObj"
+        pname="release/swiObj.pr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/swiObj_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/swiObj_pr430XS"
+        cfgScript="swiObj.cfg"
+        />
+    <configuration name="release/tsk"
+        pname="release/tsk.pr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/tsk_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/tsk_pr430XS"
+        cfgScript="tsk.cfg"
+        />
+    <configuration name="release/tskObj"
+        pname="release/tskObj.pr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/tskObj_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/tskObj_pr430XS"
+        cfgScript="tskObj.cfg"
+        />
+    <configuration name="release/sem"
+        pname="release/sem.pr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/sem_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/sem_pr430XS"
+        cfgScript="sem.cfg"
+        />
+    <configuration name="release/semObj"
+        pname="release/semObj.pr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/semObj_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/semObj_pr430XS"
+        cfgScript="semObj.cfg"
+        />
+    <configuration name="release/mem"
+        pname="release/mem.pr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/mem_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/mem_pr430XS"
+        cfgScript="mem.cfg"
+        />
+    <configuration name="release/dynamicTsk"
+        pname="release/dynamicTsk.pr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/dynamicTsk_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/dynamicTsk_pr430XS"
+        cfgScript="dynamicTsk.cfg"
+        />
+    <configuration name="release/dynamicSem"
+        pname="release/dynamicSem.pr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/dynamicSem_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/dynamicSem_pr430XS"
         cfgScript="dynamicSem.cfg"
         />
     <configuration name="release/latency"
@@ -3929,7 +4636,7 @@
     <configuration name="release/latencyM3"
         pname="release/latencyM3.pm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/latencyM3_pm3g.cfg"
@@ -3939,7 +4646,7 @@
     <configuration name="release/benchloop"
         pname="release/benchloop.pm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/benchloop_pm3g.cfg"
@@ -3949,7 +4656,7 @@
     <configuration name="release/default"
         pname="release/default.pm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/default_pm3g.cfg"
@@ -3959,7 +4666,7 @@
     <configuration name="release/basic"
         pname="release/basic.pm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/basic_pm3g.cfg"
@@ -3969,7 +4676,7 @@
     <configuration name="release/hwi"
         pname="release/hwi.pm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/hwi_pm3g.cfg"
@@ -3979,7 +4686,7 @@
     <configuration name="release/clk"
         pname="release/clk.pm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/clk_pm3g.cfg"
@@ -3989,7 +4696,7 @@
     <configuration name="release/clkObj"
         pname="release/clkObj.pm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/clkObj_pm3g.cfg"
@@ -3999,7 +4706,7 @@
     <configuration name="release/swi"
         pname="release/swi.pm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/swi_pm3g.cfg"
@@ -4009,7 +4716,7 @@
     <configuration name="release/swiObj"
         pname="release/swiObj.pm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/swiObj_pm3g.cfg"
@@ -4019,7 +4726,7 @@
     <configuration name="release/tsk"
         pname="release/tsk.pm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/tsk_pm3g.cfg"
@@ -4029,7 +4736,7 @@
     <configuration name="release/tskObj"
         pname="release/tskObj.pm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/tskObj_pm3g.cfg"
@@ -4039,7 +4746,7 @@
     <configuration name="release/sem"
         pname="release/sem.pm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/sem_pm3g.cfg"
@@ -4049,7 +4756,7 @@
     <configuration name="release/semObj"
         pname="release/semObj.pm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/semObj_pm3g.cfg"
@@ -4059,7 +4766,7 @@
     <configuration name="release/mem"
         pname="release/mem.pm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/mem_pm3g.cfg"
@@ -4069,7 +4776,7 @@
     <configuration name="release/dynamicTsk"
         pname="release/dynamicTsk.pm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/dynamicTsk_pm3g.cfg"
@@ -4079,7 +4786,7 @@
     <configuration name="release/dynamicSem"
         pname="release/dynamicSem.pm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/dynamicSem_pm3g.cfg"
@@ -4089,7 +4796,7 @@
     <configuration name="release/latencyM3"
         pname="release/latencyM3.pm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/latencyM3_pm4fg.cfg"
@@ -4099,7 +4806,7 @@
     <configuration name="release/benchloop"
         pname="release/benchloop.pm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/benchloop_pm4fg.cfg"
@@ -4109,7 +4816,7 @@
     <configuration name="release/default"
         pname="release/default.pm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/default_pm4fg.cfg"
@@ -4119,7 +4826,7 @@
     <configuration name="release/basic"
         pname="release/basic.pm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/basic_pm4fg.cfg"
@@ -4129,7 +4836,7 @@
     <configuration name="release/hwi"
         pname="release/hwi.pm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/hwi_pm4fg.cfg"
@@ -4139,7 +4846,7 @@
     <configuration name="release/clk"
         pname="release/clk.pm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/clk_pm4fg.cfg"
@@ -4149,7 +4856,7 @@
     <configuration name="release/clkObj"
         pname="release/clkObj.pm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/clkObj_pm4fg.cfg"
@@ -4159,7 +4866,7 @@
     <configuration name="release/swi"
         pname="release/swi.pm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/swi_pm4fg.cfg"
@@ -4169,7 +4876,7 @@
     <configuration name="release/swiObj"
         pname="release/swiObj.pm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/swiObj_pm4fg.cfg"
@@ -4179,7 +4886,7 @@
     <configuration name="release/tsk"
         pname="release/tsk.pm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/tsk_pm4fg.cfg"
@@ -4189,7 +4896,7 @@
     <configuration name="release/tskObj"
         pname="release/tskObj.pm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/tskObj_pm4fg.cfg"
@@ -4199,7 +4906,7 @@
     <configuration name="release/sem"
         pname="release/sem.pm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/sem_pm4fg.cfg"
@@ -4209,7 +4916,7 @@
     <configuration name="release/semObj"
         pname="release/semObj.pm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/semObj_pm4fg.cfg"
@@ -4219,7 +4926,7 @@
     <configuration name="release/mem"
         pname="release/mem.pm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/mem_pm4fg.cfg"
@@ -4229,7 +4936,7 @@
     <configuration name="release/dynamicTsk"
         pname="release/dynamicTsk.pm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/dynamicTsk_pm4fg.cfg"
@@ -4239,7 +4946,7 @@
     <configuration name="release/dynamicSem"
         pname="release/dynamicSem.pm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/dynamicSem_pm4fg.cfg"
@@ -4406,6 +5113,166 @@
         xCfgPrefix="package/cfg/release/dynamicSem_pa8fg"
         cfgScript="dynamicSem.cfg"
         />
+    <configuration name="release/latencyA9"
+        pname="release/latencyA9.pa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/latencyA9_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/latencyA9_pa9fg"
+        cfgScript="latencyA9.cfg"
+        />
+    <configuration name="release/benchloop"
+        pname="release/benchloop.pa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/benchloop_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/benchloop_pa9fg"
+        cfgScript="benchloop.cfg"
+        />
+    <configuration name="release/default"
+        pname="release/default.pa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/default_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/default_pa9fg"
+        cfgScript="default.cfg"
+        />
+    <configuration name="release/basic"
+        pname="release/basic.pa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/basic_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/basic_pa9fg"
+        cfgScript="basic.cfg"
+        />
+    <configuration name="release/hwi"
+        pname="release/hwi.pa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/hwi_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/hwi_pa9fg"
+        cfgScript="hwi.cfg"
+        />
+    <configuration name="release/clk"
+        pname="release/clk.pa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/clk_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/clk_pa9fg"
+        cfgScript="clk.cfg"
+        />
+    <configuration name="release/clkObj"
+        pname="release/clkObj.pa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/clkObj_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/clkObj_pa9fg"
+        cfgScript="clkObj.cfg"
+        />
+    <configuration name="release/swi"
+        pname="release/swi.pa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/swi_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/swi_pa9fg"
+        cfgScript="swi.cfg"
+        />
+    <configuration name="release/swiObj"
+        pname="release/swiObj.pa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/swiObj_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/swiObj_pa9fg"
+        cfgScript="swiObj.cfg"
+        />
+    <configuration name="release/tsk"
+        pname="release/tsk.pa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/tsk_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/tsk_pa9fg"
+        cfgScript="tsk.cfg"
+        />
+    <configuration name="release/tskObj"
+        pname="release/tskObj.pa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/tskObj_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/tskObj_pa9fg"
+        cfgScript="tskObj.cfg"
+        />
+    <configuration name="release/sem"
+        pname="release/sem.pa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/sem_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/sem_pa9fg"
+        cfgScript="sem.cfg"
+        />
+    <configuration name="release/semObj"
+        pname="release/semObj.pa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/semObj_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/semObj_pa9fg"
+        cfgScript="semObj.cfg"
+        />
+    <configuration name="release/mem"
+        pname="release/mem.pa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/mem_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/mem_pa9fg"
+        cfgScript="mem.cfg"
+        />
+    <configuration name="release/dynamicTsk"
+        pname="release/dynamicTsk.pa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/dynamicTsk_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/dynamicTsk_pa9fg"
+        cfgScript="dynamicTsk.cfg"
+        />
+    <configuration name="release/dynamicSem"
+        pname="release/dynamicSem.pa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/dynamicSem_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/dynamicSem_pa9fg"
+        cfgScript="dynamicSem.cfg"
+        />
     <configuration name="release/latencyA15"
         pname="release/latencyA15.pa15fg"
         target="gnu.targets.arm.A15F"
@@ -4419,7 +5286,7 @@
     <configuration name="release/benchloop"
         pname="release/benchloop.pa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/benchloop_pa15fg.cfg"
@@ -4429,7 +5296,7 @@
     <configuration name="release/default"
         pname="release/default.pa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/default_pa15fg.cfg"
@@ -4439,7 +5306,7 @@
     <configuration name="release/basic"
         pname="release/basic.pa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/basic_pa15fg.cfg"
@@ -4449,7 +5316,7 @@
     <configuration name="release/hwi"
         pname="release/hwi.pa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/hwi_pa15fg.cfg"
@@ -4459,7 +5326,7 @@
     <configuration name="release/clk"
         pname="release/clk.pa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/clk_pa15fg.cfg"
@@ -4469,7 +5336,7 @@
     <configuration name="release/clkObj"
         pname="release/clkObj.pa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/clkObj_pa15fg.cfg"
@@ -4479,7 +5346,7 @@
     <configuration name="release/swi"
         pname="release/swi.pa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/swi_pa15fg.cfg"
@@ -4489,7 +5356,7 @@
     <configuration name="release/swiObj"
         pname="release/swiObj.pa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/swiObj_pa15fg.cfg"
@@ -4499,7 +5366,7 @@
     <configuration name="release/tsk"
         pname="release/tsk.pa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/tsk_pa15fg.cfg"
@@ -4509,7 +5376,7 @@
     <configuration name="release/tskObj"
         pname="release/tskObj.pa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/tskObj_pa15fg.cfg"
@@ -4519,7 +5386,7 @@
     <configuration name="release/sem"
         pname="release/sem.pa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/sem_pa15fg.cfg"
@@ -4529,7 +5396,7 @@
     <configuration name="release/semObj"
         pname="release/semObj.pa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/semObj_pa15fg.cfg"
@@ -4539,7 +5406,7 @@
     <configuration name="release/mem"
         pname="release/mem.pa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/mem_pa15fg.cfg"
@@ -4549,7 +5416,7 @@
     <configuration name="release/dynamicTsk"
         pname="release/dynamicTsk.pa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/dynamicTsk_pa15fg.cfg"
@@ -4559,7 +5426,7 @@
     <configuration name="release/dynamicSem"
         pname="release/dynamicSem.pa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         isPartial="false"
         xCfgScript="package/cfg/release/dynamicSem_pa15fg.cfg"
@@ -4884,6 +5751,486 @@
         isPartial="false"
         xCfgScript="package/cfg/release/dynamicSem_pearp32F.cfg"
         xCfgPrefix="package/cfg/release/dynamicSem_pearp32F"
+        cfgScript="dynamicSem.cfg"
+        />
+    <configuration name="release/latencyM3"
+        pname="release/latencyM3.prm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/latencyM3_prm3.cfg"
+        xCfgPrefix="package/cfg/release/latencyM3_prm3"
+        cfgScript="latencyM3.cfg"
+        />
+    <configuration name="release/benchloop"
+        pname="release/benchloop.prm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/benchloop_prm3.cfg"
+        xCfgPrefix="package/cfg/release/benchloop_prm3"
+        cfgScript="benchloop.cfg"
+        />
+    <configuration name="release/default"
+        pname="release/default.prm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/default_prm3.cfg"
+        xCfgPrefix="package/cfg/release/default_prm3"
+        cfgScript="default.cfg"
+        />
+    <configuration name="release/basic"
+        pname="release/basic.prm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/basic_prm3.cfg"
+        xCfgPrefix="package/cfg/release/basic_prm3"
+        cfgScript="basic.cfg"
+        />
+    <configuration name="release/hwi"
+        pname="release/hwi.prm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/hwi_prm3.cfg"
+        xCfgPrefix="package/cfg/release/hwi_prm3"
+        cfgScript="hwi.cfg"
+        />
+    <configuration name="release/clk"
+        pname="release/clk.prm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/clk_prm3.cfg"
+        xCfgPrefix="package/cfg/release/clk_prm3"
+        cfgScript="clk.cfg"
+        />
+    <configuration name="release/clkObj"
+        pname="release/clkObj.prm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/clkObj_prm3.cfg"
+        xCfgPrefix="package/cfg/release/clkObj_prm3"
+        cfgScript="clkObj.cfg"
+        />
+    <configuration name="release/swi"
+        pname="release/swi.prm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/swi_prm3.cfg"
+        xCfgPrefix="package/cfg/release/swi_prm3"
+        cfgScript="swi.cfg"
+        />
+    <configuration name="release/swiObj"
+        pname="release/swiObj.prm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/swiObj_prm3.cfg"
+        xCfgPrefix="package/cfg/release/swiObj_prm3"
+        cfgScript="swiObj.cfg"
+        />
+    <configuration name="release/tsk"
+        pname="release/tsk.prm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/tsk_prm3.cfg"
+        xCfgPrefix="package/cfg/release/tsk_prm3"
+        cfgScript="tsk.cfg"
+        />
+    <configuration name="release/tskObj"
+        pname="release/tskObj.prm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/tskObj_prm3.cfg"
+        xCfgPrefix="package/cfg/release/tskObj_prm3"
+        cfgScript="tskObj.cfg"
+        />
+    <configuration name="release/sem"
+        pname="release/sem.prm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/sem_prm3.cfg"
+        xCfgPrefix="package/cfg/release/sem_prm3"
+        cfgScript="sem.cfg"
+        />
+    <configuration name="release/semObj"
+        pname="release/semObj.prm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/semObj_prm3.cfg"
+        xCfgPrefix="package/cfg/release/semObj_prm3"
+        cfgScript="semObj.cfg"
+        />
+    <configuration name="release/mem"
+        pname="release/mem.prm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/mem_prm3.cfg"
+        xCfgPrefix="package/cfg/release/mem_prm3"
+        cfgScript="mem.cfg"
+        />
+    <configuration name="release/dynamicTsk"
+        pname="release/dynamicTsk.prm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/dynamicTsk_prm3.cfg"
+        xCfgPrefix="package/cfg/release/dynamicTsk_prm3"
+        cfgScript="dynamicTsk.cfg"
+        />
+    <configuration name="release/dynamicSem"
+        pname="release/dynamicSem.prm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/dynamicSem_prm3.cfg"
+        xCfgPrefix="package/cfg/release/dynamicSem_prm3"
+        cfgScript="dynamicSem.cfg"
+        />
+    <configuration name="release/latencyM3"
+        pname="release/latencyM3.prm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/latencyM3_prm4.cfg"
+        xCfgPrefix="package/cfg/release/latencyM3_prm4"
+        cfgScript="latencyM3.cfg"
+        />
+    <configuration name="release/benchloop"
+        pname="release/benchloop.prm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/benchloop_prm4.cfg"
+        xCfgPrefix="package/cfg/release/benchloop_prm4"
+        cfgScript="benchloop.cfg"
+        />
+    <configuration name="release/default"
+        pname="release/default.prm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/default_prm4.cfg"
+        xCfgPrefix="package/cfg/release/default_prm4"
+        cfgScript="default.cfg"
+        />
+    <configuration name="release/basic"
+        pname="release/basic.prm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/basic_prm4.cfg"
+        xCfgPrefix="package/cfg/release/basic_prm4"
+        cfgScript="basic.cfg"
+        />
+    <configuration name="release/hwi"
+        pname="release/hwi.prm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/hwi_prm4.cfg"
+        xCfgPrefix="package/cfg/release/hwi_prm4"
+        cfgScript="hwi.cfg"
+        />
+    <configuration name="release/clk"
+        pname="release/clk.prm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/clk_prm4.cfg"
+        xCfgPrefix="package/cfg/release/clk_prm4"
+        cfgScript="clk.cfg"
+        />
+    <configuration name="release/clkObj"
+        pname="release/clkObj.prm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/clkObj_prm4.cfg"
+        xCfgPrefix="package/cfg/release/clkObj_prm4"
+        cfgScript="clkObj.cfg"
+        />
+    <configuration name="release/swi"
+        pname="release/swi.prm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/swi_prm4.cfg"
+        xCfgPrefix="package/cfg/release/swi_prm4"
+        cfgScript="swi.cfg"
+        />
+    <configuration name="release/swiObj"
+        pname="release/swiObj.prm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/swiObj_prm4.cfg"
+        xCfgPrefix="package/cfg/release/swiObj_prm4"
+        cfgScript="swiObj.cfg"
+        />
+    <configuration name="release/tsk"
+        pname="release/tsk.prm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/tsk_prm4.cfg"
+        xCfgPrefix="package/cfg/release/tsk_prm4"
+        cfgScript="tsk.cfg"
+        />
+    <configuration name="release/tskObj"
+        pname="release/tskObj.prm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/tskObj_prm4.cfg"
+        xCfgPrefix="package/cfg/release/tskObj_prm4"
+        cfgScript="tskObj.cfg"
+        />
+    <configuration name="release/sem"
+        pname="release/sem.prm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/sem_prm4.cfg"
+        xCfgPrefix="package/cfg/release/sem_prm4"
+        cfgScript="sem.cfg"
+        />
+    <configuration name="release/semObj"
+        pname="release/semObj.prm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/semObj_prm4.cfg"
+        xCfgPrefix="package/cfg/release/semObj_prm4"
+        cfgScript="semObj.cfg"
+        />
+    <configuration name="release/mem"
+        pname="release/mem.prm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/mem_prm4.cfg"
+        xCfgPrefix="package/cfg/release/mem_prm4"
+        cfgScript="mem.cfg"
+        />
+    <configuration name="release/dynamicTsk"
+        pname="release/dynamicTsk.prm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/dynamicTsk_prm4.cfg"
+        xCfgPrefix="package/cfg/release/dynamicTsk_prm4"
+        cfgScript="dynamicTsk.cfg"
+        />
+    <configuration name="release/dynamicSem"
+        pname="release/dynamicSem.prm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/dynamicSem_prm4.cfg"
+        xCfgPrefix="package/cfg/release/dynamicSem_prm4"
+        cfgScript="dynamicSem.cfg"
+        />
+    <configuration name="release/latencyM3"
+        pname="release/latencyM3.prm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/latencyM3_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/latencyM3_prm4f"
+        cfgScript="latencyM3.cfg"
+        />
+    <configuration name="release/benchloop"
+        pname="release/benchloop.prm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/benchloop_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/benchloop_prm4f"
+        cfgScript="benchloop.cfg"
+        />
+    <configuration name="release/default"
+        pname="release/default.prm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/default_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/default_prm4f"
+        cfgScript="default.cfg"
+        />
+    <configuration name="release/basic"
+        pname="release/basic.prm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/basic_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/basic_prm4f"
+        cfgScript="basic.cfg"
+        />
+    <configuration name="release/hwi"
+        pname="release/hwi.prm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/hwi_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/hwi_prm4f"
+        cfgScript="hwi.cfg"
+        />
+    <configuration name="release/clk"
+        pname="release/clk.prm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/clk_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/clk_prm4f"
+        cfgScript="clk.cfg"
+        />
+    <configuration name="release/clkObj"
+        pname="release/clkObj.prm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/clkObj_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/clkObj_prm4f"
+        cfgScript="clkObj.cfg"
+        />
+    <configuration name="release/swi"
+        pname="release/swi.prm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/swi_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/swi_prm4f"
+        cfgScript="swi.cfg"
+        />
+    <configuration name="release/swiObj"
+        pname="release/swiObj.prm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/swiObj_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/swiObj_prm4f"
+        cfgScript="swiObj.cfg"
+        />
+    <configuration name="release/tsk"
+        pname="release/tsk.prm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/tsk_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/tsk_prm4f"
+        cfgScript="tsk.cfg"
+        />
+    <configuration name="release/tskObj"
+        pname="release/tskObj.prm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/tskObj_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/tskObj_prm4f"
+        cfgScript="tskObj.cfg"
+        />
+    <configuration name="release/sem"
+        pname="release/sem.prm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/sem_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/sem_prm4f"
+        cfgScript="sem.cfg"
+        />
+    <configuration name="release/semObj"
+        pname="release/semObj.prm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/semObj_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/semObj_prm4f"
+        cfgScript="semObj.cfg"
+        />
+    <configuration name="release/mem"
+        pname="release/mem.prm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/mem_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/mem_prm4f"
+        cfgScript="mem.cfg"
+        />
+    <configuration name="release/dynamicTsk"
+        pname="release/dynamicTsk.prm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/dynamicTsk_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/dynamicTsk_prm4f"
+        cfgScript="dynamicTsk.cfg"
+        />
+    <configuration name="release/dynamicSem"
+        pname="release/dynamicSem.prm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/release/dynamicSem_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/dynamicSem_prm4f"
         cfgScript="dynamicSem.cfg"
         />
     </configurations>
@@ -5611,7 +6958,7 @@
     <executable name="release/latencyMSP"
         pname="release/latencyMSP.xe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/latencyMSP_pe430XS.cfg"
         xCfgPrefix="package/cfg/release/latencyMSP_pe430XS"
@@ -5620,7 +6967,7 @@
     <executable name="release/benchloop"
         pname="release/benchloop.xe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/benchloop_pe430XS.cfg"
         xCfgPrefix="package/cfg/release/benchloop_pe430XS"
@@ -5629,7 +6976,7 @@
     <executable name="release/default"
         pname="release/default.xe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/default_pe430XS.cfg"
         xCfgPrefix="package/cfg/release/default_pe430XS"
@@ -5638,7 +6985,7 @@
     <executable name="release/basic"
         pname="release/basic.xe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/basic_pe430XS.cfg"
         xCfgPrefix="package/cfg/release/basic_pe430XS"
@@ -5647,7 +6994,7 @@
     <executable name="release/hwi"
         pname="release/hwi.xe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/hwi_pe430XS.cfg"
         xCfgPrefix="package/cfg/release/hwi_pe430XS"
@@ -5656,7 +7003,7 @@
     <executable name="release/clk"
         pname="release/clk.xe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/clk_pe430XS.cfg"
         xCfgPrefix="package/cfg/release/clk_pe430XS"
@@ -5665,7 +7012,7 @@
     <executable name="release/clkObj"
         pname="release/clkObj.xe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/clkObj_pe430XS.cfg"
         xCfgPrefix="package/cfg/release/clkObj_pe430XS"
@@ -5674,7 +7021,7 @@
     <executable name="release/swi"
         pname="release/swi.xe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/swi_pe430XS.cfg"
         xCfgPrefix="package/cfg/release/swi_pe430XS"
@@ -5683,7 +7030,7 @@
     <executable name="release/swiObj"
         pname="release/swiObj.xe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/swiObj_pe430XS.cfg"
         xCfgPrefix="package/cfg/release/swiObj_pe430XS"
@@ -5692,7 +7039,7 @@
     <executable name="release/tsk"
         pname="release/tsk.xe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/tsk_pe430XS.cfg"
         xCfgPrefix="package/cfg/release/tsk_pe430XS"
@@ -5701,7 +7048,7 @@
     <executable name="release/tskObj"
         pname="release/tskObj.xe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/tskObj_pe430XS.cfg"
         xCfgPrefix="package/cfg/release/tskObj_pe430XS"
@@ -5710,7 +7057,7 @@
     <executable name="release/sem"
         pname="release/sem.xe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/sem_pe430XS.cfg"
         xCfgPrefix="package/cfg/release/sem_pe430XS"
@@ -5719,7 +7066,7 @@
     <executable name="release/semObj"
         pname="release/semObj.xe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/semObj_pe430XS.cfg"
         xCfgPrefix="package/cfg/release/semObj_pe430XS"
@@ -5728,7 +7075,7 @@
     <executable name="release/mem"
         pname="release/mem.xe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/mem_pe430XS.cfg"
         xCfgPrefix="package/cfg/release/mem_pe430XS"
@@ -5737,7 +7084,7 @@
     <executable name="release/dynamicTsk"
         pname="release/dynamicTsk.xe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/dynamicTsk_pe430XS.cfg"
         xCfgPrefix="package/cfg/release/dynamicTsk_pe430XS"
@@ -5746,7 +7093,7 @@
     <executable name="release/dynamicSem"
         pname="release/dynamicSem.xe430XS"
         target="ti.targets.msp430.elf.MSP430X_small"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/dynamicSem_pe430XS.cfg"
         xCfgPrefix="package/cfg/release/dynamicSem_pe430XS"
@@ -5755,7 +7102,7 @@
     <executable name="release/latencyMSP"
         pname="release/latencyMSP.xe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/latencyMSP_pe430X.cfg"
         xCfgPrefix="package/cfg/release/latencyMSP_pe430X"
@@ -5764,7 +7111,7 @@
     <executable name="release/benchloop"
         pname="release/benchloop.xe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/benchloop_pe430X.cfg"
         xCfgPrefix="package/cfg/release/benchloop_pe430X"
@@ -5773,7 +7120,7 @@
     <executable name="release/default"
         pname="release/default.xe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/default_pe430X.cfg"
         xCfgPrefix="package/cfg/release/default_pe430X"
@@ -5782,7 +7129,7 @@
     <executable name="release/basic"
         pname="release/basic.xe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/basic_pe430X.cfg"
         xCfgPrefix="package/cfg/release/basic_pe430X"
@@ -5791,7 +7138,7 @@
     <executable name="release/hwi"
         pname="release/hwi.xe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/hwi_pe430X.cfg"
         xCfgPrefix="package/cfg/release/hwi_pe430X"
@@ -5800,7 +7147,7 @@
     <executable name="release/clk"
         pname="release/clk.xe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/clk_pe430X.cfg"
         xCfgPrefix="package/cfg/release/clk_pe430X"
@@ -5809,7 +7156,7 @@
     <executable name="release/clkObj"
         pname="release/clkObj.xe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/clkObj_pe430X.cfg"
         xCfgPrefix="package/cfg/release/clkObj_pe430X"
@@ -5818,7 +7165,7 @@
     <executable name="release/swi"
         pname="release/swi.xe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/swi_pe430X.cfg"
         xCfgPrefix="package/cfg/release/swi_pe430X"
@@ -5827,7 +7174,7 @@
     <executable name="release/swiObj"
         pname="release/swiObj.xe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/swiObj_pe430X.cfg"
         xCfgPrefix="package/cfg/release/swiObj_pe430X"
@@ -5836,7 +7183,7 @@
     <executable name="release/tsk"
         pname="release/tsk.xe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/tsk_pe430X.cfg"
         xCfgPrefix="package/cfg/release/tsk_pe430X"
@@ -5845,7 +7192,7 @@
     <executable name="release/tskObj"
         pname="release/tskObj.xe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/tskObj_pe430X.cfg"
         xCfgPrefix="package/cfg/release/tskObj_pe430X"
@@ -5854,7 +7201,7 @@
     <executable name="release/sem"
         pname="release/sem.xe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/sem_pe430X.cfg"
         xCfgPrefix="package/cfg/release/sem_pe430X"
@@ -5863,7 +7210,7 @@
     <executable name="release/semObj"
         pname="release/semObj.xe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/semObj_pe430X.cfg"
         xCfgPrefix="package/cfg/release/semObj_pe430X"
@@ -5872,7 +7219,7 @@
     <executable name="release/mem"
         pname="release/mem.xe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/mem_pe430X.cfg"
         xCfgPrefix="package/cfg/release/mem_pe430X"
@@ -5881,7 +7228,7 @@
     <executable name="release/dynamicTsk"
         pname="release/dynamicTsk.xe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/dynamicTsk_pe430X.cfg"
         xCfgPrefix="package/cfg/release/dynamicTsk_pe430X"
@@ -5890,10 +7237,154 @@
     <executable name="release/dynamicSem"
         pname="release/dynamicSem.xe430X"
         target="ti.targets.msp430.elf.MSP430X"
-        platform="ti.platforms.exp430F5438"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
         profile="release"
         xCfgScript="package/cfg/release/dynamicSem_pe430X.cfg"
         xCfgPrefix="package/cfg/release/dynamicSem_pe430X"
+        cfgScript="dynamicSem.cfg"
+        />
+    <executable name="release/latencyMSP"
+        pname="release/latencyMSP.xr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        xCfgScript="package/cfg/release/latencyMSP_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/latencyMSP_pr430XS"
+        cfgScript="latencyMSP.cfg"
+        />
+    <executable name="release/benchloop"
+        pname="release/benchloop.xr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        xCfgScript="package/cfg/release/benchloop_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/benchloop_pr430XS"
+        cfgScript="benchloop.cfg"
+        />
+    <executable name="release/default"
+        pname="release/default.xr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        xCfgScript="package/cfg/release/default_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/default_pr430XS"
+        cfgScript="default.cfg"
+        />
+    <executable name="release/basic"
+        pname="release/basic.xr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        xCfgScript="package/cfg/release/basic_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/basic_pr430XS"
+        cfgScript="basic.cfg"
+        />
+    <executable name="release/hwi"
+        pname="release/hwi.xr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        xCfgScript="package/cfg/release/hwi_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/hwi_pr430XS"
+        cfgScript="hwi.cfg"
+        />
+    <executable name="release/clk"
+        pname="release/clk.xr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        xCfgScript="package/cfg/release/clk_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/clk_pr430XS"
+        cfgScript="clk.cfg"
+        />
+    <executable name="release/clkObj"
+        pname="release/clkObj.xr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        xCfgScript="package/cfg/release/clkObj_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/clkObj_pr430XS"
+        cfgScript="clkObj.cfg"
+        />
+    <executable name="release/swi"
+        pname="release/swi.xr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        xCfgScript="package/cfg/release/swi_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/swi_pr430XS"
+        cfgScript="swi.cfg"
+        />
+    <executable name="release/swiObj"
+        pname="release/swiObj.xr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        xCfgScript="package/cfg/release/swiObj_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/swiObj_pr430XS"
+        cfgScript="swiObj.cfg"
+        />
+    <executable name="release/tsk"
+        pname="release/tsk.xr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        xCfgScript="package/cfg/release/tsk_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/tsk_pr430XS"
+        cfgScript="tsk.cfg"
+        />
+    <executable name="release/tskObj"
+        pname="release/tskObj.xr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        xCfgScript="package/cfg/release/tskObj_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/tskObj_pr430XS"
+        cfgScript="tskObj.cfg"
+        />
+    <executable name="release/sem"
+        pname="release/sem.xr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        xCfgScript="package/cfg/release/sem_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/sem_pr430XS"
+        cfgScript="sem.cfg"
+        />
+    <executable name="release/semObj"
+        pname="release/semObj.xr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        xCfgScript="package/cfg/release/semObj_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/semObj_pr430XS"
+        cfgScript="semObj.cfg"
+        />
+    <executable name="release/mem"
+        pname="release/mem.xr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        xCfgScript="package/cfg/release/mem_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/mem_pr430XS"
+        cfgScript="mem.cfg"
+        />
+    <executable name="release/dynamicTsk"
+        pname="release/dynamicTsk.xr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        xCfgScript="package/cfg/release/dynamicTsk_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/dynamicTsk_pr430XS"
+        cfgScript="dynamicTsk.cfg"
+        />
+    <executable name="release/dynamicSem"
+        pname="release/dynamicSem.xr430XS"
+        target="iar.targets.msp430.MSP430X_small"
+        platform="ti.platforms.msp430:MSP430F5438A:1"
+        profile="release"
+        xCfgScript="package/cfg/release/dynamicSem_pr430XS.cfg"
+        xCfgPrefix="package/cfg/release/dynamicSem_pr430XS"
         cfgScript="dynamicSem.cfg"
         />
     <executable name="release/latency"
@@ -6619,7 +8110,7 @@
     <executable name="release/latencyM3"
         pname="release/latencyM3.xm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/latencyM3_pm3g.cfg"
         xCfgPrefix="package/cfg/release/latencyM3_pm3g"
@@ -6628,7 +8119,7 @@
     <executable name="release/benchloop"
         pname="release/benchloop.xm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/benchloop_pm3g.cfg"
         xCfgPrefix="package/cfg/release/benchloop_pm3g"
@@ -6637,7 +8128,7 @@
     <executable name="release/default"
         pname="release/default.xm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/default_pm3g.cfg"
         xCfgPrefix="package/cfg/release/default_pm3g"
@@ -6646,7 +8137,7 @@
     <executable name="release/basic"
         pname="release/basic.xm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/basic_pm3g.cfg"
         xCfgPrefix="package/cfg/release/basic_pm3g"
@@ -6655,7 +8146,7 @@
     <executable name="release/hwi"
         pname="release/hwi.xm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/hwi_pm3g.cfg"
         xCfgPrefix="package/cfg/release/hwi_pm3g"
@@ -6664,7 +8155,7 @@
     <executable name="release/clk"
         pname="release/clk.xm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/clk_pm3g.cfg"
         xCfgPrefix="package/cfg/release/clk_pm3g"
@@ -6673,7 +8164,7 @@
     <executable name="release/clkObj"
         pname="release/clkObj.xm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/clkObj_pm3g.cfg"
         xCfgPrefix="package/cfg/release/clkObj_pm3g"
@@ -6682,7 +8173,7 @@
     <executable name="release/swi"
         pname="release/swi.xm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/swi_pm3g.cfg"
         xCfgPrefix="package/cfg/release/swi_pm3g"
@@ -6691,7 +8182,7 @@
     <executable name="release/swiObj"
         pname="release/swiObj.xm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/swiObj_pm3g.cfg"
         xCfgPrefix="package/cfg/release/swiObj_pm3g"
@@ -6700,7 +8191,7 @@
     <executable name="release/tsk"
         pname="release/tsk.xm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/tsk_pm3g.cfg"
         xCfgPrefix="package/cfg/release/tsk_pm3g"
@@ -6709,7 +8200,7 @@
     <executable name="release/tskObj"
         pname="release/tskObj.xm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/tskObj_pm3g.cfg"
         xCfgPrefix="package/cfg/release/tskObj_pm3g"
@@ -6718,7 +8209,7 @@
     <executable name="release/sem"
         pname="release/sem.xm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/sem_pm3g.cfg"
         xCfgPrefix="package/cfg/release/sem_pm3g"
@@ -6727,7 +8218,7 @@
     <executable name="release/semObj"
         pname="release/semObj.xm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/semObj_pm3g.cfg"
         xCfgPrefix="package/cfg/release/semObj_pm3g"
@@ -6736,7 +8227,7 @@
     <executable name="release/mem"
         pname="release/mem.xm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/mem_pm3g.cfg"
         xCfgPrefix="package/cfg/release/mem_pm3g"
@@ -6745,7 +8236,7 @@
     <executable name="release/dynamicTsk"
         pname="release/dynamicTsk.xm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/dynamicTsk_pm3g.cfg"
         xCfgPrefix="package/cfg/release/dynamicTsk_pm3g"
@@ -6754,7 +8245,7 @@
     <executable name="release/dynamicSem"
         pname="release/dynamicSem.xm3g"
         target="gnu.targets.arm.M3"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/dynamicSem_pm3g.cfg"
         xCfgPrefix="package/cfg/release/dynamicSem_pm3g"
@@ -6763,7 +8254,7 @@
     <executable name="release/latencyM3"
         pname="release/latencyM3.xm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/latencyM3_pm4fg.cfg"
         xCfgPrefix="package/cfg/release/latencyM3_pm4fg"
@@ -6772,7 +8263,7 @@
     <executable name="release/benchloop"
         pname="release/benchloop.xm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/benchloop_pm4fg.cfg"
         xCfgPrefix="package/cfg/release/benchloop_pm4fg"
@@ -6781,7 +8272,7 @@
     <executable name="release/default"
         pname="release/default.xm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/default_pm4fg.cfg"
         xCfgPrefix="package/cfg/release/default_pm4fg"
@@ -6790,7 +8281,7 @@
     <executable name="release/basic"
         pname="release/basic.xm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/basic_pm4fg.cfg"
         xCfgPrefix="package/cfg/release/basic_pm4fg"
@@ -6799,7 +8290,7 @@
     <executable name="release/hwi"
         pname="release/hwi.xm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/hwi_pm4fg.cfg"
         xCfgPrefix="package/cfg/release/hwi_pm4fg"
@@ -6808,7 +8299,7 @@
     <executable name="release/clk"
         pname="release/clk.xm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/clk_pm4fg.cfg"
         xCfgPrefix="package/cfg/release/clk_pm4fg"
@@ -6817,7 +8308,7 @@
     <executable name="release/clkObj"
         pname="release/clkObj.xm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/clkObj_pm4fg.cfg"
         xCfgPrefix="package/cfg/release/clkObj_pm4fg"
@@ -6826,7 +8317,7 @@
     <executable name="release/swi"
         pname="release/swi.xm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/swi_pm4fg.cfg"
         xCfgPrefix="package/cfg/release/swi_pm4fg"
@@ -6835,7 +8326,7 @@
     <executable name="release/swiObj"
         pname="release/swiObj.xm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/swiObj_pm4fg.cfg"
         xCfgPrefix="package/cfg/release/swiObj_pm4fg"
@@ -6844,7 +8335,7 @@
     <executable name="release/tsk"
         pname="release/tsk.xm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/tsk_pm4fg.cfg"
         xCfgPrefix="package/cfg/release/tsk_pm4fg"
@@ -6853,7 +8344,7 @@
     <executable name="release/tskObj"
         pname="release/tskObj.xm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/tskObj_pm4fg.cfg"
         xCfgPrefix="package/cfg/release/tskObj_pm4fg"
@@ -6862,7 +8353,7 @@
     <executable name="release/sem"
         pname="release/sem.xm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/sem_pm4fg.cfg"
         xCfgPrefix="package/cfg/release/sem_pm4fg"
@@ -6871,7 +8362,7 @@
     <executable name="release/semObj"
         pname="release/semObj.xm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/semObj_pm4fg.cfg"
         xCfgPrefix="package/cfg/release/semObj_pm4fg"
@@ -6880,7 +8371,7 @@
     <executable name="release/mem"
         pname="release/mem.xm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/mem_pm4fg.cfg"
         xCfgPrefix="package/cfg/release/mem_pm4fg"
@@ -6889,7 +8380,7 @@
     <executable name="release/dynamicTsk"
         pname="release/dynamicTsk.xm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/dynamicTsk_pm4fg.cfg"
         xCfgPrefix="package/cfg/release/dynamicTsk_pm4fg"
@@ -6898,7 +8389,7 @@
     <executable name="release/dynamicSem"
         pname="release/dynamicSem.xm4fg"
         target="gnu.targets.arm.M4F"
-        platform="ti.platforms.stellaris:LM4F232H5QD:1"
+        platform="ti.platforms.tiva:LM4F232H5QD:1"
         profile="release"
         xCfgScript="package/cfg/release/dynamicSem_pm4fg.cfg"
         xCfgPrefix="package/cfg/release/dynamicSem_pm4fg"
@@ -7048,6 +8539,150 @@
         xCfgPrefix="package/cfg/release/dynamicSem_pa8fg"
         cfgScript="dynamicSem.cfg"
         />
+    <executable name="release/latencyA9"
+        pname="release/latencyA9.xa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        xCfgScript="package/cfg/release/latencyA9_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/latencyA9_pa9fg"
+        cfgScript="latencyA9.cfg"
+        />
+    <executable name="release/benchloop"
+        pname="release/benchloop.xa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        xCfgScript="package/cfg/release/benchloop_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/benchloop_pa9fg"
+        cfgScript="benchloop.cfg"
+        />
+    <executable name="release/default"
+        pname="release/default.xa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        xCfgScript="package/cfg/release/default_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/default_pa9fg"
+        cfgScript="default.cfg"
+        />
+    <executable name="release/basic"
+        pname="release/basic.xa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        xCfgScript="package/cfg/release/basic_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/basic_pa9fg"
+        cfgScript="basic.cfg"
+        />
+    <executable name="release/hwi"
+        pname="release/hwi.xa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        xCfgScript="package/cfg/release/hwi_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/hwi_pa9fg"
+        cfgScript="hwi.cfg"
+        />
+    <executable name="release/clk"
+        pname="release/clk.xa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        xCfgScript="package/cfg/release/clk_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/clk_pa9fg"
+        cfgScript="clk.cfg"
+        />
+    <executable name="release/clkObj"
+        pname="release/clkObj.xa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        xCfgScript="package/cfg/release/clkObj_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/clkObj_pa9fg"
+        cfgScript="clkObj.cfg"
+        />
+    <executable name="release/swi"
+        pname="release/swi.xa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        xCfgScript="package/cfg/release/swi_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/swi_pa9fg"
+        cfgScript="swi.cfg"
+        />
+    <executable name="release/swiObj"
+        pname="release/swiObj.xa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        xCfgScript="package/cfg/release/swiObj_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/swiObj_pa9fg"
+        cfgScript="swiObj.cfg"
+        />
+    <executable name="release/tsk"
+        pname="release/tsk.xa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        xCfgScript="package/cfg/release/tsk_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/tsk_pa9fg"
+        cfgScript="tsk.cfg"
+        />
+    <executable name="release/tskObj"
+        pname="release/tskObj.xa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        xCfgScript="package/cfg/release/tskObj_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/tskObj_pa9fg"
+        cfgScript="tskObj.cfg"
+        />
+    <executable name="release/sem"
+        pname="release/sem.xa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        xCfgScript="package/cfg/release/sem_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/sem_pa9fg"
+        cfgScript="sem.cfg"
+        />
+    <executable name="release/semObj"
+        pname="release/semObj.xa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        xCfgScript="package/cfg/release/semObj_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/semObj_pa9fg"
+        cfgScript="semObj.cfg"
+        />
+    <executable name="release/mem"
+        pname="release/mem.xa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        xCfgScript="package/cfg/release/mem_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/mem_pa9fg"
+        cfgScript="mem.cfg"
+        />
+    <executable name="release/dynamicTsk"
+        pname="release/dynamicTsk.xa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        xCfgScript="package/cfg/release/dynamicTsk_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/dynamicTsk_pa9fg"
+        cfgScript="dynamicTsk.cfg"
+        />
+    <executable name="release/dynamicSem"
+        pname="release/dynamicSem.xa9fg"
+        target="gnu.targets.arm.A9F"
+        platform="ti.platforms.sdp4430"
+        profile="release"
+        xCfgScript="package/cfg/release/dynamicSem_pa9fg.cfg"
+        xCfgPrefix="package/cfg/release/dynamicSem_pa9fg"
+        cfgScript="dynamicSem.cfg"
+        />
     <executable name="release/latencyA15"
         pname="release/latencyA15.xa15fg"
         target="gnu.targets.arm.A15F"
@@ -7060,7 +8695,7 @@
     <executable name="release/benchloop"
         pname="release/benchloop.xa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         xCfgScript="package/cfg/release/benchloop_pa15fg.cfg"
         xCfgPrefix="package/cfg/release/benchloop_pa15fg"
@@ -7069,7 +8704,7 @@
     <executable name="release/default"
         pname="release/default.xa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         xCfgScript="package/cfg/release/default_pa15fg.cfg"
         xCfgPrefix="package/cfg/release/default_pa15fg"
@@ -7078,7 +8713,7 @@
     <executable name="release/basic"
         pname="release/basic.xa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         xCfgScript="package/cfg/release/basic_pa15fg.cfg"
         xCfgPrefix="package/cfg/release/basic_pa15fg"
@@ -7087,7 +8722,7 @@
     <executable name="release/hwi"
         pname="release/hwi.xa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         xCfgScript="package/cfg/release/hwi_pa15fg.cfg"
         xCfgPrefix="package/cfg/release/hwi_pa15fg"
@@ -7096,7 +8731,7 @@
     <executable name="release/clk"
         pname="release/clk.xa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         xCfgScript="package/cfg/release/clk_pa15fg.cfg"
         xCfgPrefix="package/cfg/release/clk_pa15fg"
@@ -7105,7 +8740,7 @@
     <executable name="release/clkObj"
         pname="release/clkObj.xa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         xCfgScript="package/cfg/release/clkObj_pa15fg.cfg"
         xCfgPrefix="package/cfg/release/clkObj_pa15fg"
@@ -7114,7 +8749,7 @@
     <executable name="release/swi"
         pname="release/swi.xa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         xCfgScript="package/cfg/release/swi_pa15fg.cfg"
         xCfgPrefix="package/cfg/release/swi_pa15fg"
@@ -7123,7 +8758,7 @@
     <executable name="release/swiObj"
         pname="release/swiObj.xa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         xCfgScript="package/cfg/release/swiObj_pa15fg.cfg"
         xCfgPrefix="package/cfg/release/swiObj_pa15fg"
@@ -7132,7 +8767,7 @@
     <executable name="release/tsk"
         pname="release/tsk.xa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         xCfgScript="package/cfg/release/tsk_pa15fg.cfg"
         xCfgPrefix="package/cfg/release/tsk_pa15fg"
@@ -7141,7 +8776,7 @@
     <executable name="release/tskObj"
         pname="release/tskObj.xa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         xCfgScript="package/cfg/release/tskObj_pa15fg.cfg"
         xCfgPrefix="package/cfg/release/tskObj_pa15fg"
@@ -7150,7 +8785,7 @@
     <executable name="release/sem"
         pname="release/sem.xa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         xCfgScript="package/cfg/release/sem_pa15fg.cfg"
         xCfgPrefix="package/cfg/release/sem_pa15fg"
@@ -7159,7 +8794,7 @@
     <executable name="release/semObj"
         pname="release/semObj.xa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         xCfgScript="package/cfg/release/semObj_pa15fg.cfg"
         xCfgPrefix="package/cfg/release/semObj_pa15fg"
@@ -7168,7 +8803,7 @@
     <executable name="release/mem"
         pname="release/mem.xa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         xCfgScript="package/cfg/release/mem_pa15fg.cfg"
         xCfgPrefix="package/cfg/release/mem_pa15fg"
@@ -7177,7 +8812,7 @@
     <executable name="release/dynamicTsk"
         pname="release/dynamicTsk.xa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         xCfgScript="package/cfg/release/dynamicTsk_pa15fg.cfg"
         xCfgPrefix="package/cfg/release/dynamicTsk_pa15fg"
@@ -7186,7 +8821,7 @@
     <executable name="release/dynamicSem"
         pname="release/dynamicSem.xa15fg"
         target="gnu.targets.arm.A15F"
-        platform="ti.platforms.simVayu"
+        platform="ti.platforms.evmDRA7XX"
         profile="release"
         xCfgScript="package/cfg/release/dynamicSem_pa15fg.cfg"
         xCfgPrefix="package/cfg/release/dynamicSem_pa15fg"
@@ -7478,6 +9113,438 @@
         profile="release"
         xCfgScript="package/cfg/release/dynamicSem_pearp32F.cfg"
         xCfgPrefix="package/cfg/release/dynamicSem_pearp32F"
+        cfgScript="dynamicSem.cfg"
+        />
+    <executable name="release/latencyM3"
+        pname="release/latencyM3.xrm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        xCfgScript="package/cfg/release/latencyM3_prm3.cfg"
+        xCfgPrefix="package/cfg/release/latencyM3_prm3"
+        cfgScript="latencyM3.cfg"
+        />
+    <executable name="release/benchloop"
+        pname="release/benchloop.xrm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        xCfgScript="package/cfg/release/benchloop_prm3.cfg"
+        xCfgPrefix="package/cfg/release/benchloop_prm3"
+        cfgScript="benchloop.cfg"
+        />
+    <executable name="release/default"
+        pname="release/default.xrm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        xCfgScript="package/cfg/release/default_prm3.cfg"
+        xCfgPrefix="package/cfg/release/default_prm3"
+        cfgScript="default.cfg"
+        />
+    <executable name="release/basic"
+        pname="release/basic.xrm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        xCfgScript="package/cfg/release/basic_prm3.cfg"
+        xCfgPrefix="package/cfg/release/basic_prm3"
+        cfgScript="basic.cfg"
+        />
+    <executable name="release/hwi"
+        pname="release/hwi.xrm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        xCfgScript="package/cfg/release/hwi_prm3.cfg"
+        xCfgPrefix="package/cfg/release/hwi_prm3"
+        cfgScript="hwi.cfg"
+        />
+    <executable name="release/clk"
+        pname="release/clk.xrm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        xCfgScript="package/cfg/release/clk_prm3.cfg"
+        xCfgPrefix="package/cfg/release/clk_prm3"
+        cfgScript="clk.cfg"
+        />
+    <executable name="release/clkObj"
+        pname="release/clkObj.xrm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        xCfgScript="package/cfg/release/clkObj_prm3.cfg"
+        xCfgPrefix="package/cfg/release/clkObj_prm3"
+        cfgScript="clkObj.cfg"
+        />
+    <executable name="release/swi"
+        pname="release/swi.xrm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        xCfgScript="package/cfg/release/swi_prm3.cfg"
+        xCfgPrefix="package/cfg/release/swi_prm3"
+        cfgScript="swi.cfg"
+        />
+    <executable name="release/swiObj"
+        pname="release/swiObj.xrm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        xCfgScript="package/cfg/release/swiObj_prm3.cfg"
+        xCfgPrefix="package/cfg/release/swiObj_prm3"
+        cfgScript="swiObj.cfg"
+        />
+    <executable name="release/tsk"
+        pname="release/tsk.xrm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        xCfgScript="package/cfg/release/tsk_prm3.cfg"
+        xCfgPrefix="package/cfg/release/tsk_prm3"
+        cfgScript="tsk.cfg"
+        />
+    <executable name="release/tskObj"
+        pname="release/tskObj.xrm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        xCfgScript="package/cfg/release/tskObj_prm3.cfg"
+        xCfgPrefix="package/cfg/release/tskObj_prm3"
+        cfgScript="tskObj.cfg"
+        />
+    <executable name="release/sem"
+        pname="release/sem.xrm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        xCfgScript="package/cfg/release/sem_prm3.cfg"
+        xCfgPrefix="package/cfg/release/sem_prm3"
+        cfgScript="sem.cfg"
+        />
+    <executable name="release/semObj"
+        pname="release/semObj.xrm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        xCfgScript="package/cfg/release/semObj_prm3.cfg"
+        xCfgPrefix="package/cfg/release/semObj_prm3"
+        cfgScript="semObj.cfg"
+        />
+    <executable name="release/mem"
+        pname="release/mem.xrm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        xCfgScript="package/cfg/release/mem_prm3.cfg"
+        xCfgPrefix="package/cfg/release/mem_prm3"
+        cfgScript="mem.cfg"
+        />
+    <executable name="release/dynamicTsk"
+        pname="release/dynamicTsk.xrm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        xCfgScript="package/cfg/release/dynamicTsk_prm3.cfg"
+        xCfgPrefix="package/cfg/release/dynamicTsk_prm3"
+        cfgScript="dynamicTsk.cfg"
+        />
+    <executable name="release/dynamicSem"
+        pname="release/dynamicSem.xrm3"
+        target="iar.targets.arm.M3"
+        platform="ti.platforms.tiva:LM3S9B92:1"
+        profile="release"
+        xCfgScript="package/cfg/release/dynamicSem_prm3.cfg"
+        xCfgPrefix="package/cfg/release/dynamicSem_prm3"
+        cfgScript="dynamicSem.cfg"
+        />
+    <executable name="release/latencyM3"
+        pname="release/latencyM3.xrm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/latencyM3_prm4.cfg"
+        xCfgPrefix="package/cfg/release/latencyM3_prm4"
+        cfgScript="latencyM3.cfg"
+        />
+    <executable name="release/benchloop"
+        pname="release/benchloop.xrm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/benchloop_prm4.cfg"
+        xCfgPrefix="package/cfg/release/benchloop_prm4"
+        cfgScript="benchloop.cfg"
+        />
+    <executable name="release/default"
+        pname="release/default.xrm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/default_prm4.cfg"
+        xCfgPrefix="package/cfg/release/default_prm4"
+        cfgScript="default.cfg"
+        />
+    <executable name="release/basic"
+        pname="release/basic.xrm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/basic_prm4.cfg"
+        xCfgPrefix="package/cfg/release/basic_prm4"
+        cfgScript="basic.cfg"
+        />
+    <executable name="release/hwi"
+        pname="release/hwi.xrm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/hwi_prm4.cfg"
+        xCfgPrefix="package/cfg/release/hwi_prm4"
+        cfgScript="hwi.cfg"
+        />
+    <executable name="release/clk"
+        pname="release/clk.xrm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/clk_prm4.cfg"
+        xCfgPrefix="package/cfg/release/clk_prm4"
+        cfgScript="clk.cfg"
+        />
+    <executable name="release/clkObj"
+        pname="release/clkObj.xrm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/clkObj_prm4.cfg"
+        xCfgPrefix="package/cfg/release/clkObj_prm4"
+        cfgScript="clkObj.cfg"
+        />
+    <executable name="release/swi"
+        pname="release/swi.xrm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/swi_prm4.cfg"
+        xCfgPrefix="package/cfg/release/swi_prm4"
+        cfgScript="swi.cfg"
+        />
+    <executable name="release/swiObj"
+        pname="release/swiObj.xrm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/swiObj_prm4.cfg"
+        xCfgPrefix="package/cfg/release/swiObj_prm4"
+        cfgScript="swiObj.cfg"
+        />
+    <executable name="release/tsk"
+        pname="release/tsk.xrm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/tsk_prm4.cfg"
+        xCfgPrefix="package/cfg/release/tsk_prm4"
+        cfgScript="tsk.cfg"
+        />
+    <executable name="release/tskObj"
+        pname="release/tskObj.xrm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/tskObj_prm4.cfg"
+        xCfgPrefix="package/cfg/release/tskObj_prm4"
+        cfgScript="tskObj.cfg"
+        />
+    <executable name="release/sem"
+        pname="release/sem.xrm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/sem_prm4.cfg"
+        xCfgPrefix="package/cfg/release/sem_prm4"
+        cfgScript="sem.cfg"
+        />
+    <executable name="release/semObj"
+        pname="release/semObj.xrm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/semObj_prm4.cfg"
+        xCfgPrefix="package/cfg/release/semObj_prm4"
+        cfgScript="semObj.cfg"
+        />
+    <executable name="release/mem"
+        pname="release/mem.xrm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/mem_prm4.cfg"
+        xCfgPrefix="package/cfg/release/mem_prm4"
+        cfgScript="mem.cfg"
+        />
+    <executable name="release/dynamicTsk"
+        pname="release/dynamicTsk.xrm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/dynamicTsk_prm4.cfg"
+        xCfgPrefix="package/cfg/release/dynamicTsk_prm4"
+        cfgScript="dynamicTsk.cfg"
+        />
+    <executable name="release/dynamicSem"
+        pname="release/dynamicSem.xrm4"
+        target="iar.targets.arm.M4"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/dynamicSem_prm4.cfg"
+        xCfgPrefix="package/cfg/release/dynamicSem_prm4"
+        cfgScript="dynamicSem.cfg"
+        />
+    <executable name="release/latencyM3"
+        pname="release/latencyM3.xrm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/latencyM3_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/latencyM3_prm4f"
+        cfgScript="latencyM3.cfg"
+        />
+    <executable name="release/benchloop"
+        pname="release/benchloop.xrm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/benchloop_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/benchloop_prm4f"
+        cfgScript="benchloop.cfg"
+        />
+    <executable name="release/default"
+        pname="release/default.xrm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/default_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/default_prm4f"
+        cfgScript="default.cfg"
+        />
+    <executable name="release/basic"
+        pname="release/basic.xrm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/basic_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/basic_prm4f"
+        cfgScript="basic.cfg"
+        />
+    <executable name="release/hwi"
+        pname="release/hwi.xrm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/hwi_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/hwi_prm4f"
+        cfgScript="hwi.cfg"
+        />
+    <executable name="release/clk"
+        pname="release/clk.xrm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/clk_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/clk_prm4f"
+        cfgScript="clk.cfg"
+        />
+    <executable name="release/clkObj"
+        pname="release/clkObj.xrm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/clkObj_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/clkObj_prm4f"
+        cfgScript="clkObj.cfg"
+        />
+    <executable name="release/swi"
+        pname="release/swi.xrm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/swi_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/swi_prm4f"
+        cfgScript="swi.cfg"
+        />
+    <executable name="release/swiObj"
+        pname="release/swiObj.xrm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/swiObj_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/swiObj_prm4f"
+        cfgScript="swiObj.cfg"
+        />
+    <executable name="release/tsk"
+        pname="release/tsk.xrm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/tsk_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/tsk_prm4f"
+        cfgScript="tsk.cfg"
+        />
+    <executable name="release/tskObj"
+        pname="release/tskObj.xrm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/tskObj_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/tskObj_prm4f"
+        cfgScript="tskObj.cfg"
+        />
+    <executable name="release/sem"
+        pname="release/sem.xrm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/sem_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/sem_prm4f"
+        cfgScript="sem.cfg"
+        />
+    <executable name="release/semObj"
+        pname="release/semObj.xrm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/semObj_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/semObj_prm4f"
+        cfgScript="semObj.cfg"
+        />
+    <executable name="release/mem"
+        pname="release/mem.xrm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/mem_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/mem_prm4f"
+        cfgScript="mem.cfg"
+        />
+    <executable name="release/dynamicTsk"
+        pname="release/dynamicTsk.xrm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/dynamicTsk_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/dynamicTsk_prm4f"
+        cfgScript="dynamicTsk.cfg"
+        />
+    <executable name="release/dynamicSem"
+        pname="release/dynamicSem.xrm4f"
+        target="iar.targets.arm.M4F"
+        platform="ti.platforms.tiva:LM4F120H5QR:1"
+        profile="release"
+        xCfgScript="package/cfg/release/dynamicSem_prm4f.cfg"
+        xCfgPrefix="package/cfg/release/dynamicSem_prm4f"
         cfgScript="dynamicSem.cfg"
         />
     </executables>
@@ -8262,6 +10329,118 @@
     <test exeName="release/dynamicSem.xe430X"
         args=""
         groupName="release/dynamicSem.xe430X"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/latencyMSP.xr430XS"
+        args=""
+        groupName="release/latencyMSP.xr430XS"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/benchloop.xr430XS"
+        args=""
+        groupName="release/benchloop.xr430XS"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/default.xr430XS"
+        args=""
+        groupName="release/default.xr430XS"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/basic.xr430XS"
+        args=""
+        groupName="release/basic.xr430XS"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/hwi.xr430XS"
+        args=""
+        groupName="release/hwi.xr430XS"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/clk.xr430XS"
+        args=""
+        groupName="release/clk.xr430XS"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/clkObj.xr430XS"
+        args=""
+        groupName="release/clkObj.xr430XS"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/swi.xr430XS"
+        args=""
+        groupName="release/swi.xr430XS"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/swiObj.xr430XS"
+        args=""
+        groupName="release/swiObj.xr430XS"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/tsk.xr430XS"
+        args=""
+        groupName="release/tsk.xr430XS"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/tskObj.xr430XS"
+        args=""
+        groupName="release/tskObj.xr430XS"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/sem.xr430XS"
+        args=""
+        groupName="release/sem.xr430XS"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/semObj.xr430XS"
+        args=""
+        groupName="release/semObj.xr430XS"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/mem.xr430XS"
+        args=""
+        groupName="release/mem.xr430XS"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/dynamicTsk.xr430XS"
+        args=""
+        groupName="release/dynamicTsk.xr430XS"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/dynamicSem.xr430XS"
+        args=""
+        groupName="release/dynamicSem.xr430XS"
         refOutput="undefined"
         refExitCode="0"
         execArgs=""
@@ -9162,6 +11341,118 @@
         refExitCode="0"
         execArgs=""
         />
+    <test exeName="release/latencyA9.xa9fg"
+        args=""
+        groupName="release/latencyA9.xa9fg"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/benchloop.xa9fg"
+        args=""
+        groupName="release/benchloop.xa9fg"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/default.xa9fg"
+        args=""
+        groupName="release/default.xa9fg"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/basic.xa9fg"
+        args=""
+        groupName="release/basic.xa9fg"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/hwi.xa9fg"
+        args=""
+        groupName="release/hwi.xa9fg"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/clk.xa9fg"
+        args=""
+        groupName="release/clk.xa9fg"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/clkObj.xa9fg"
+        args=""
+        groupName="release/clkObj.xa9fg"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/swi.xa9fg"
+        args=""
+        groupName="release/swi.xa9fg"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/swiObj.xa9fg"
+        args=""
+        groupName="release/swiObj.xa9fg"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/tsk.xa9fg"
+        args=""
+        groupName="release/tsk.xa9fg"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/tskObj.xa9fg"
+        args=""
+        groupName="release/tskObj.xa9fg"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/sem.xa9fg"
+        args=""
+        groupName="release/sem.xa9fg"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/semObj.xa9fg"
+        args=""
+        groupName="release/semObj.xa9fg"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/mem.xa9fg"
+        args=""
+        groupName="release/mem.xa9fg"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/dynamicTsk.xa9fg"
+        args=""
+        groupName="release/dynamicTsk.xa9fg"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/dynamicSem.xa9fg"
+        args=""
+        groupName="release/dynamicSem.xa9fg"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
     <test exeName="release/latencyA15.xa15fg"
         args=""
         groupName="release/latencyA15.xa15fg"
@@ -9494,6 +11785,342 @@
     <test exeName="release/dynamicSem.xearp32F"
         args=""
         groupName="release/dynamicSem.xearp32F"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/latencyM3.xrm3"
+        args=""
+        groupName="release/latencyM3.xrm3"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/benchloop.xrm3"
+        args=""
+        groupName="release/benchloop.xrm3"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/default.xrm3"
+        args=""
+        groupName="release/default.xrm3"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/basic.xrm3"
+        args=""
+        groupName="release/basic.xrm3"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/hwi.xrm3"
+        args=""
+        groupName="release/hwi.xrm3"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/clk.xrm3"
+        args=""
+        groupName="release/clk.xrm3"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/clkObj.xrm3"
+        args=""
+        groupName="release/clkObj.xrm3"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/swi.xrm3"
+        args=""
+        groupName="release/swi.xrm3"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/swiObj.xrm3"
+        args=""
+        groupName="release/swiObj.xrm3"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/tsk.xrm3"
+        args=""
+        groupName="release/tsk.xrm3"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/tskObj.xrm3"
+        args=""
+        groupName="release/tskObj.xrm3"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/sem.xrm3"
+        args=""
+        groupName="release/sem.xrm3"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/semObj.xrm3"
+        args=""
+        groupName="release/semObj.xrm3"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/mem.xrm3"
+        args=""
+        groupName="release/mem.xrm3"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/dynamicTsk.xrm3"
+        args=""
+        groupName="release/dynamicTsk.xrm3"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/dynamicSem.xrm3"
+        args=""
+        groupName="release/dynamicSem.xrm3"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/latencyM3.xrm4"
+        args=""
+        groupName="release/latencyM3.xrm4"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/benchloop.xrm4"
+        args=""
+        groupName="release/benchloop.xrm4"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/default.xrm4"
+        args=""
+        groupName="release/default.xrm4"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/basic.xrm4"
+        args=""
+        groupName="release/basic.xrm4"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/hwi.xrm4"
+        args=""
+        groupName="release/hwi.xrm4"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/clk.xrm4"
+        args=""
+        groupName="release/clk.xrm4"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/clkObj.xrm4"
+        args=""
+        groupName="release/clkObj.xrm4"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/swi.xrm4"
+        args=""
+        groupName="release/swi.xrm4"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/swiObj.xrm4"
+        args=""
+        groupName="release/swiObj.xrm4"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/tsk.xrm4"
+        args=""
+        groupName="release/tsk.xrm4"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/tskObj.xrm4"
+        args=""
+        groupName="release/tskObj.xrm4"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/sem.xrm4"
+        args=""
+        groupName="release/sem.xrm4"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/semObj.xrm4"
+        args=""
+        groupName="release/semObj.xrm4"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/mem.xrm4"
+        args=""
+        groupName="release/mem.xrm4"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/dynamicTsk.xrm4"
+        args=""
+        groupName="release/dynamicTsk.xrm4"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/dynamicSem.xrm4"
+        args=""
+        groupName="release/dynamicSem.xrm4"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/latencyM3.xrm4f"
+        args=""
+        groupName="release/latencyM3.xrm4f"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/benchloop.xrm4f"
+        args=""
+        groupName="release/benchloop.xrm4f"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/default.xrm4f"
+        args=""
+        groupName="release/default.xrm4f"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/basic.xrm4f"
+        args=""
+        groupName="release/basic.xrm4f"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/hwi.xrm4f"
+        args=""
+        groupName="release/hwi.xrm4f"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/clk.xrm4f"
+        args=""
+        groupName="release/clk.xrm4f"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/clkObj.xrm4f"
+        args=""
+        groupName="release/clkObj.xrm4f"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/swi.xrm4f"
+        args=""
+        groupName="release/swi.xrm4f"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/swiObj.xrm4f"
+        args=""
+        groupName="release/swiObj.xrm4f"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/tsk.xrm4f"
+        args=""
+        groupName="release/tsk.xrm4f"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/tskObj.xrm4f"
+        args=""
+        groupName="release/tskObj.xrm4f"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/sem.xrm4f"
+        args=""
+        groupName="release/sem.xrm4f"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/semObj.xrm4f"
+        args=""
+        groupName="release/semObj.xrm4f"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/mem.xrm4f"
+        args=""
+        groupName="release/mem.xrm4f"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/dynamicTsk.xrm4f"
+        args=""
+        groupName="release/dynamicTsk.xrm4f"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    <test exeName="release/dynamicSem.xrm4f"
+        args=""
+        groupName="release/dynamicSem.xrm4f"
         refOutput="undefined"
         refExitCode="0"
         execArgs=""
